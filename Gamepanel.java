@@ -6,9 +6,10 @@ import javax.swing.*;
 class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
     private boolean [] keys;
 	private ArrayList<Bullet>bullets;
+	private ArrayList <Platform> platforms;
 
     Timer timer;
-    Player p1 = new Player(30, 30);
+    Player p1 = new Player(300, 30);
     public static final int WIDTH = 800, HEIGHT = 600;
 
 	int shootCoolDown;
@@ -32,11 +33,15 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
         p1.setUKey1(KeyEvent.VK_W);
         p1.setUKey2(KeyEvent.VK_Q);
 		p1.setShootKey(KeyEvent.VK_E);
-        p1.addAccel("Gravity", 10, -1, "Y");
+        p1.addAccel("Gravity", 2.5, -1, "Y");
+
+		platforms = new ArrayList<Platform>();
+		platforms.add(new Platform(250, 240, 100, 1));
+		platforms.add(new Platform(300, 300, WIDTH-300, 300));
 	}
 
     public void move(){
-        p1.move(keys);
+        p1.move(keys, platforms);
 
 		double canShoot = p1.shoot(bullets, keys, shootCoolDown);
 		if (canShoot != -1){
@@ -89,12 +94,18 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 	public void paint(Graphics g){
 		g.setColor(Color.BLACK);
 		g.fillRect(0,0,800,800);
-        g.setColor(Color.RED);
-        g.fillRect(0,300, 800, 300);
+
+		platforms.get(0).draw(g, Color.BLUE);
+		platforms.get(1).draw(g, Color.RED);
+		// for (Platform p : platforms){
+		// 	p.draw(g);
+		// }
+
         p1.draw(g);
 
 		for (int b = 0; b < bullets.size(); b++){ // draws all bullets
 			bullets.get(b).draw(g);
 		}
+		
     }
 }
