@@ -2,13 +2,17 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Player{
+    public static final int LEFT = -1;
+    public static final int RIGHT = 1;
     private double x, y, vx, vy;
-    private int w, h;
+    private int w, h, lives;
     private ArrayList<Vector> accelX, accelY;
     private int LKey, RKey, UKey1, UKey2, DKey, shootKey;
     private boolean jump1, jump2, onGround;
+    private String type;
+    private int dir;
 
-    public Player(int xx, int yy){
+    public Player(int xx, int yy, int direct, int numLives){
         x = xx;
         y = yy;
         w = 10;
@@ -16,13 +20,32 @@ public class Player{
         jump1 = false;
         jump2 = false;
         onGround = false;
+        lives = numLives;
+        // type = t;
         
         accelX = new ArrayList<Vector>();
         accelY = new ArrayList<Vector>();
+        dir = direct;
     }
 
     public void move(boolean [] keys, ArrayList <Platform> plats){
         // checkPlats(plats);
+
+        // this depends on if we want the players to die immediately after hitting the edge or not
+        // rn it just resets player to starting pos... idk if that's what we want it to do
+        // maybe add an invincibility period ?
+        if (x <= 0 || x+w >= 800){
+            loseLife();
+            x = 300;
+            y = 30;
+            System.out.println(lives);
+        }
+        if (y <= 0 || y+h >= 600){
+            loseLife();
+            x = 300;
+            y = 30;
+            System.out.println(lives);
+        }
 
         if (onGround){ //on temporary ground
             jump1 = true;
@@ -31,9 +54,11 @@ public class Player{
         }
         if (keys[LKey]){
             x-=7;
+            dir = LEFT;
         }
         if (keys[RKey]){
             x+=7;
+            dir = RIGHT;
         }
         if (keys[UKey1]){
             if (jump1){
@@ -126,9 +151,17 @@ public class Player{
         }
     }
 
+    public void loseLife(){
+        lives--;
+    }
+
     public void draw(Graphics g){
         g.setColor(Color.WHITE);
         g.fillRect((int)x, (int)y, w, h);
+    }
+
+    public Rectangle getRect(){ // returns Rectangle
+        return new Rectangle((int)x, (int)y, w, h);
     }
 
     public void setLKey(int k){
@@ -155,6 +188,19 @@ public class Player{
     }
     public double getY(){
         return y;
+    }
+
+    public int getDir(){
+        return dir;
+    }
+
+    public int getLives(){
+        return lives;
+    }
+
+    // TEMP get rid of this if width for players is remaining the same for all characters
+    public int getW(){
+        return w;
     }
     
     public void addAccel(String name, double magnitude, int time, String dir){
