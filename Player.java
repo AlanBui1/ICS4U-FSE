@@ -30,9 +30,9 @@ public class Player{
     jump2 is true if the Player can use their second jump
     onGround is true if the Player is on a platform
     */
-
-    private String type;
     private int dir;
+
+    ArrayList <Hitbox> hitboxes; //hitboxes the Player sends out e.g. bullets
 
     public Player(int xx, int yy, int direct, int numLives, double g){
         x = xx;
@@ -44,8 +44,8 @@ public class Player{
         onGround = false;
         lives = numLives;
         gravity = g;
-        // type = t;
-        
+
+        hitboxes = new ArrayList<Hitbox>();
         accelX = new ArrayList<Vector>();
         accelY = new ArrayList<Vector>();
         dir = direct;
@@ -136,6 +136,17 @@ public class Player{
         y += vy;
 
         checkPlats(plats); //checks if on a platform and adjusts position 
+
+        ArrayList <Hitbox> toDel = new ArrayList<Hitbox>();
+        for (Hitbox h : hitboxes){
+            h.move();
+            if (h.getTime() <= 0){
+                toDel.add(h);
+            }
+        }
+        for (Hitbox h : toDel){
+            hitboxes.remove(h);
+        }
     }
 
     public void checkPlats(ArrayList<Platform> plats){
@@ -161,22 +172,6 @@ public class Player{
 				}
 			}		
 		}	
-    }
-
-    public void attack(boolean [] keys){ //Player attacks
-        //check which type of character
-
-        //check keys and attacks
-    }
-
-    public double shoot(ArrayList<Bullet>bullets, boolean [] keys, int shootCoolDown){
-        if(keys[shootKey] && shootCoolDown <= 0){ 
-            // if a shot can be taken, space pressed and cool down is complete x position is returned
-            return x;
-        }
-        else{
-            return -1;
-        }
     }
 
     public void loseLife(){
@@ -210,6 +205,21 @@ public class Player{
     public void setShootKey(int k){
         shootKey = k;
     }
+    public void setX(int xx){
+        x = xx;
+    }
+    public void setY(int yy){
+        y = yy;
+    }
+    public void setLives(int l){
+        lives = l;
+    }
+    public void setGravity(double g){
+        gravity = g;
+    }
+    public void setDirect(int d){
+        dir = d;
+    }
 
     public double getX(){
         return x;
@@ -217,13 +227,17 @@ public class Player{
     public double getY(){
         return y;
     }
-
     public int getDir(){
         return dir;
     }
-
     public int getLives(){
         return lives;
+    }
+    public int getCoolDown(){
+        return atkCooldown;
+    }
+    public int getShootKey(){
+        return shootKey;
     }
 
     // TEMP get rid of this if width for players is remaining the same for all characters
@@ -234,6 +248,18 @@ public class Player{
     public void addAccel(String name, double magnitude, int time, String dir){
         if (dir == "X") accelX.add(new Vector(name, magnitude, time));
         if (dir == "Y") accelY.add(new Vector(name, magnitude, time));
+    }
+
+    public void addHitBox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T){
+        hitboxes.add(new Hitbox(X, Y, W, H, VX, VY, AX, AY, T));
+    }
+
+    public ArrayList <Hitbox> getHitBoxes(){
+        return hitboxes;
+    } 
+
+    public void setCoolDown(int time){
+        atkCooldown = time;
     }
 
 }
