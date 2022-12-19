@@ -12,12 +12,13 @@ public class Player{
     gravity is the force of gravity acting on Player when they aren't onGround
     */
 
-    private int w, h, lives;
+    private int w, h, lives, atkCooldown;
 
     /*
     w is the width of the Player
     h is the height of the Player
     lives is the number of lives the player has
+    atkCooldown is a cooldown for attacks to prevent excessive spamming
     */
 
     private ArrayList<Vector> accelX, accelY;
@@ -48,6 +49,7 @@ public class Player{
         accelX = new ArrayList<Vector>();
         accelY = new ArrayList<Vector>();
         dir = direct;
+        atkCooldown = 0;
     }
 
     public void move(boolean [] keys, ArrayList <Platform> plats){ //moves the Player
@@ -159,6 +161,12 @@ public class Player{
 				}
 			}		
 		}	
+    }
+
+    public void attack(boolean [] keys){ //Player attacks
+        //check which type of character
+
+        //check keys and attacks
     }
 
     public double shoot(ArrayList<Bullet>bullets, boolean [] keys, int shootCoolDown){
