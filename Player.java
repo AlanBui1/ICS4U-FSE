@@ -4,15 +4,36 @@ import java.util.ArrayList;
 public class Player{
     public static final int LEFT = -1;
     public static final int RIGHT = 1;
-    private double x, y, vx, vy;
+    private double x, y, vx, vy, gravity;
+
+    /*
+    (x, y) are the Player's coordinates on the screen 
+    vx and vy are the Player's velocity in the x and y directions, respectively
+    gravity is the force of gravity acting on Player when they aren't onGround
+    */
+
     private int w, h, lives;
+
+    /*
+    w is the width of the Player
+    h is the height of the Player
+    lives is the number of lives the player has
+    */
+
     private ArrayList<Vector> accelX, accelY;
     private int LKey, RKey, UKey1, UKey2, DKey, shootKey;
     private boolean jump1, jump2, onGround;
+
+    /*
+    jump1 is true if the Player can use their first jump
+    jump2 is true if the Player can use their second jump
+    onGround is true if the Player is on a platform
+    */
+
     private String type;
     private int dir;
 
-    public Player(int xx, int yy, int direct, int numLives){
+    public Player(int xx, int yy, int direct, int numLives, double g){
         x = xx;
         y = yy;
         w = 10;
@@ -21,6 +42,7 @@ public class Player{
         jump2 = false;
         onGround = false;
         lives = numLives;
+        gravity = g;
         // type = t;
         
         accelX = new ArrayList<Vector>();
@@ -28,19 +50,19 @@ public class Player{
         dir = direct;
     }
 
-    public void move(boolean [] keys, ArrayList <Platform> plats){
-        // checkPlats(plats);
-
+    public void move(boolean [] keys, ArrayList <Platform> plats){ //moves the Player
         // this depends on if we want the players to die immediately after hitting the edge or not
         // rn it just resets player to starting pos... idk if that's what we want it to do
         // maybe add an invincibility period ?
-        if (x <= 0 || x+w >= 800){
+
+        //player dies by going off-screen
+        if (x <= 0 || x+w >= Gamepanel.WIDTH){
             loseLife();
             x = 300;
             y = 30;
             System.out.println(lives);
         }
-        if (y <= 0 || y+h >= 600){
+        if (y <= 0 || y+h >= Gamepanel.HEIGHT){
             loseLife();
             x = 300;
             y = 30;
@@ -52,14 +74,16 @@ public class Player{
             jump2 = true;
             vy = 0;
         }
-        if (keys[LKey]){
+
+        if (keys[LKey]){ //moves left with constant velocity
             x-=7;
             dir = LEFT;
         }
-        if (keys[RKey]){
+        if (keys[RKey]){ //moves right with constant velocity
             x+=7;
             dir = RIGHT;
         }
+
         if (keys[UKey1]){
             if (jump1){
                 vy = -20;
@@ -79,31 +103,27 @@ public class Player{
             // vy += 5;
         }
 
-        for (int i=accelX.size()-1; i>=0; i--){
+        //applies accelerations acting on the Player
+        //idk if getting hit by attacks will be an acceleration force or velocity
+        for (int i=accelX.size()-1; i>=0; i--){ 
             Vector ax = accelX.get(i);
-
             vx += ax.getMagnitude();
             ax.changeTime(-1);
             if (ax.getTime() < 0){
                 accelX.remove(i);
             }
         }
-        
         for (int i=accelY.size()-1; i>=0; i--){
             Vector ay = accelY.get(i);
-
-            if (ay.getName() == "Gravity"){
-                if (!onGround){
-                    vy += ay.getMagnitude();
-                }
-                continue;
-            }
-
             vy += ay.getMagnitude();
             ay.changeTime(-1);
             if (ay.getTime() < 0){
                 accelY.remove(i);
             }
+        }
+
+        if (!onGround){
+            vy += gravity;
         }
 
         if (vy > 10){
@@ -113,11 +133,11 @@ public class Player{
         x += vx;
         y += vy;
 
-        checkPlats(plats);
-        // System.out.println(onGround);
+        checkPlats(plats); //checks if on a platform and adjusts position 
     }
 
     public void checkPlats(ArrayList<Platform> plats){
+        //method to check if the player is on a platform and adjusts the Player accordingly
         Rectangle guyr = new Rectangle((int)x,(int)y,w,h);
 		Rectangle guyrNoVY = new Rectangle((int)x,(int)(y-vy),w,h);		
 

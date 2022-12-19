@@ -10,8 +10,8 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 	private ArrayList <Platform> platforms;
 
     Timer timer;
-    Player p1 = new Player(300, 30, Player.RIGHT, 3);
-	Player p2 = new Player(280, 30, Player.RIGHT, 3);
+    Player p1 = new Player(300, 30, Player.RIGHT, 3, 2.5);
+	Player p2 = new Player(280, 30, Player.RIGHT, 3, 2.5);
     public static final int WIDTH = 800, HEIGHT = 600;
 
 	int shootCoolDown;
