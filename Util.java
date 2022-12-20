@@ -30,7 +30,9 @@ java Game
   MAKE shooter class have a Player inside? -> it's using inheritance
 
   later have an arraylist of players probably
-  change the draw() in Hitbox
+  change the draw() in Hitbox for images
   maybe have a super class with x, y, vx, vy, ax, ay for "cleaner code"
+  use baseframe?
+  
 
   */
