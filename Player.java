@@ -113,7 +113,7 @@ public class Player extends Mover{
             f.addTime(-1);
             System.out.println("TIME " + f.getTime());
             if (f.getTime() <= 0){
-                this.setVX(this.getVX() - f.getMX());
+                this.setVX(this.getVX() - f.getMX()*f.getOrigTime());
                 this.setVX(this.getVY() - f.getMY()*f.getOrigTime()); // is this supposed to be setVX ? 
                 forces.remove(i);
             }

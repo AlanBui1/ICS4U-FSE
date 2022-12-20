@@ -121,6 +121,15 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 		// }
 
 		// DRAWING LIVES
+		Polygon test = new Polygon(new int []{10+300, 25+300, 40+300, 25+300}, new int []{25+250,40+250,25+250,10+250}, 4);
+		if (test.intersects(p1.getRect()) || test.intersects(p2.getRect())){
+			System.out.println("AS");
+			g.setColor(Color.WHITE);
+		}
+		else{
+			g.setColor(Color.RED);
+		}
+		g.fillPolygon(test);
 		g.setColor(Color.RED);
 		for (int L = 0; L < 3; L++){
 			if (p1.getLives()-L == 0){
