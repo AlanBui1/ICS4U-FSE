@@ -8,8 +8,8 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 	private ArrayList <Platform> platforms;
 
     Timer timer;
-    Shooter p1 = new Shooter(400, 30, Player.RIGHT, 3, 2.5);
-	Shooter p2 = new Shooter(280, 30, Player.RIGHT, 3, 2.5);
+    Shooter p2 = new Shooter(400, 30, Player.RIGHT, 3, 2.5);
+	Shooter p1 = new Shooter(280, 30, Player.RIGHT, 3, 2.5);
     public static final int WIDTH = 800, HEIGHT = 600;
 
 	int shootCoolDown;
@@ -47,7 +47,6 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 	}
 
     public void move(){		
-		// UHH i'll change this later so it's not just copy pasted code for each player
 		p1.setCoolDown(p1.getCoolDown()-1);
         p1.move(keys, platforms);
 		p1.attack(keys);
@@ -65,6 +64,7 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 				toDelH.add(h);
 				System.out.println("ASDJASILL");
 				p2.addForce(h.getForce());
+				p2.loseLife();
 			}
 		}
 
@@ -115,10 +115,27 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 		g.fillRect(0,0,WIDTH,HEIGHT);
 
 		platforms.get(0).draw(g, Color.BLUE);
-		platforms.get(1).draw(g, Color.RED);
+		platforms.get(1).draw(g, Color.GREEN);
 		// for (Platform p : platforms){
 		// 	p.draw(g);
 		// }
+
+		// DRAWING LIVES
+		g.setColor(Color.RED);
+		for (int L = 0; L < 3; L++){
+			if (p1.getLives()-L == 0){
+				g.setColor(Color.WHITE);
+			}
+			g.fillRect(20 + L*30, 570, 20, 20);
+		}
+
+		g.setColor(Color.RED);
+		for (int L = 0; L < 3; L++){
+			if (p2.getLives()-L == 0){
+				g.setColor(Color.WHITE);
+			}
+			g.fillRect(700 + L*30, 570, 20, 20);
+		}
 
         p1.draw(g);
 		for (Hitbox h : p1.getHitBoxes()){
