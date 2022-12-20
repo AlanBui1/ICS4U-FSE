@@ -32,6 +32,6 @@ java Game
   later have an arraylist of players probably
   change the draw() in Hitbox
   maybe have a super class with x, y, vx, vy, ax, ay for "cleaner code"
-  asadhdsajdlskadsada
+  hi :)
 
   */
