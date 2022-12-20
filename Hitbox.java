@@ -1,41 +1,38 @@
 import java.awt.*;
-public class Hitbox {
-    private double x, y, vx, vy, ax, ay, w, h, time;
+public class Hitbox extends Mover{
+    private double w, h, time, kbx, kby;
+    private Force knockBack;
 
-    public Hitbox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T){
-        x = X; y = Y;
-        vx = VX; vy = VY;
-        ax = AX; ay = AY;
+    public Hitbox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T, double knockBackX, double knockBackY, int knockBackTime){
+        super(X, Y, VX, VY, AX, AY);
+
         w = W; h = H;
         time = T;
+        knockBack = new Force(knockBackX, knockBackY, knockBackTime);
+        kbx = knockBackX;
+        kby = knockBackY;
     }
 
-    public double getX(){return x;}
-    public double getY(){return y;}
-    public double getVX(){return vx;}
-    public double getVY(){return vy;}
-    public double getAX(){return ax;}
-    public double getAY(){return ay;}
+    
     public double getTime(){return time;};
-    public Rectangle getRect(){return new Rectangle((int)x, (int)y, (int)w, (int)h);}
+    public Rectangle getRect(){return new Rectangle((int)this.getX(), (int)this.getY(), (int)w, (int)h);}
+    public Force getForce(){return knockBack;}
 
     public void addTime(double t){
         time += t;
     }
 
+    @Override
     public void move(){
         time --;
         if (time < 0){
             return;
         }
-        vx += ax;
-        x += vx;
-        vy += ay;
-        x += vy;
+        super.move();
     }
 
     public void draw(Graphics g){
         g.setColor(Color.GREEN);
-        g.fillRect((int)x, (int)y, (int)w, (int)h);
+        g.fillRect((int)this.getX(), (int)this.getY(), (int)w, (int)h);
     }
 }

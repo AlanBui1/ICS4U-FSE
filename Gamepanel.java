@@ -5,21 +5,17 @@ import javax.swing.*;
 
 class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
     private boolean [] keys;
-	private ArrayList<Bullet>bullets;
-	private ArrayList<Bullet>remBullets;
 	private ArrayList <Platform> platforms;
 
     Timer timer;
     Shooter p1 = new Shooter(400, 30, Player.RIGHT, 3, 2.5);
-	//Player p2 = new Player(280, 30, Player.RIGHT, 3, 2.5);
+	Shooter p2 = new Shooter(280, 30, Player.RIGHT, 3, 2.5);
     public static final int WIDTH = 800, HEIGHT = 600;
 
 	int shootCoolDown;
 
 	public Gamepanel(){
 		keys = new boolean[KeyEvent.KEY_LAST+1];
-		bullets = new ArrayList<Bullet>(); 
-		remBullets = new ArrayList<Bullet>();
 
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
@@ -36,14 +32,14 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
         p1.setRKey(KeyEvent.VK_D);
         p1.setUKey1(KeyEvent.VK_W);
         p1.setUKey2(KeyEvent.VK_Q);
-		p1.setShootKey(KeyEvent.VK_E);
+		p1.setFastKey(KeyEvent.VK_E);
 
-		// p2.setDKey(KeyEvent.VK_K);
-        // p2.setLKey(KeyEvent.VK_J);
-        // p2.setRKey(KeyEvent.VK_L);
-        // p2.setUKey1(KeyEvent.VK_I);
-        // p2.setUKey2(KeyEvent.VK_U);
-		// p2.setShootKey(KeyEvent.VK_O);
+		p2.setDKey(KeyEvent.VK_K);
+        p2.setLKey(KeyEvent.VK_J);
+        p2.setRKey(KeyEvent.VK_L);
+        p2.setUKey1(KeyEvent.VK_I);
+        p2.setUKey2(KeyEvent.VK_U);
+		p2.setFastKey(KeyEvent.VK_O);
 
 		platforms = new ArrayList<Platform>();
 		platforms.add(new Platform(250, 240, 100, 1));
@@ -55,35 +51,27 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 		p1.setCoolDown(p1.getCoolDown()-1);
         p1.move(keys, platforms);
 		p1.attack(keys);
-		// p2.move(keys, platforms);
+		p2.setCoolDown(p2.getCoolDown()-1);
+        p2.move(keys, platforms);
+		p2.attack(keys);
 
-		// double canShoot1 = p1.shoot(bullets, keys, shootCoolDown);
-		// double canShoot2 = p2.shoot(bullets, keys, shootCoolDown);
-		// if (canShoot1 != -1){
-		// 	// bullets.add(new Bullet(10, p1.getX()+(p1.getW()/2), p1.getY()+5, 1, p1, p2));
-		// 	bullets.get(bullets.size()-1).addAccel("Shot", 10*p1.getDir(), -1, "X");
-		// 	shootCoolDown = 25;
-		// }
-		// if (canShoot2 != -1){
-		// 	bullets.add(new Bullet(10, p2.getX()+(p2.getW()/2), p2.getY()+5, 1, p2, p1));
-		// 	bullets.get(bullets.size()-1).addAccel("Shot", 10*p2.getDir(), -1, "X");
-		// 	shootCoolDown = 25;
-		// }
-
-		// for (int b = 0; b < bullets.size(); b++){ // moves every bullet 
-		// 	bullets.get(b).move(); 
-		// 	if (bullets.get(b).checkHitPlayer(bullets)){
-		// 		remBullets.add(bullets.get(b));
-		// 		bullets.get(b).getOppo().loseLife();
-		// 		System.out.println("PLAYER 1: " + p1.getLives());
-		// 		// System.out.println("PLAYER 2: " + p2.getLives());
-		// 	}
-		// }
-
-		// if (remBullets != null){ // removes all elements that have been hit 
-		// 	bullets.removeAll(remBullets);
-		// }
+		checkCollisions();
     }
+
+	public void checkCollisions(){
+		ArrayList<Hitbox> toDelH = new ArrayList<Hitbox>();
+		for (Hitbox h : p1.getHitBoxes()){
+			if (p2.getRect().intersects(h.getRect())){
+				toDelH.add(h);
+				System.out.println("ASDJASILL");
+				p2.addForce(h.getForce());
+			}
+		}
+
+		for (Hitbox h : toDelH){
+			p1.getHitBoxes().remove(h);
+		}
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e){
@@ -124,7 +112,7 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 	@Override
 	public void paint(Graphics g){
 		g.setColor(Color.BLACK);
-		g.fillRect(0,0,800,800);
+		g.fillRect(0,0,WIDTH,HEIGHT);
 
 		platforms.get(0).draw(g, Color.BLUE);
 		platforms.get(1).draw(g, Color.RED);
@@ -136,9 +124,9 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 		for (Hitbox h : p1.getHitBoxes()){
 			h.draw(g);
 		}
-		// p2.draw(g);
-
-		
-		
+		p2.draw(g);
+		for (Hitbox h : p2.getHitBoxes()){
+			h.draw(g);
+		}
     }
 }

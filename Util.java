@@ -22,16 +22,16 @@ public class Util {
 
 /*
 cd C:\Users\alanb\OneDrive - Greater Essex County District School Board\Documents\ICS4U\ICS4U-FSE
-javac Platform.java Gamepanel.java Game.java Player.java Util.java Vector.java Bullet.java Hitbox.java Shooter.java
+javac Platform.java Gamepanel.java Game.java Player.java Util.java Hitbox.java Shooter.java Mover.java
 java Game
  */
 
  /*
   MAKE shooter class have a Player inside? -> it's using inheritance
+  maybe have a super class with x, y, vx, vy, ax, ay for "cleaner code" -> Mover class 
 
   later have an arraylist of players probably
   change the draw() in Hitbox for images
-  maybe have a super class with x, y, vx, vy, ax, ay for "cleaner code"
-  asadhdsajdlskadsada
+  
 
   */

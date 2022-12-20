@@ -7,19 +7,34 @@ public class Shooter extends Player{
 
     public void attack(boolean [] keys){
         if (this.getCoolDown() < 0){
-            if (keys[this.getShootKey()]){
-                shoot();
+            if (keys[this.getFastKey()]){
+                if (keys[this.getUKey1()]){
+                    fastUpAtk();
+                }
+                else if (keys[this.getDKey()]){
+                    fastDownAtk();
+                }
+                else{
+                    fastSideAtk();
+                }
             }
         }
     }
 
-    public void shoot(){
-        
-            //if (keys[this.getShootKey()]){ //rename shoot key to be smth like "fast attack key" or "charged attack key" depending on 
-        this.addHitBox(this.getX(), this.getY(), 7.0, 7.0, 10.0*this.getDir(), 0, 0, 0, 30);
+    public void fastUpAtk(){
+        this.addHitBox(this.getX(), this.getY(), 20.0, 20.0, 0, -10, 0, 0, 30, 0, -20);
         this.setCoolDown(30);
-            // }
-        
+    }
+
+    public void fastDownAtk(){
+        this.addHitBox(this.getX(), this.getY(), 7.0, 7.0, 0, 10, 0, 0, 30, 0, 20);
+        this.setCoolDown(30);
+    }
+
+    public void fastSideAtk(){
+            //if (keys[this.getShootKey()]){ //rename shoot key to be smth like "fast attack key" or "charged attack key" depending on 
+        this.addHitBox(this.getX(), this.getY(), 7.0, 7.0, 10.0*this.getDir(), 0, 0, 0, 30, 20*this.getDir(), 0);
+        this.setCoolDown(30);
     }
 
 }

@@ -1,10 +1,10 @@
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Player{
+public class Player extends Mover{
     public static final int LEFT = -1;
     public static final int RIGHT = 1;
-    private double x, y, vx, vy, gravity;
+    private double gravity;
 
     /*
     (x, y) are the Player's coordinates on the screen 
@@ -21,8 +21,8 @@ public class Player{
     atkCooldown is a cooldown for attacks to prevent excessive spamming
     */
 
-    private ArrayList<Vector> accelX, accelY;
-    private int LKey, RKey, UKey1, UKey2, DKey, shootKey;
+    private ArrayList<Force> forces;
+    private int LKey, RKey, UKey1, UKey2, DKey, fastKey;
     private boolean jump1, jump2, onGround;
 
     /*
@@ -35,8 +35,7 @@ public class Player{
     ArrayList <Hitbox> hitboxes; //hitboxes the Player sends out e.g. bullets
 
     public Player(int xx, int yy, int direct, int numLives, double g){
-        x = xx;
-        y = yy;
+        super(xx, yy, 0, 0, 0, 0);
         w = 10;
         h = 20;
         jump1 = false;
@@ -46,8 +45,7 @@ public class Player{
         gravity = g;
 
         hitboxes = new ArrayList<Hitbox>();
-        accelX = new ArrayList<Vector>();
-        accelY = new ArrayList<Vector>();
+        forces = new ArrayList<Force>();
         dir = direct;
         atkCooldown = 0;
     }
@@ -58,44 +56,44 @@ public class Player{
         // maybe add an invincibility period ?
 
         //player dies by going off-screen
-        if (x <= 0 || x+w >= Gamepanel.WIDTH){
+        if (this.getX() <= 0 || this.getX()+w >= Gamepanel.WIDTH){
             loseLife();
-            x = 300;
-            y = 30;
+            this.setX(300);
+            this.setY(30);
             System.out.println(lives);
         }
-        if (y <= 0 || y+h >= Gamepanel.HEIGHT){
+        if (this.getY() <= 0 || this.getY()+h >= Gamepanel.HEIGHT){
             loseLife();
-            x = 300;
-            y = 30;
+            this.setX(300);
+            this.setY(30);
             System.out.println(lives);
         }
 
         if (onGround){ //on temporary ground
             jump1 = true;
             jump2 = true;
-            vy = 0;
+            this.setVY(0);
         }
 
         if (keys[LKey]){ //moves left with constant velocity
-            x-=7;
+            this.setX(this.getX() - 7);
             dir = LEFT;
         }
         if (keys[RKey]){ //moves right with constant velocity
-            x+=7;
+            this.setX(this.getX() + 7);
             dir = RIGHT;
         }
 
         if (keys[UKey1]){
             if (jump1){
-                vy = -20;
+                this.setVY(this.getVY() - 20);
                 jump1 = false;
                 onGround = false;
             }
         }
         if (keys[UKey2]){
             if (jump2){
-                vy = -20;
+                this.setVY(this.getVY() - 20);
                 jump2 = false;
                 onGround = false;
             }
@@ -107,33 +105,30 @@ public class Player{
 
         //applies accelerations acting on the Player
         //idk if getting hit by attacks will be an acceleration force or velocity
-        for (int i=accelX.size()-1; i>=0; i--){ 
-            Vector ax = accelX.get(i);
-            vx += ax.getMagnitude();
-            ax.changeTime(-1);
-            if (ax.getTime() < 0){
-                accelX.remove(i);
-            }
-        }
-        for (int i=accelY.size()-1; i>=0; i--){
-            Vector ay = accelY.get(i);
-            vy += ay.getMagnitude();
-            ay.changeTime(-1);
-            if (ay.getTime() < 0){
-                accelY.remove(i);
+
+        for (int i=forces.size()-1; i>=0; i--){
+            Force f = forces.get(i);
+            this.setVY(this.getVY() + f.getMY());
+            this.setVX(this.getVX() + f.getMX());
+            f.addTime(-1);
+            System.out.println("TIME " + f.getTime());
+            if (f.getTime() <= 0){
+                this.setVX(this.getVX() - f.getMX()*f.getOrigTime());
+                this.setVX(this.getVY() - f.getMY()*f.getOrigTime());
+                forces.remove(i);
             }
         }
 
         if (!onGround){
-            vy += gravity;
+            this.setVY(this.getVY() + gravity);
+            // vy += gravity;
         }
 
-        if (vy > 10){
-            vy = 10;
+        if (this.getVY() > 10){
+            this.setVY(10);
         }
         
-        x += vx;
-        y += vy;
+        move();
 
         checkPlats(plats); //checks if on a platform and adjusts position 
 
@@ -151,8 +146,8 @@ public class Player{
 
     public void checkPlats(ArrayList<Platform> plats){
         //method to check if the player is on a platform and adjusts the Player accordingly
-        Rectangle guyr = new Rectangle((int)x,(int)y,w,h);
-		Rectangle guyrNoVY = new Rectangle((int)x,(int)(y-vy),w,h);		
+        Rectangle guyr = this.getRect();
+		Rectangle guyrNoVY = new Rectangle((int)this.getX(),(int)(this.getY()-this.getVY()),w,h);		
 
         onGround = false;
 			
@@ -161,12 +156,11 @@ public class Player{
 			if(guyr.intersects(p.getRect())){
 				// moving down
                 onGround = true;
-				if(vy > 0){
+				if(this.getVY() > 0){
 					// caused by moving down
 					if(!guyrNoVY.intersects(p.getRect())){
-						y = p.getY()-h;
-                        
-						vy = 0;
+						this.setY(p.getY()-h);
+                        this.setVY(0);
 						onGround = true;						
 					}					
 				}
@@ -176,15 +170,19 @@ public class Player{
 
     public void loseLife(){
         lives--;
+        this.setVX(0);
+        this.setVY(0);
+        this.setAX(0);
+        this.setAY(0);
     }
 
     public void draw(Graphics g){
         g.setColor(Color.WHITE);
-        g.fillRect((int)x, (int)y, w, h);
+        g.fillRect((int)this.getX(), (int)this.getY(), w, h);
     }
 
     public Rectangle getRect(){ // returns Rectangle
-        return new Rectangle((int)x, (int)y, w, h);
+        return new Rectangle((int)this.getX(), (int)this.getY(), w, h);
     }
 
     public void setLKey(int k){
@@ -202,14 +200,8 @@ public class Player{
     public void setDKey(int k){
         DKey = k;
     }
-    public void setShootKey(int k){
-        shootKey = k;
-    }
-    public void setX(int xx){
-        x = xx;
-    }
-    public void setY(int yy){
-        y = yy;
+    public void setFastKey(int k){
+        fastKey = k;
     }
     public void setLives(int l){
         lives = l;
@@ -220,13 +212,6 @@ public class Player{
     public void setDirect(int d){
         dir = d;
     }
-
-    public double getX(){
-        return x;
-    }
-    public double getY(){
-        return y;
-    }
     public int getDir(){
         return dir;
     }
@@ -236,8 +221,14 @@ public class Player{
     public int getCoolDown(){
         return atkCooldown;
     }
-    public int getShootKey(){
-        return shootKey;
+    public int getFastKey(){
+        return fastKey;
+    }
+    public int getUKey1(){
+        return UKey1;
+    }
+    public int getDKey(){
+        return DKey;
     }
 
     // TEMP get rid of this if width for players is remaining the same for all characters
@@ -245,13 +236,15 @@ public class Player{
         return w;
     }
     
-    public void addAccel(String name, double magnitude, int time, String dir){
-        if (dir == "X") accelX.add(new Vector(name, magnitude, time));
-        if (dir == "Y") accelY.add(new Vector(name, magnitude, time));
+    public void addForce(double magX, double magY, int time){
+        forces.add(new Force(magX, magY, time));
+    }
+    public void addForce(Force f){
+        forces.add(f);
     }
 
-    public void addHitBox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T){
-        hitboxes.add(new Hitbox(X, Y, W, H, VX, VY, AX, AY, T));
+    public void addHitBox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T, double KBX, double KBY){
+        hitboxes.add(new Hitbox(X, Y, W, H, VX, VY, AX, AY, T, KBX, KBY, 2));
     }
 
     public ArrayList <Hitbox> getHitBoxes(){
