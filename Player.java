@@ -85,14 +85,14 @@ public class Player extends Mover{
         if (keys[UKey1]){
             if (jump1){
                 // setVY(getVY() - 20);
-                addForce(new Force(0, -200, 5));
+                addForce(new Force(0, -800, 1));
                 jump1 = false;
                 onGround = false;
             }
         }
         if (keys[UKey2]){
             if (jump2){
-                addForce(new Force(0, -150, 5));
+                addForce(new Force(0, -800, 1));
                 // setVY(getVY() - 20);
                 jump2 = false;
                 onGround = false;
