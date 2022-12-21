@@ -1,8 +1,9 @@
 //class for the shooter character inherits from Player class
 
 public class Shooter extends Player{
-    public Shooter(int xx, int yy, int direct, int numLives, double g){
-        super(xx, yy, direct, numLives, g); //gives these values to the Player constructor
+    public static final double MASS = 40;
+    public Shooter(int xx, int yy, int direct, int numLives, double m){
+        super(xx, yy, direct, numLives, m); //gives these values to the Player constructor
     }
 
     public void attack(boolean [] keys){

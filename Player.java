@@ -4,11 +4,9 @@ import java.util.ArrayList;
 public class Player extends Mover{
     public static final int LEFT = -1;
     public static final int RIGHT = 1;
-    private double gravity;
+    private double mass;
 
     /*
-    (x, y) are the Player's coordinates on the screen 
-    vx and vy are the Player's velocity in the x and y directions, respectively
     gravity is the force of gravity acting on Player when they aren't onGround
     */
 
@@ -34,7 +32,7 @@ public class Player extends Mover{
 
     ArrayList <Hitbox> hitboxes; //hitboxes the Player sends out e.g. bullets
 
-    public Player(int xx, int yy, int direct, int numLives, double g){
+    public Player(int xx, int yy, int direct, int numLives, double m){
         super(xx, yy, 0, 0, 0, 0);
         w = 10;
         h = 20;
@@ -42,7 +40,7 @@ public class Player extends Mover{
         jump2 = false;
         onGround = false;
         lives = numLives;
-        gravity = g;
+        mass = m;
 
         hitboxes = new ArrayList<Hitbox>();
         forces = new ArrayList<Force>();
@@ -56,44 +54,46 @@ public class Player extends Mover{
         // maybe add an invincibility period ?
 
         //player dies by going off-screen
-        if (this.getX() <= 0 || this.getX()+w >= Gamepanel.WIDTH){
+        if (getX() <= 0 || getX()+w >= Gamepanel.WIDTH){
             loseLife();
-            this.setX(300);
-            this.setY(30);
-            System.out.println(lives);
+            setX(300);
+            setY(30);
+            // System.out.println(lives);
         }
-        if (this.getY() <= 0 || this.getY()+h >= Gamepanel.HEIGHT){
+        if (getY() <= 0 || getY()+h >= Gamepanel.HEIGHT){
             loseLife();
-            this.setX(300);
-            this.setY(30);
-            System.out.println(lives);
+            setX(300);
+            setY(30);
+            // System.out.println(lives);
         }
 
         if (onGround){ //on temporary ground
             jump1 = true;
             jump2 = true;
-            this.setVY(0);
+            setVY(0);
         }
 
         if (keys[LKey]){ //moves left with constant velocity
-            this.setX(this.getX() - 7);
+            setX(getX() - 7);
             dir = LEFT;
         }
         if (keys[RKey]){ //moves right with constant velocity
-            this.setX(this.getX() + 7);
+            setX(getX() + 7);
             dir = RIGHT;
         }
 
         if (keys[UKey1]){
             if (jump1){
-                this.setVY(this.getVY() - 20);
+                // setVY(getVY() - 20);
+                addForce(new Force(0, -200, 5));
                 jump1 = false;
                 onGround = false;
             }
         }
         if (keys[UKey2]){
             if (jump2){
-                this.setVY(this.getVY() - 20);
+                addForce(new Force(0, -150, 5));
+                // setVY(getVY() - 20);
                 jump2 = false;
                 onGround = false;
             }
@@ -103,32 +103,8 @@ public class Player extends Mover{
             // vy += 5;
         }
 
-        //applies accelerations acting on the Player
-        //idk if getting hit by attacks will be an acceleration force or velocity
-
-        for (int i=forces.size()-1; i>=0; i--){
-            Force f = forces.get(i);
-            this.setVY(this.getVY() + f.getMY());
-            this.setVX(this.getVX() + f.getMX());
-            f.addTime(-1);
-            System.out.println("TIME " + f.getTime());
-            if (f.getTime() <= 0){
-                this.setVX(this.getVX() - f.getMX()*f.getOrigTime());
-                this.setVX(this.getVY() - f.getMY()*f.getOrigTime()); // is this supposed to be setVX ? 
-                forces.remove(i);
-            }
-        }
-
-        if (!onGround){
-            this.setVY(this.getVY() + gravity);
-            // vy += gravity;
-        }
-
-        if (this.getVY() > 10){
-            this.setVY(10);
-        }
-        
-        move();
+        applyForces(); 
+        this.move();
 
         checkPlats(plats); //checks if on a platform and adjusts position 
 
@@ -144,10 +120,45 @@ public class Player extends Mover{
         }
     }
 
+    @Override
+    public void move(){
+        addVX(getAX());
+        addVY(getAY());
+        addX(getVX());
+        addY(getVY());
+    }
+
+    public void applyForces(){
+        setAX(0);
+        setAY(0);
+
+        if (!onGround){
+            if (getVY() < 10){
+                addVY(Util.GForce(mass));
+            }
+        }
+
+        //applies accelerations acting on the Player
+        //idk if getting hit by attacks will be an acceleration force or velocity (it's a Force = mass*accel)
+        //F = ma
+        //F/m = a
+
+        for (int i=forces.size()-1; i>=0; i--){
+            Force f = forces.get(i);
+            addAX(f.magnitudeX/mass);
+            addAY(f.magnitudeY/mass);
+            f.addTime(-1);
+            System.out.println("TIME " + f.getTime());
+            if (f.getTime() <= 0){
+                forces.remove(i);
+            }
+        }
+    }
+
     public void checkPlats(ArrayList<Platform> plats){
         //method to check if the player is on a platform and adjusts the Player accordingly
-        Rectangle guyr = this.getRect();
-		Rectangle guyrNoVY = new Rectangle((int)this.getX(),(int)(this.getY()-this.getVY()),w,h);		
+        Rectangle guyr = getRect();
+		Rectangle guyrNoVY = new Rectangle((int)getX(),(int)(getY()-getVY()),w,h);		
 
         onGround = false;
 			
@@ -156,11 +167,11 @@ public class Player extends Mover{
 			if(guyr.intersects(p.getRect())){
 				// moving down
                 onGround = true;
-				if(this.getVY() > 0){
+				if(getVY() > 0){
 					// caused by moving down
 					if(!guyrNoVY.intersects(p.getRect())){
-						this.setY(p.getY()-h);
-                        this.setVY(0);
+						setY(p.getY()-h);
+                        setVY(0);
 						onGround = true;						
 					}					
 				}
@@ -170,19 +181,19 @@ public class Player extends Mover{
 
     public void loseLife(){
         lives--;
-        this.setVX(0);
-        this.setVY(0);
-        this.setAX(0);
-        this.setAY(0);
+        setVX(0);
+        setVY(0);
+        setAX(0);
+        setAY(0);
     }
 
     public void draw(Graphics g){
         g.setColor(Color.WHITE);
-        g.fillRect((int)this.getX(), (int)this.getY(), w, h);
+        g.fillRect((int)getX(), (int)getY(), w, h);
     }
 
     public Rectangle getRect(){ // returns Rectangle
-        return new Rectangle((int)this.getX(), (int)this.getY(), w, h);
+        return new Rectangle((int)getX(), (int)getY(), w, h);
     }
 
     public void setLKey(int k){
@@ -205,9 +216,6 @@ public class Player extends Mover{
     }
     public void setLives(int l){
         lives = l;
-    }
-    public void setGravity(double g){
-        gravity = g;
     }
     public void setDirect(int d){
         dir = d;
