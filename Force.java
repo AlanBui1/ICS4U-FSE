@@ -1,13 +1,14 @@
 public class Force {
     String name;
     double magnitudeX, magnitudeY;
-    int time, origTime;
+    int time, origTime, stunTime;
 
-    public Force(double mx, double my, int t){
+    public Force(double mx, double my, int t, int stun){
         magnitudeX = mx;
         magnitudeY = my; 
         time = t; //how long the vector will be in effect for
         origTime= t;
+        stunTime = stun;
     }
 
     public void addTime(int t){
@@ -27,5 +28,8 @@ public class Force {
     }
     public int getOrigTime(){
         return origTime;
+    }
+    public int getStun(){
+        return stunTime;
     }
 }

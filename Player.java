@@ -10,13 +10,14 @@ public class Player extends Mover{
     gravity is the force of gravity acting on Player when they aren't onGround
     */
 
-    private int w, h, lives, atkCooldown;
+    private int w, h, lives, atkCooldown, stunTime;
 
     /*
     w is the width of the Player
     h is the height of the Player
     lives is the number of lives the player has
     atkCooldown is a cooldown for attacks to prevent excessive spamming
+    stunTime is a cooldown for all movements usually after getting hit by a Hitbox
     */
 
     private ArrayList<Force> forces;
@@ -67,40 +68,45 @@ public class Player extends Mover{
             // System.out.println(lives);
         }
 
-        if (onGround){ //on temporary ground
-            jump1 = true;
-            jump2 = true;
-            setVY(0);
-        }
-
-        if (keys[LKey]){ //moves left with constant velocity
-            setX(getX() - 7);
-            dir = LEFT;
-        }
-        if (keys[RKey]){ //moves right with constant velocity
-            setX(getX() + 7);
-            dir = RIGHT;
-        }
-
-        if (keys[UKey1]){
-            if (jump1){
-                // setVY(getVY() - 20);
-                addForce(new Force(0, -800, 1));
-                jump1 = false;
-                onGround = false;
+        if (stunTime <= 0){
+            if (onGround){ //on temporary ground
+                jump1 = true;
+                jump2 = true;
+                setVY(0);
             }
-        }
-        if (keys[UKey2]){
-            if (jump2){
-                addForce(new Force(0, -800, 1));
-                // setVY(getVY() - 20);
-                jump2 = false;
-                onGround = false;
+
+            if (keys[LKey]){ //moves left with constant velocity
+                setX(getX() - 7);
+                dir = LEFT;
             }
-        }
-        if (keys[DKey]){
-            // y+=7;
-            // vy += 5;
+            if (keys[RKey]){ //moves right with constant velocity
+                setX(getX() + 7);
+                dir = RIGHT;
+            }
+
+            if (keys[UKey1] || keys[UKey2]){
+                if (keys[UKey1]){
+                    if (jump1){
+                        // setVY(getVY() - 20);
+                        addForce(new Force(0, -800, 1, 0));
+                        jump1 = false;
+                        onGround = false;
+                    }
+                }
+                else if (keys[UKey2]){
+                    if (jump2 && !jump1){
+                        addForce(new Force(0, -1000, 1, 0));
+                        // setVY(getVY() - 20);
+                        jump2 = false;
+                        onGround = false;
+                    }
+                }
+            }
+
+            if (keys[DKey]){
+                // y+=7;
+                // vy += 5;
+            }
         }
 
         applyForces(); 
@@ -118,6 +124,7 @@ public class Player extends Mover{
         for (Hitbox h : toDel){
             hitboxes.remove(h);
         }
+        // System.out.println(stunTime);
     }
 
     @Override
@@ -150,6 +157,8 @@ public class Player extends Mover{
             f.addTime(-1);
             System.out.println("TIME " + f.getTime());
             if (f.getTime() <= 0){
+                addVX(-f.magnitudeX/mass*f.getOrigTime());
+                // addVY(-f.magnitudeY/mass*f.getOrigTime());
                 forces.remove(i);
             }
         }
@@ -244,15 +253,19 @@ public class Player extends Mover{
         return w;
     }
     
-    public void addForce(double magX, double magY, int time){
-        forces.add(new Force(magX, magY, time));
+    public void addForce(double magX, double magY, int time, int stun){
+        forces.add(new Force(magX, magY, time, stun));
     }
     public void addForce(Force f){
         forces.add(f);
     }
 
-    public void addHitBox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T, double KBX, double KBY){
-        hitboxes.add(new Hitbox(X, Y, W, H, VX, VY, AX, AY, T, KBX, KBY, 2));
+    public void addHitBox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T, double KBX, double KBY, int stun){
+        hitboxes.add(new Hitbox(X, Y, W, H, VX, VY, AX, AY, T, KBX, KBY, 10, stun));
+    }
+
+    public void addHitBox(Mover m, Force f, double w, double h, double time){
+        hitboxes.add(new Hitbox(m.getX(), m.getY(), w, h, m.getVX(), m.getVY(), m.getAX(), m.getAY(), time, f.getMX(), f.getMY(), f.getTime(), f.getStun()));
     }
 
     public ArrayList <Hitbox> getHitBoxes(){
@@ -263,5 +276,12 @@ public class Player extends Mover{
         atkCooldown = time;
     }
 
+    public void addStun(int time){
+        stunTime += time;
+    }
+
+    public int getStun(){
+        return stunTime;
+    }
 }
 

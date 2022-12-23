@@ -47,6 +47,9 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 	}
 
     public void move(){		
+		if (p1.getStun() > 0) p1.addStun(-1);
+		if (p2.getStun() > 0)p2.addStun(-1);
+
 		p1.setCoolDown(p1.getCoolDown()-1);
         p1.move(keys, platforms);
 		p1.attack(keys);
@@ -69,8 +72,10 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 		}
 
 		for (Hitbox h : toDelH){
+			p2.addStun(h.getStun());
 			p1.getHitBoxes().remove(h);
 		}
+		System.out.println(p2.getStun());
 	}
 	
 	@Override

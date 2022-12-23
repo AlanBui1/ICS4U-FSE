@@ -14,6 +14,15 @@ public class Mover {
         ay = AY;
     }
 
+    public Mover(double X, double Y, double VX, double VY){
+        x = X;
+        y = Y;
+        vx = VX;
+        vy = VY;
+        ax = 0;
+        ay = 0;
+    }
+
     public void move(){
         vx += ax;
         x += vx;

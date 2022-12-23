@@ -3,16 +3,15 @@ public class Hitbox extends Mover{
     private double w, h, time, kbx, kby;
     private Force knockBack;
 
-    public Hitbox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T, double knockBackX, double knockBackY, int knockBackTime){
+    public Hitbox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T, double knockBackX, double knockBackY, int knockBackTime, int stunTime){
         super(X, Y, VX, VY, AX, AY);
 
         w = W; h = H;
         time = T;
-        knockBack = new Force(knockBackX, knockBackY, knockBackTime);
+        knockBack = new Force(knockBackX, knockBackY, knockBackTime, stunTime);
         kbx = knockBackX;
         kby = knockBackY;
     }
-
     
     public double getTime(){return time;};
     public Rectangle getRect(){return new Rectangle((int)this.getX(), (int)this.getY(), (int)w, (int)h);}
@@ -20,6 +19,9 @@ public class Hitbox extends Mover{
 
     public void addTime(double t){
         time += t;
+    }
+    public int getStun(){
+        return knockBack.getStun();
     }
 
     @Override

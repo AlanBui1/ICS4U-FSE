@@ -7,12 +7,12 @@ public class Shooter extends Player{
     }
 
     public void attack(boolean [] keys){
-        if (this.getCoolDown() < 0){
-            if (keys[this.getFastKey()]){
-                if (keys[this.getUKey1()]){
+        if (getCoolDown() < 0){
+            if (keys[getFastKey()]){
+                if (keys[getUKey1()]){
                     fastUpAtk();
                 }
-                else if (keys[this.getDKey()]){
+                else if (keys[getDKey()]){
                     fastDownAtk();
                 }
                 else{
@@ -23,19 +23,20 @@ public class Shooter extends Player{
     }
 
     public void fastUpAtk(){
-        this.addHitBox(this.getX(), this.getY(), 20.0, 20.0, 0, -10, 0, 0, 30, 0, -20);
-        this.setCoolDown(30);
+        addHitBox(getX(), getY(), 20.0, 20.0, 0, -10, 0, 0, 30, 0, -20, 100);
+        setCoolDown(30);
     }
 
     public void fastDownAtk(){
-        this.addHitBox(this.getX(), this.getY(), 7.0, 7.0, 0, 10, 0, 0, 30, 0, 20);
-        this.setCoolDown(30);
+        addHitBox(getX(), getY(), 7.0, 7.0, 0, 10, 0, 0, 30, 0, 20, 100);
+        setCoolDown(30);
     }
 
     public void fastSideAtk(){
-            //if (keys[this.getShootKey()]){ //rename shoot key to be smth like "fast attack key" or "charged attack key" depending on 
-        this.addHitBox(this.getX(), this.getY(), 7.0, 7.0, 10.0*this.getDir(), 0, 0, 0, 30, 20*this.getDir(), 0);
-        this.setCoolDown(30);
+        Force knockForce = new Force(20*getDir(), 0, 10, 10);
+        Mover movt = new Mover(getX(), getY(), 10*getDir(), 0);
+        addHitBox(movt, knockForce, 7, 7, 30);
+        setCoolDown(30);
     }
 
 }
