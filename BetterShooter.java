@@ -1,6 +1,8 @@
 import java.awt.*;
 
 public class BetterShooter extends BetterPlayer{
+    public static final int FACTOR = 3;
+
     //modeled after https://ultimateframedata.com/lucina
     //JUMPFORCE is from Brawl Marth
 
@@ -8,7 +10,7 @@ public class BetterShooter extends BetterPlayer{
     public static final int WIDTH = 20, HEIGHT = 30;
 
     public BetterShooter(double x, double y){
-        super(x, y, WEIGHT, AIRACCEL, AIRFRICTION, GROUNDFRICTION, AIRSPD, FALLSPD, GRAVITY, RUNSPD, JUMPFORCE);
+        super(x, y, WEIGHT*FACTOR, AIRACCEL*FACTOR, AIRFRICTION*FACTOR, GROUNDFRICTION*FACTOR, AIRSPD*FACTOR, FALLSPD*FACTOR, GRAVITY*FACTOR, RUNSPD*FACTOR, JUMPFORCE*FACTOR);
     }
 
     public void draw(Graphics g){

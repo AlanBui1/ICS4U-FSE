@@ -54,7 +54,7 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
         p1.move(keys, platforms);
 		// p1.attack(keys);
 		// p2.setCoolDown(p2.getCoolDown()-1);
-        p2.move(keys, platforms);
+        //p2.move(keys, platforms);
 		// p2.attack(keys);
 
 		// checkCollisions();

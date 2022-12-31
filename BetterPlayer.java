@@ -42,7 +42,7 @@ public class BetterPlayer extends Mover{
         this.runspd = runspd;
         this.jumpforce = jumpforce;
 
-        onGround = true;
+        onGround = false;
     }
 
     public void move(boolean [] keys, ArrayList <Platform> plats){ //moves the Player
@@ -105,8 +105,8 @@ public class BetterPlayer extends Mover{
             }
         }
 
-        //applyForces(); 
-        System.out.println(getVX());
+        applyForces(); 
+        System.out.println(onGround + " " + getVX());
         move();
 
         checkPlats(plats); //checks if on a platform and adjusts position 
@@ -126,25 +126,34 @@ public class BetterPlayer extends Mover{
     }
 
     public void applyForces(){
+
+        //GROUND FRICTION
         if (onGround){
             if (getVX() < 0){ //moving left
                 addVX(groundfriction);
             }
-            else{ //moving right or standing still
+            else if (getVX() > 0){ //moving right
                 addVX(-groundfriction);
             }
         }
 
         else{
+
+            //AIR FRICTION
             if (getVX() < 0){ //moving left
                 addVX(airfriction);
             }
             else{ //moving right or standing still
                 addVX(-airfriction);
             }
+
+            //GRAVITY
+            addVY(gravity);
         }
 
-        
+        if (Math.abs(getVX()) < 1){
+            setVX(0);
+        }
     }
     
     public void checkPlats(ArrayList<Platform> plats){
@@ -173,15 +182,15 @@ public class BetterPlayer extends Mover{
     
     public void loseLife(){
         // lives--;
-        setX(300); setY(30);
-        setVX(0);
-        setVY(0);
-        setAX(0);
-        setAY(0);
+        //setX(300); setY(30);
+        // setVX(0);
+        // setVY(0);
+        // setAX(0);
+        // setAY(0);
     }
     
     public Rectangle getRect(){
-        return new Rectangle((int)getX(), (int)getY(), WIDTH, HEIGHT);
+        return new Rectangle((int)getX(), (int)getY(), WIDTH+1, HEIGHT+1);
     }
     
     public void setLKey(int k){LKey = k;}
