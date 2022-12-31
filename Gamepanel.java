@@ -65,7 +65,7 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 		for (Hitbox h : p1.getHitBoxes()){
 			if (p2.getRect().intersects(h.getRect())){
 				toDelH.add(h);
-				System.out.println("ASDJASILL");
+				//System.out.println("ASDJASILL");
 				p2.addForce(h.getForce());
 				p2.loseLife();
 			}
@@ -75,7 +75,7 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 			p2.addStun(h.getStun());
 			p1.getHitBoxes().remove(h);
 		}
-		System.out.println(p2.getStun());
+		//System.out.println(p2.getStun());
 	}
 	
 	@Override
@@ -128,7 +128,7 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 		// DRAWING LIVES
 		Polygon test = new Polygon(new int []{10+300, 25+300, 40+300, 25+300}, new int []{25+250,40+250,25+250,10+250}, 4);
 		if (test.intersects(p1.getRect()) || test.intersects(p2.getRect())){
-			System.out.println("AS");
+			//System.out.println("AS");
 			g.setColor(Color.WHITE);
 		}
 		else{

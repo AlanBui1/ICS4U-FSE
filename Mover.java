@@ -23,6 +23,15 @@ public class Mover {
         ay = 0;
     }
 
+    public Mover(double X, double Y){
+        x = X;
+        y = Y;
+        vx = 0;
+        vy = 0;
+        ax = 0;
+        ay = 0;
+    }
+
     public void move(){
         vx += ax;
         x += vx;

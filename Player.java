@@ -155,7 +155,7 @@ public class Player extends Mover{
             addAX(f.magnitudeX/mass);
             addAY(f.magnitudeY/mass);
             f.addTime(-1);
-            System.out.println("TIME " + f.getTime());
+            //System.out.println("TIME " + f.getTime());
             if (f.getTime() <= 0){
                 addVX(-f.magnitudeX/mass*f.getOrigTime());
                 // addVY(-f.magnitudeY/mass*f.getOrigTime());
