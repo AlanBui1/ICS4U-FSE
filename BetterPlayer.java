@@ -41,6 +41,8 @@ public class BetterPlayer extends Mover{
         this.gravity = gravity;
         this.runspd = runspd;
         this.jumpforce = jumpforce;
+
+        onGround = true;
     }
 
     public void move(boolean [] keys, ArrayList <Platform> plats){ //moves the Player
@@ -70,11 +72,11 @@ public class BetterPlayer extends Mover{
             }
 
             if (keys[LKey]){ //moves left with constant velocity
-                setX(getX() - 7);
+                setVX(-runspd);
                 dir = LEFT;
             }
             if (keys[RKey]){ //moves right with constant velocity
-                setX(getX() + 7);
+                setVX(runspd);
                 dir = RIGHT;
             }
 
@@ -103,8 +105,9 @@ public class BetterPlayer extends Mover{
             }
         }
 
-        // applyForces(); 
-        this.move();
+        //applyForces(); 
+        System.out.println(getVX());
+        move();
 
         checkPlats(plats); //checks if on a platform and adjusts position 
 
@@ -119,6 +122,29 @@ public class BetterPlayer extends Mover{
         //     hitboxes.remove(h);
         // }
         // System.out.println(stunTime);
+        
+    }
+
+    public void applyForces(){
+        if (onGround){
+            if (getVX() < 0){ //moving left
+                addVX(groundfriction);
+            }
+            else{ //moving right or standing still
+                addVX(-groundfriction);
+            }
+        }
+
+        else{
+            if (getVX() < 0){ //moving left
+                addVX(airfriction);
+            }
+            else{ //moving right or standing still
+                addVX(-airfriction);
+            }
+        }
+
+        
     }
     
     public void checkPlats(ArrayList<Platform> plats){

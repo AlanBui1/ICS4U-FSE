@@ -8,8 +8,8 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 	private ArrayList <Platform> platforms;
 
     Timer timer;
-    Shooter p2 = new Shooter(400, 30, Player.RIGHT, 3,  Shooter.MASS);
-	Shooter p1 = new Shooter(280, 30, Player.RIGHT, 3,  Shooter.MASS);
+    BetterShooter p2 = new BetterShooter(300, 30);
+	BetterShooter p1 = new BetterShooter(400, 30);
     public static final int WIDTH = 800, HEIGHT = 600;
 
 	int shootCoolDown;
@@ -47,36 +47,36 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 	}
 
     public void move(){		
-		if (p1.getStun() > 0) p1.addStun(-1);
-		if (p2.getStun() > 0)p2.addStun(-1);
+		// if (p1.getStun() > 0) p1.addStun(-1);
+		// if (p2.getStun() > 0)p2.addStun(-1);
 
-		p1.setCoolDown(p1.getCoolDown()-1);
+		// p1.setCoolDown(p1.getCoolDown()-1);
         p1.move(keys, platforms);
-		p1.attack(keys);
-		p2.setCoolDown(p2.getCoolDown()-1);
+		// p1.attack(keys);
+		// p2.setCoolDown(p2.getCoolDown()-1);
         p2.move(keys, platforms);
-		p2.attack(keys);
+		// p2.attack(keys);
 
-		checkCollisions();
+		// checkCollisions();
     }
 
-	public void checkCollisions(){
-		ArrayList<Hitbox> toDelH = new ArrayList<Hitbox>();
-		for (Hitbox h : p1.getHitBoxes()){
-			if (p2.getRect().intersects(h.getRect())){
-				toDelH.add(h);
-				//System.out.println("ASDJASILL");
-				p2.addForce(h.getForce());
-				p2.loseLife();
-			}
-		}
+	// public void checkCollisions(){
+	// 	ArrayList<Hitbox> toDelH = new ArrayList<Hitbox>();
+	// 	for (Hitbox h : p1.getHitBoxes()){
+	// 		if (p2.getRect().intersects(h.getRect())){
+	// 			toDelH.add(h);
+	// 			//System.out.println("ASDJASILL");
+	// 			p2.addForce(h.getForce());
+	// 			p2.loseLife();
+	// 		}
+	// 	}
 
-		for (Hitbox h : toDelH){
-			p2.addStun(h.getStun());
-			p1.getHitBoxes().remove(h);
-		}
-		//System.out.println(p2.getStun());
-	}
+	// 	for (Hitbox h : toDelH){
+	// 		p2.addStun(h.getStun());
+	// 		p1.getHitBoxes().remove(h);
+	// 	}
+	// 	//System.out.println(p2.getStun());
+	// }
 	
 	@Override
 	public void actionPerformed(ActionEvent e){
@@ -136,28 +136,31 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 		}
 		g.fillPolygon(test);
 		g.setColor(Color.RED);
-		for (int L = 0; L < 3; L++){
-			if (p1.getLives()-L == 0){
-				g.setColor(Color.WHITE);
-			}
-			g.fillRect(20 + L*30, 570, 20, 20);
-		}
+		// for (int L = 0; L < 3; L++){
+		// 	if (p1.getLives()-L == 0){
+		// 		g.setColor(Color.WHITE);
+		// 	}
+		// 	g.fillRect(20 + L*30, 570, 20, 20);
+		// }
 
-		g.setColor(Color.RED);
-		for (int L = 0; L < 3; L++){
-			if (p2.getLives()-L == 0){
-				g.setColor(Color.WHITE);
-			}
-			g.fillRect(700 + L*30, 570, 20, 20);
-		}
+		// g.setColor(Color.RED);
+		// for (int L = 0; L < 3; L++){
+		// 	if (p2.getLives()-L == 0){
+		// 		g.setColor(Color.WHITE);
+		// 	}
+		// 	g.fillRect(700 + L*30, 570, 20, 20);
+		// }
 
-        p1.draw(g);
-		for (Hitbox h : p1.getHitBoxes()){
-			h.draw(g);
-		}
+        // p1.draw(g);
+		// for (Hitbox h : p1.getHitBoxes()){
+		// 	h.draw(g);
+		// }
+		// p2.draw(g);
+		// for (Hitbox h : p2.getHitBoxes()){
+		// 	h.draw(g);
+		// }
+
+		p1.draw(g);
 		p2.draw(g);
-		for (Hitbox h : p2.getHitBoxes()){
-			h.draw(g);
-		}
     }
 }
