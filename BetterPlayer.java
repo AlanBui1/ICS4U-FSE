@@ -46,6 +46,10 @@ public class BetterPlayer extends Mover{
     }
 
     public void move(boolean [] keys, ArrayList <Platform> plats){ //moves the Player
+        if (keys[32]){
+            loseLife();
+        }
+
         // this depends on if we want the players to die immediately after hitting the edge or not
         // rn it just resets player to starting pos... idk if that's what we want it to do
         // maybe add an invincibility period ?
@@ -72,12 +76,25 @@ public class BetterPlayer extends Mover{
             }
 
             if (keys[LKey]){ //moves left with constant velocity
-                setVX(-runspd);
+                if (onGround){
+                    setVX(-runspd);
+                }
+                else{
+                    setVX(-airspd);
+                    // setVX(-Math.min(airspd, airaccel + getVX()));
+                }
                 dir = LEFT;
             }
             if (keys[RKey]){ //moves right with constant velocity
-                setVX(runspd);
+                if (onGround){
+                    setVX(runspd);
+                }
+                else{
+                    setVX(airspd);
+                    // setVX(Math.min(airspd, airaccel + getVX()));
+                }
                 dir = RIGHT;
+                
             }
 
             if (keys[UKey1] || keys[UKey2]){
@@ -85,6 +102,7 @@ public class BetterPlayer extends Mover{
                     if (jump1){
                         // // setVY(getVY() - 20);
                         // addForce(new Force(0, -800, 1, 0));
+                        setVY(-jumpforce);
                         jump1 = false;
                         onGround = false;
                     }
@@ -93,6 +111,7 @@ public class BetterPlayer extends Mover{
                     if (jump2 && !jump1){
                         // addForce(new Force(0, -1000, 1, 0));
                         // setVY(getVY() - 20);
+                        setVY(-jumpforce*1.15);
                         jump2 = false;
                         onGround = false;
                     }
@@ -106,7 +125,7 @@ public class BetterPlayer extends Mover{
         }
 
         applyForces(); 
-        System.out.println(onGround + " " + getVX());
+        System.out.println(onGround + " " + getVX() + " " + getVY());
         move();
 
         checkPlats(plats); //checks if on a platform and adjusts position 
@@ -148,7 +167,7 @@ public class BetterPlayer extends Mover{
             }
 
             //GRAVITY
-            addVY(gravity);
+            setVY(Math.min(getVY() + gravity, fallspd));
         }
 
         if (Math.abs(getVX()) < 1){
@@ -182,11 +201,11 @@ public class BetterPlayer extends Mover{
     
     public void loseLife(){
         // lives--;
-        //setX(300); setY(30);
-        // setVX(0);
-        // setVY(0);
-        // setAX(0);
-        // setAY(0);
+        setX(300); setY(30);
+        setVX(0);
+        setVY(0);
+        setAX(0);
+        setAY(0);
     }
     
     public Rectangle getRect(){
