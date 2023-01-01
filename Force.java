@@ -6,7 +6,7 @@ public class Force {
     public Force(double mx, double my, int t, int stun){
         magnitudeX = mx;
         magnitudeY = my; 
-        time = t; //how long the vector will be in effect for
+        time = t; //how long the Force will be in effect for
         origTime= t;
         stunTime = stun;
     }

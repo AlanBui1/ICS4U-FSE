@@ -20,7 +20,7 @@ public class BetterPlayer extends Mover{
     jumpforce (pixles / frame) is the force exerted on the Player when it jumps 
     */
 
-    private int stunTime =0, dir;
+    private int stunTime, dir, atkCooldown;
 
     private boolean jump1, jump2, onGround;
     /*
@@ -28,6 +28,9 @@ public class BetterPlayer extends Mover{
     jump2 is true if the Player can use their second jump
     onGround is true if the Player is on a platform
     */
+
+    ArrayList <Hitbox> hitboxes; //hitboxes the Player sends out e.g. bullets
+    private ArrayList<Force> forces;
 
     public BetterPlayer(double x, double y, double weight,double airaccel, double airfriction, double groundfriction, double airspd,double fallspd,double gravity, double runspd, double jumpforce){
         super(x, y);
@@ -42,7 +45,12 @@ public class BetterPlayer extends Mover{
         this.runspd = runspd;
         this.jumpforce = jumpforce;
 
+        stunTime = 0;
+        atkCooldown = 0;
+        dir =1;
         onGround = false;
+        hitboxes = new ArrayList<Hitbox>();
+        forces = new ArrayList<Force>();
     }
 
     public void move(boolean [] keys, ArrayList <Platform> plats){ //moves the Player
@@ -108,10 +116,10 @@ public class BetterPlayer extends Mover{
                     }
                 }
                 else if (keys[UKey2]){
-                    if (jump2 && !jump1){
+                    if (jump2){
                         // addForce(new Force(0, -1000, 1, 0));
                         // setVY(getVY() - 20);
-                        setVY(-jumpforce*1.15);
+                        setVY(-jumpforce*.85);
                         jump2 = false;
                         onGround = false;
                     }
@@ -125,21 +133,21 @@ public class BetterPlayer extends Mover{
         }
 
         applyForces(); 
-        System.out.println(onGround + " " + getVX() + " " + getVY());
+        //System.out.println(onGround + " " + getVX() + " " + getVY());
         move();
 
         checkPlats(plats); //checks if on a platform and adjusts position 
 
-        // ArrayList <Hitbox> toDel = new ArrayList<Hitbox>();
-        // for (Hitbox h : hitboxes){
-        //     h.move();
-        //     if (h.getTime() <= 0){
-        //         toDel.add(h);
-        //     }
-        // }
-        // for (Hitbox h : toDel){
-        //     hitboxes.remove(h);
-        // }
+        ArrayList <Hitbox> toDel = new ArrayList<Hitbox>();
+        for (Hitbox h : hitboxes){
+            h.move();
+            if (h.getTime() <= 0){
+                toDel.add(h);
+            }
+        }
+        for (Hitbox h : toDel){
+            hitboxes.remove(h);
+        }
         // System.out.println(stunTime);
         
     }
@@ -172,6 +180,16 @@ public class BetterPlayer extends Mover{
 
         if (Math.abs(getVX()) < 1){
             setVX(0);
+        }
+
+        for (int i=forces.size()-1; i>=0; i--){
+            Force f = forces.get(i);
+            addVX(f.magnitudeX);
+            addVY(f.magnitudeY);
+            f.addTime(-1);
+            if (f.getTime() <= 0){
+                forces.remove(i);
+            }
         }
     }
     
@@ -207,10 +225,35 @@ public class BetterPlayer extends Mover{
         setAX(0);
         setAY(0);
     }
-    
-    public Rectangle getRect(){
-        return new Rectangle((int)getX(), (int)getY(), WIDTH+1, HEIGHT+1);
+
+    public void addHitBox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T, double KBX, double KBY, int stun){
+        hitboxes.add(new Hitbox(X, Y, W, H, VX, VY, AX, AY, T, KBX, KBY, 10, stun));
     }
+
+    public void addHitBox(Mover m, Force f, double w, double h, double time){
+        hitboxes.add(new Hitbox(m.getX(), m.getY(), w, h, m.getVX(), m.getVY(), m.getAX(), m.getAY(), time, f.getMX(), f.getMY(), f.getTime(), f.getStun()));
+    }
+
+    public void addForce(double magX, double magY, int time, int stun){
+        forces.add(new Force(magX, magY, time, stun));
+    }
+    public void addForce(Force f){
+        forces.add(f);
+    }
+
+    public void addStun(int time){
+        stunTime += time;
+    }
+    
+    public Rectangle getRect(){return new Rectangle((int)getX(), (int)getY(), WIDTH+1, HEIGHT+1);}
+    public int getCoolDown(){return atkCooldown;}
+    public ArrayList <Hitbox> getHitBoxes(){return hitboxes;} 
+
+    public int getFastKey(){return fastKey;}
+    public int getUKey1(){return UKey1;}
+    public int getDKey(){return DKey;}
+    public int getDir(){return dir;}
+    public int getStun(){return stunTime;}
     
     public void setLKey(int k){LKey = k;}
     public void setRKey(int k){RKey = k;}
@@ -218,4 +261,6 @@ public class BetterPlayer extends Mover{
     public void setUKey2(int k){UKey2 = k;}
     public void setDKey(int k){DKey = k;}
     public void setFastKey(int k){fastKey = k;}
+
+    public void setCoolDown(int time){atkCooldown = time;}
 }

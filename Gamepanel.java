@@ -47,36 +47,38 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 	}
 
     public void move(){		
-		// if (p1.getStun() > 0) p1.addStun(-1);
-		// if (p2.getStun() > 0)p2.addStun(-1);
+		if (p1.getStun() > 0) p1.addStun(-1);
+		if (p2.getStun() > 0)p2.addStun(-1);
 
-		// p1.setCoolDown(p1.getCoolDown()-1);
+		p1.setCoolDown(p1.getCoolDown()-1);
         p1.move(keys, platforms);
-		// p1.attack(keys);
-		// p2.setCoolDown(p2.getCoolDown()-1);
-        //p2.move(keys, platforms);
-		// p2.attack(keys);
+		p1.attack(keys);
+		p2.setCoolDown(p2.getCoolDown()-1);
+        p2.move(keys, platforms);
+		p2.attack(keys);
 
-		// checkCollisions();
+		System.out.println(p2.getX());
+
+		checkCollisions();
     }
 
-	// public void checkCollisions(){
-	// 	ArrayList<Hitbox> toDelH = new ArrayList<Hitbox>();
-	// 	for (Hitbox h : p1.getHitBoxes()){
-	// 		if (p2.getRect().intersects(h.getRect())){
-	// 			toDelH.add(h);
-	// 			//System.out.println("ASDJASILL");
-	// 			p2.addForce(h.getForce());
-	// 			p2.loseLife();
-	// 		}
-	// 	}
+	public void checkCollisions(){
+		ArrayList<Hitbox> toDelH = new ArrayList<Hitbox>();
+		for (Hitbox h : p1.getHitBoxes()){
+			if (p2.getRect().intersects(h.getRect())){
+				toDelH.add(h);
+				//System.out.println("ASDJASILL");
+				p2.addForce(h.getForce());
+				// p2.loseLife();
+			}
+		}
 
-	// 	for (Hitbox h : toDelH){
-	// 		p2.addStun(h.getStun());
-	// 		p1.getHitBoxes().remove(h);
-	// 	}
-	// 	//System.out.println(p2.getStun());
-	// }
+		for (Hitbox h : toDelH){
+			p2.addStun(h.getStun());
+			p1.getHitBoxes().remove(h);
+		}
+		//System.out.println(p2.getStun());
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e){
@@ -151,16 +153,13 @@ class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseList
 		// 	g.fillRect(700 + L*30, 570, 20, 20);
 		// }
 
-        // p1.draw(g);
-		// for (Hitbox h : p1.getHitBoxes()){
-		// 	h.draw(g);
-		// }
-		// p2.draw(g);
-		// for (Hitbox h : p2.getHitBoxes()){
-		// 	h.draw(g);
-		// }
-
-		p1.draw(g);
+        p1.draw(g);
+		for (Hitbox h : p1.getHitBoxes()){
+			h.draw(g);
+		}
 		p2.draw(g);
+		for (Hitbox h : p2.getHitBoxes()){
+			h.draw(g);
+		}
     }
 }
