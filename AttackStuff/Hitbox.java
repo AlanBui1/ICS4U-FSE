@@ -1,4 +1,7 @@
+package AttackStuff;
 import java.awt.*;
+
+import ThingsThatMove.Mover;
 public class Hitbox extends Mover{
     private double w, h, time;
     private Force knockBack;

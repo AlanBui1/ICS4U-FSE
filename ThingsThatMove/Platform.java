@@ -1,3 +1,4 @@
+package ThingsThatMove;
 import java.awt.*;
 
 public class Platform {

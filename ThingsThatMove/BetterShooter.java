@@ -1,4 +1,7 @@
+package ThingsThatMove;
 import java.awt.*;
+
+import Force;
 
 public class BetterShooter extends BetterPlayer{
     public static final int FASTSIDEATK = 0, FASTUPATK = 1, FASTDOWNATK = 2;
@@ -9,7 +12,19 @@ public class BetterShooter extends BetterPlayer{
      KBGROWTH is a measure of how much the knockback increases as opponents' damage increases #TO DO 
     */
 
-    public static final double WEIGHT = 90, GRAVITY = 2, RUNSPD = 5, AIRSPD = 3.6213, AIRACCEL = 1.73, FALLSPD = 10.4, JUMPFORCE = 20.02, GROUNDFRICTION = 0.85, AIRFRICTION = 0.65;
+    //ORGANIZE THIS STUPID STUFF TO DO
+    //array of ArrayLists or HashMap 
+    //initialize with text files
+    public static final double  WEIGHT = 90, 
+                                GRAVITY = 2, 
+                                RUNSPD = 10, 
+                                AIRSPD = 8.6213, 
+                                AIRACCEL = 1.73, 
+                                FALLSPD = 10.4, 
+                                JUMPFORCE = 20.02, 
+                                GROUNDFRICTION = 0.85, 
+                                AIRFRICTION = 0.65;
+    
     public static final int WIDTH = 20, HEIGHT = 30;
 
     public BetterShooter(double x, double y){
@@ -48,8 +63,6 @@ public class BetterShooter extends BetterPlayer{
         addHitBox(getX(), getY(), 7.0, 7.0, 0, 10, 0, 0, 30, 0, 20, 100);
         setCoolDown(30);
     }
-
-    
 
     public void draw(Graphics g){
         g.setColor(Color.BLUE);

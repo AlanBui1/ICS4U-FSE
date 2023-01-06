@@ -1,4 +1,10 @@
+package ThingsThatMove;
 import java.util.ArrayList;
+
+import AttackStuff.Force;
+import AttackStuff.Hitbox;
+import MainGame.Gamepanel;
+
 import java.awt.*;
 
 public class BetterPlayer extends Mover{
@@ -184,8 +190,8 @@ public class BetterPlayer extends Mover{
 
         for (int i=forces.size()-1; i>=0; i--){
             Force f = forces.get(i);
-            addVX(f.magnitudeX);
-            addVY(f.magnitudeY);
+            addVX(f.getMX());
+            addVY(f.getMY());
             f.addTime(-1);
             if (f.getTime() <= 0){
                 forces.remove(i);

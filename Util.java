@@ -21,9 +21,6 @@ public class Util {
 		return img.getScaledInstance(width, height, Image.SCALE_SMOOTH); //returns scaled image
 	}
 
-	public static double GForce(double mass){ //put this in a Stage class returns acceleration due to gravity
-		return GRAVITY/mass; //F = ma => a = F/m
-	}
 }
 
 /*
