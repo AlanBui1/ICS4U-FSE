@@ -10,8 +10,8 @@ public class Hitbox extends Mover{
     private Force knockBack;
 
     public Hitbox(HashMap <String, Double> stats){
-        super(-1,-1, stats.get("vx"), stats.get("vy"), stats.get("ax"), stats.get("ay"));
-
+        super(-1,-1, stats.get("vx"), stats.get("vy"), stats.get("ax"), stats.get("ay"), stats.get("maxvx"), stats.get("maxvy"));
+        
         w = stats.get("width");
         h = stats.get("height");
         time = stats.get("timeactive");
@@ -21,8 +21,8 @@ public class Hitbox extends Mover{
         knockBack = new Force((double)stats.get("basekbx"), (double)stats.get("basekby"), (int)(double)stats.get("stuntime")); 
     }
 
-    public Hitbox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T, double knockBackX, double knockBackY, int stunTime){
-        super(X, Y, VX, VY, AX, AY);
+    public Hitbox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double MAXVX, double MAXVY, double T, double knockBackX, double knockBackY, int stunTime){
+        super(X, Y, VX, VY, AX, AY, MAXVX, MAXVY);
 
         w = W; h = H;
         time = T;
@@ -30,7 +30,7 @@ public class Hitbox extends Mover{
     }
 
     public Hitbox cloneHitbox(){
-        return new Hitbox(getX(), getY(), getWidth(), getHeight(), getVX(), getVY(), getAX(), getAY(), getTime(), knockBack.getMX(), knockBack.getMY(), knockBack.getStun());
+        return new Hitbox(getX(), getY(), getWidth(), getHeight(), getVX(), getVY(), getAX(), getAY(), getMAXVX(), getMAXVY(), getTime(), knockBack.getMX(), knockBack.getMY(), knockBack.getStun());
     }
     
     public double getTime(){return time;};
@@ -55,6 +55,7 @@ public class Hitbox extends Mover{
 
     @Override
     public void move(){
+        System.out.println(getVX());
         time --;
         if (time < 0){
             return;

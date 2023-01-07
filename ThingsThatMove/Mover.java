@@ -5,7 +5,7 @@ public class Mover {
                     vx, //velocity in the x direction
                     vy, //velocity in the y direction
                     ax, //acceleration in the x direction
-                    ay, //acceleration in the x direction
+                    ay, //acceleration in the y direction
                     maxVX, //maximum velocity in the x direction,
                     maxVY; //maximum velocity in the y direction
 
@@ -40,7 +40,6 @@ public class Mover {
     public void move(){
         if (Math.abs(vx + ax) < Math.abs(maxVX)) vx += ax;
         if (Math.abs(vy + ay) < Math.abs(maxVY)) vy += ay;
-        
         x += vx;
         y += vy;
     }
@@ -60,6 +59,8 @@ public class Mover {
     public double getVY(){return vy;}
     public double getAX(){return ax;}
     public double getAY(){return ay;}
+    public double getMAXVX(){return maxVX;}
+    public double getMAXVY(){return maxVY;}
 
     //setter methods
     public void setX(double X){x = X;}

@@ -18,7 +18,7 @@ vx 0
 vy 0
 ax 3
 ay 0
-maxvx 15
+maxvx 5
 maxvy 0
 width 7
 height 7

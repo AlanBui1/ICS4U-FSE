@@ -125,7 +125,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
         p2.move(keysPressed, keysReleasedTime, platforms);
 		p2.attack(keysPressed);
 
-		System.out.println(p1.getVX());
+		// System.out.println(p1.getVX());
 		// System.out.println(p2.getX());
 
 		checkCollisions();

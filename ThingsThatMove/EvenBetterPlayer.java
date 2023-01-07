@@ -282,8 +282,8 @@ public class EvenBetterPlayer extends Mover{
         g.fillRect((int)getX(), (int)getY(), (int)width, (int)height);
     }
 
-    public void addHitBox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double KBX, double KBY, int stun){hitboxes.add(new Hitbox(X, Y, W, H, VX, VY, AX, AY, KBX, KBY, 10, stun));}
-    public void addHitBox(Mover m, Force f, double w, double h, double time){hitboxes.add(new Hitbox(m.getX(), m.getY(), w, h, m.getVX(), m.getVY(), m.getAX(), m.getAY(), time, f.getMX(), f.getMY(), f.getStun()));}
+    public void addHitBox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double KBX, double KBY, int stun){hitboxes.add(new Hitbox(X, Y, W, H, VX, VY, AX, AY, Double.MAX_VALUE, Double.MAX_VALUE, KBX, KBY, 10, stun));}
+    public void addHitBox(Mover m, Force f, double w, double h, double time){hitboxes.add(new Hitbox(m.getX(), m.getY(), w, h, m.getVX(), m.getVY(), m.getAX(), m.getAY(), m.getMAXVX(), m.getMAXVY(), time, f.getMX(), f.getMY(), f.getStun()));}
     public void addHitBox(Hitbox h){hitboxes.add(h);}
 
     public void addForce(double magX, double magY, int stun){forces.add(new Force(magX, magY, stun));}
