@@ -48,14 +48,14 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		try{
 			Scanner shooterFile = new Scanner(new BufferedReader(new FileReader("shooterStats.txt"))); 
-			for (int i=1; i<=11; i++){
+			for (int i=1; i<=11; i++){ //CHANGE THE 11 to however many fields there are
 				String name = shooterFile.next();
 				Double val = shooterFile.nextDouble();
 				shooterFile.nextLine();
 				shooterStats.put(name, val);
 			}
 
-			String curName;
+			String curName; //name of the current attack that's being loaded in
 			int numHitboxes;
 
 			while (true){
@@ -71,20 +71,21 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 					for (int i=0; i<numHitboxes; i++){
 						HashMap <String, Double> hitStats = new HashMap<String, Double>();
 
-						for (int k=0; k<14; k++){
+						for (int k=0; k<14; k++){ //CHANGE THE 14 to however many fields there are
 							String KEY = shooterFile.next();
 							Double val = shooterFile.nextDouble();
 							shooterFile.nextLine();
 							//System.out.println(KEY + " " + val);
 							hitStats.put(KEY, val);
 						}
-						
-						shooterFile.next();
-						int cdown = shooterFile.nextInt();
-						shooterFile.nextLine();
 						shooterAtks.get(curName).addHitbox(new Hitbox(hitStats));
-						shooterAtks.get(curName).setCoolDown(cdown);
+						
 					}
+
+					shooterFile.next();
+					int cdown = shooterFile.nextInt();
+					shooterFile.nextLine();
+					shooterAtks.get(curName).setCoolDown(cdown);
 				}
 				
 			}

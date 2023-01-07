@@ -16,12 +16,12 @@ public class EvenBetterPlayer extends Mover{
                     airfriction, //airfriction (units / frame^2) is a measure of how long it takes a character to stop moving from a sideways force midair
                     groundfriction, //groundfriction (units / frame^2) is a measure of how long it takes a character to stop moving from a sideways force on the ground
                     airspd, //airspd (pixels / frame) is the maximum speed a Player can move horizontally midair
-                    fallspd, //fallspd (units / frame) is the rate a Player can move downward mid-air
+                    fallspd, //fallspd (units / frame) is the maximum rate a Player can move downward mid-air
                     gravity, //gravity (pixels / frame^2) is a measure of how fast a falling Player reaches fallspd
                     runspd, //runspd (pixels / frame) is the speed a Player moves on the ground horizontally (running)
                     jumpforce, //jumpforce (pixels / frame) is the force exerted on the Player when it jumps 
                     width, //width (pixels) is the number of pixels wide the Player is
-                    height; //height (pixels) is the number of pixels high the Player is;
+                    height; //height (pixels) is the number of pixels high the Player is
 
     private int stunTime, dir, atkCooldown;
 
