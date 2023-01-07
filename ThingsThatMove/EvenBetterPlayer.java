@@ -247,8 +247,15 @@ public class EvenBetterPlayer extends Mover{
     }
 
     public void attack(Attack a){
+        System.out.println(dir);
         for (Hitbox h : a.getHitboxes()){
-            addHitBox(h);
+            Hitbox toAdd = h.cloneHitbox();
+            toAdd.setX(getX() - toAdd.getOffsetX());
+            toAdd.setY(getY() - toAdd.getOffsetY());
+            toAdd.setVX(toAdd.getVX()*dir);
+            toAdd.setAX(toAdd.getAX()*dir);
+            toAdd.setKnockBackX(toAdd.getKnockBackX()*dir);
+            addHitBox(toAdd);
         }
         setCoolDown(a.getCoolDown());
     }

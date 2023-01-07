@@ -1,6 +1,6 @@
 package ThingsThatMove;
 public class Mover {
-    private double x, y, vx, vy, ax, ay;
+    private double x, y, vx, vy, ax, ay, origVX;
     /*
     (x, y) are the Player's coordinates on the screen 
     vx and vy are the Player's velocity in the x and y directions, respectively
@@ -13,6 +13,7 @@ public class Mover {
         vy = VY;
         ax = AX;
         ay = AY;
+        origVX = VX;
     }
 
     public Mover(double X, double Y, double VX, double VY){
@@ -22,6 +23,7 @@ public class Mover {
         vy = VY;
         ax = 0;
         ay = 0;
+        origVX = VX;
     }
 
     public Mover(double X, double Y){
@@ -31,6 +33,7 @@ public class Mover {
         vy = 0;
         ax = 0;
         ay = 0;
+        origVX = 0;
     }
 
     public void move(){
@@ -55,6 +58,7 @@ public class Mover {
     public double getVY(){return vy;}
     public double getAX(){return ax;}
     public double getAY(){return ay;}
+    public double getOrigVX(){return origVX;}
 
     //setter methods
     public void setX(double X){x = X;}

@@ -9,8 +9,6 @@ import java.io.*;
 import javax.swing.*;
 
 import AttackStuff.Hitbox;
-import ThingsThatMove.BetterPlayer;
-import ThingsThatMove.BetterShooter;
 import ThingsThatMove.EvenBetterPlayer;
 import ThingsThatMove.Platform;
 import AttackStuff.Attack;

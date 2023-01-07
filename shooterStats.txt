@@ -1,5 +1,5 @@
-height 20
-width 30
+height 30
+width 20
 weight 90
 gravity 2
 runspd 10

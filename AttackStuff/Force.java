@@ -33,4 +33,11 @@ public class Force {
     public int getStun(){
         return stunTime;
     }
+
+    public void setMX(double mx){
+        magnitudeX = mx;
+    }
+    public void setMY(double my){
+        magnitudeY = my;
+    }
 }
