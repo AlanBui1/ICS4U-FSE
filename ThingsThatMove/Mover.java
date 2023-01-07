@@ -1,45 +1,47 @@
 package ThingsThatMove;
 public class Mover {
-    private double x, y, vx, vy, ax, ay, origVX;
-    /*
-    (x, y) are the Player's coordinates on the screen 
-    vx and vy are the Player's velocity in the x and y directions, respectively
-    */
+    private double  x, //x coordinate
+                    y, //y coordinate
+                    vx, //velocity in the x direction
+                    vy, //velocity in the y direction
+                    ax, //acceleration in the x direction
+                    ay, //acceleration in the x direction
+                    maxVX, //maximum velocity in the x direction,
+                    maxVY; //maximum velocity in the y direction
 
     public Mover(double X, double Y, double VX, double VY, double AX, double AY){
-        x = X;
-        y = Y;
-        vx = VX;
-        vy = VY;
-        ax = AX;
-        ay = AY;
-        origVX = VX;
+        x = X; y = Y;
+        vx = VX; vy = VY;
+        ax = AX; ay = AY;
+        maxVX = Double.MAX_VALUE; maxVY = Double.MAX_VALUE;
     }
 
     public Mover(double X, double Y, double VX, double VY){
-        x = X;
-        y = Y;
-        vx = VX;
-        vy = VY;
-        ax = 0;
-        ay = 0;
-        origVX = VX;
+        x = X; y = Y;
+        vx = VX; vy = VY;
+        ax = 0; ay = 0;
+        maxVX = Double.MAX_VALUE; maxVY = Double.MAX_VALUE;
     }
 
     public Mover(double X, double Y){
-        x = X;
-        y = Y;
-        vx = 0;
-        vy = 0;
-        ax = 0;
-        ay = 0;
-        origVX = 0;
+        x = X; y = Y;
+        vx = 0; vy = 0;
+        ax = 0; ay = 0;
+        maxVX = Double.MAX_VALUE; maxVY = Double.MAX_VALUE;
+    }
+
+    public Mover(double X, double Y, double VX, double VY, double AX, double AY, double MAXVX, double MAXVY){
+        x = X; y = Y;
+        vx = VX; vy = VY;
+        ax = AX; ay = AY;
+        maxVX = MAXVX; maxVY = MAXVY;
     }
 
     public void move(){
-        vx += ax;
+        if (Math.abs(vx + ax) < Math.abs(maxVX)) vx += ax;
+        if (Math.abs(vy + ay) < Math.abs(maxVY)) vy += ay;
+        
         x += vx;
-        vy += ay;
         y += vy;
     }
 
@@ -58,7 +60,6 @@ public class Mover {
     public double getVY(){return vy;}
     public double getAX(){return ax;}
     public double getAY(){return ay;}
-    public double getOrigVX(){return origVX;}
 
     //setter methods
     public void setX(double X){x = X;}
