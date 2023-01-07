@@ -10,7 +10,7 @@ jumpforce 20.02
 groundfriction 0.85
 airfriction 0.65
 ---FastSideAtk--- 1
-basekbx 2
+basekbx 20
 basekby 0
 startoffsetx 0
 startoffsety 0

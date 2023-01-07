@@ -18,19 +18,19 @@ public class Hitbox extends Mover{
         startOffsetX = stats.get("startoffsetx");
         startOffsetY = stats.get("startoffsety");
         // knockBack = new Force() TO DO FINISH THIS with knockback growth and base knockback
-        knockBack = new Force((double)stats.get("basekbx"), (double)stats.get("basekby"), (int)time, (int)(double)stats.get("stuntime")); 
+        knockBack = new Force((double)stats.get("basekbx"), (double)stats.get("basekby"), (int)(double)stats.get("stuntime")); 
     }
 
-    public Hitbox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T, double knockBackX, double knockBackY, int knockBackTime, int stunTime){
+    public Hitbox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T, double knockBackX, double knockBackY, int stunTime){
         super(X, Y, VX, VY, AX, AY);
 
         w = W; h = H;
         time = T;
-        knockBack = new Force(knockBackX, knockBackY, knockBackTime, stunTime);
+        knockBack = new Force(knockBackX, knockBackY, stunTime);
     }
 
     public Hitbox cloneHitbox(){
-        return new Hitbox(getX(), getY(), getWidth(), getHeight(), getVX(), getVY(), getAX(), getAY(), getTime(), knockBack.getMX(), knockBack.getMY(), knockBack.getTime(), knockBack.getStun());
+        return new Hitbox(getX(), getY(), getWidth(), getHeight(), getVX(), getVY(), getAX(), getAY(), getTime(), knockBack.getMX(), knockBack.getMY(), knockBack.getStun());
     }
     
     public double getTime(){return time;};

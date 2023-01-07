@@ -14,7 +14,8 @@ import ThingsThatMove.Platform;
 import AttackStuff.Attack;
 
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
-    private boolean [] keys;
+    private boolean [] keysPressed;
+	private int [] keysHeldTime, keysReleasedTime;
 	private ArrayList <Platform> platforms;
 	private HashMap <String, Double> shooterStats; //statName -> value
 	private HashMap <String, Attack> shooterAtks; //attackName -> hitboxes
@@ -24,10 +25,10 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	EvenBetterPlayer p1;
     public static final int WIDTH = 800, HEIGHT = 600;
 
-	int shootCoolDown;
-
 	public Gamepanel(){
-		keys = new boolean[KeyEvent.KEY_LAST+1];
+		keysPressed = new boolean[KeyEvent.KEY_LAST+1];
+		keysHeldTime = new int[KeyEvent.KEY_LAST+1];
+		keysReleasedTime = new int[KeyEvent.KEY_LAST+1];
 
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
@@ -37,7 +38,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		addMouseListener(this);
 		timer = new Timer(20, this);
 		timer.start();
-		shootCoolDown = 10;
 
 		platforms = new ArrayList<Platform>();
 		platforms.add(new Platform(250, 240, 100, 1));
@@ -113,19 +113,23 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	}
 
     public void move(){		
+		try{
 		if (p1.getStun() > 0) p1.addStun(-1);
-		if (p2.getStun() > 0)p2.addStun(-1);
-
+		if (p2.getStun() > 0) p2.addStun(-1);
+		
 		p1.setCoolDown(p1.getCoolDown()-1);
-        p1.move(keys, platforms);
-		p1.attack(keys);
+        p1.move(keysPressed, keysReleasedTime, platforms);
+		p1.attack(keysPressed);
 		p2.setCoolDown(p2.getCoolDown()-1);
-        p2.move(keys, platforms);
-		p2.attack(keys);
+        p2.move(keysPressed, keysReleasedTime, platforms);
+		p2.attack(keysPressed);
 
-		System.out.println(p2.getX());
+		System.out.println(p1.getVX());
+		// System.out.println(p2.getX());
 
 		checkCollisions();
+	}
+	catch(Exception e){}
     }
 
 	public void checkCollisions(){
@@ -148,7 +152,13 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	
 	@Override
 	public void actionPerformed(ActionEvent e){
-		shootCoolDown --;
+		for (int i=0; i<KeyEvent.KEY_LAST; i++){
+			if (keysPressed[i]){
+				keysHeldTime[i]++;
+			}
+		}
+
+		// System.out.println(keysPressed[KeyEvent.VK_W] + " " + keysHeldTime[KeyEvent.VK_W] + " " + keysReleasedTime[KeyEvent.VK_W]);
 		move(); 	// never draw in move
 		repaint(); 	// only draw
 	}
@@ -156,13 +166,16 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	@Override
 	public void keyReleased(KeyEvent ke){
 		int key = ke.getKeyCode();
-		keys[key] = false;
+		keysPressed[key] = false;
+		keysReleasedTime[key] = keysHeldTime[key];
+		keysHeldTime[key] = 0;
 	}	
 	
 	@Override
 	public void keyPressed(KeyEvent ke){
 		int key = ke.getKeyCode();
-		keys[key] = true;
+		keysPressed[key] = true;
+		keysReleasedTime[key] = 0;
 	}
 	
 	@Override

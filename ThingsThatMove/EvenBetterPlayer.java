@@ -2,6 +2,7 @@ package ThingsThatMove;
 
 import java.util.*;
 import java.awt.*;
+import javax.swing.*;
 import MainGame.*;
 import AttackStuff.*;
 
@@ -57,8 +58,8 @@ public class EvenBetterPlayer extends Mover{
         forces = new ArrayList<Force>();
     }
 
-    public void move(boolean [] keys, ArrayList <Platform> plats){ //moves the Player
-        if (keys[32]){
+    public void move(boolean [] keysPressed, int [] keysReleasedTime, ArrayList <Platform> plats){ //moves the Player
+        if (keysPressed[32]){
             loseLife();
         }
 
@@ -80,61 +81,7 @@ public class EvenBetterPlayer extends Mover{
             // System.out.println(lives);
         }
 
-        if (stunTime <= 0){
-            if (onGround){ //on temporary ground
-                jump1 = true;
-                jump2 = true;
-                setVY(0);
-            }
-
-            if (keys[LKey]){ //moves left with constant velocity
-                if (onGround){
-                    setVX(-runspd);
-                }
-                else{
-                    setVX(-airspd);
-                    // setVX(-Math.min(airspd, airaccel + getVX()));
-                }
-                dir = LEFT;
-            }
-            if (keys[RKey]){ //moves right with constant velocity
-                if (onGround){
-                    setVX(runspd);
-                }
-                else{
-                    setVX(airspd);
-                    // setVX(Math.min(airspd, airaccel + getVX()));
-                }
-                dir = RIGHT;
-                
-            }
-
-            if (keys[UKey1] || keys[UKey2]){
-                if (keys[UKey1]){
-                    if (jump1){
-                        // // setVY(getVY() - 20);
-                        // addForce(new Force(0, -800, 1, 0));
-                        setVY(-jumpforce);
-                        jump1 = false;
-                        onGround = false;
-                    }
-                }
-                else if (keys[UKey2]){
-                    if (jump2){
-                        // addForce(new Force(0, -1000, 1, 0));
-                        // setVY(getVY() - 20);
-                        setVY(-jumpforce*.85);
-                        jump2 = false;
-                        onGround = false;
-                    }
-                }
-            }
-
-            if (keys[DKey]){
-                // y+=7;
-                // vy += 5;
-            }
-        }
+        keyBoardMovement(keysPressed, keysReleasedTime);
 
         applyForces(); 
         //System.out.println(onGround + " " + getVX() + " " + getVY());
@@ -154,6 +101,77 @@ public class EvenBetterPlayer extends Mover{
         }
         // System.out.println(stunTime);
         
+    }
+
+    public void keyBoardMovement(boolean [] keysPressed, int [] keysReleasedTime){
+        if (stunTime <= 0){
+            if (onGround){ //on temporary ground
+                jump1 = true;
+                jump2 = true;
+                setVY(0);
+            }
+
+            if (1 <= keysReleasedTime[LKey] && keysReleasedTime[LKey] <= 10){
+                setVX(0);
+                dir = LEFT;
+                keysReleasedTime[LKey] = 0;
+            }
+            else if (keysPressed[LKey]){ //moves left with constant velocity
+                if (onGround){
+                    setVX(Math.max(-runspd, getVX() - runspd));
+                }
+                else{
+                    setVX(Math.max(-airspd, getVX() - airspd));
+                    // setVX(-airspd);
+                    // setVX(-Math.min(airspd, airaccel + getVX()));
+                }
+                dir = LEFT;
+            }
+
+            if (1 <= keysReleasedTime[RKey] && keysReleasedTime[RKey] <= 10){
+                setVX(0);
+                dir = RIGHT;
+                keysReleasedTime[RKey] = 0;
+            }
+            else if (keysPressed[RKey]){ //moves right with constant velocity
+                if (onGround){
+                    setVX(Math.min(runspd, getVX() + runspd));
+                }
+                else{
+                    setVX(Math.min(airspd, getVX() + airspd));
+                    // setVX(airspd);
+                    // setVX(Math.min(airspd, airaccel + getVX()));
+                }
+                dir = RIGHT;
+                
+            }
+
+            if (keysPressed[UKey1] || keysPressed[UKey2]){
+                if (keysPressed[UKey1]){
+                    if (jump1){
+                        // // setVY(getVY() - 20);
+                        // addForce(new Force(0, -800, 1, 0));
+                        setVY(-jumpforce);
+                        jump1 = false;
+                        onGround = false;
+                    }
+                }
+                else if (keysPressed[UKey2]){
+                    if (jump2){
+                        // addForce(new Force(0, -1000, 1, 0));
+                        // setVY(getVY() - 20);
+                        setVY(-jumpforce*.85);
+                        jump2 = false;
+                        onGround = false;
+                    }
+                }
+            }
+
+            if (keysPressed[DKey]){
+                // y+=7;
+                // vy += 5;
+            }
+        }
     }
 
     public void applyForces(){
@@ -190,10 +208,9 @@ public class EvenBetterPlayer extends Mover{
             Force f = forces.get(i);
             addVX(f.getMX());
             addVY(f.getMY());
-            f.addTime(-1);
-            if (f.getTime() <= 0){
-                forces.remove(i);
-            }
+
+            forces.remove(i);
+            
         }
     }
     
@@ -230,13 +247,13 @@ public class EvenBetterPlayer extends Mover{
         setAY(0);
     }
 
-    public void attack(boolean [] keys){
+    public void attack(boolean [] keysPressed){
         if (getCoolDown() <= 0){
-            if (keys[getFastKey()]){
-                if (keys[getUKey1()]){
+            if (keysPressed[getFastKey()]){
+                if (keysPressed[getUKey1()]){
                     attack(attacks.get("FastUpAtk"));
                 }
-                else if (keys[getDKey()]){
+                else if (keysPressed[getDKey()]){
                     attack(attacks.get("FastDownAtk"));
                 }
                 else{
@@ -247,7 +264,7 @@ public class EvenBetterPlayer extends Mover{
     }
 
     public void attack(Attack a){
-        System.out.println(dir);
+        
         for (Hitbox h : a.getHitboxes()){
             Hitbox toAdd = h.cloneHitbox();
             toAdd.setX(getX() - toAdd.getOffsetX());
@@ -265,11 +282,11 @@ public class EvenBetterPlayer extends Mover{
         g.fillRect((int)getX(), (int)getY(), (int)width, (int)height);
     }
 
-    public void addHitBox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T, double KBX, double KBY, int stun){hitboxes.add(new Hitbox(X, Y, W, H, VX, VY, AX, AY, T, KBX, KBY, 10, stun));}
-    public void addHitBox(Mover m, Force f, double w, double h, double time){hitboxes.add(new Hitbox(m.getX(), m.getY(), w, h, m.getVX(), m.getVY(), m.getAX(), m.getAY(), time, f.getMX(), f.getMY(), f.getTime(), f.getStun()));}
+    public void addHitBox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double KBX, double KBY, int stun){hitboxes.add(new Hitbox(X, Y, W, H, VX, VY, AX, AY, KBX, KBY, 10, stun));}
+    public void addHitBox(Mover m, Force f, double w, double h, double time){hitboxes.add(new Hitbox(m.getX(), m.getY(), w, h, m.getVX(), m.getVY(), m.getAX(), m.getAY(), time, f.getMX(), f.getMY(), f.getStun()));}
     public void addHitBox(Hitbox h){hitboxes.add(h);}
 
-    public void addForce(double magX, double magY, int time, int stun){forces.add(new Force(magX, magY, time, stun));}
+    public void addForce(double magX, double magY, int stun){forces.add(new Force(magX, magY, stun));}
     public void addForce(Force f){forces.add(f);}
 
     public void addStun(int time){stunTime += time;}
