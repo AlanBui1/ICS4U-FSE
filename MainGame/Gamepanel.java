@@ -2,20 +2,28 @@ package MainGame;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.HashMap;
+import java.io.*;
+
 import javax.swing.*;
 
 import AttackStuff.Hitbox;
 import ThingsThatMove.BetterPlayer;
 import ThingsThatMove.BetterShooter;
+import ThingsThatMove.EvenBetterPlayer;
 import ThingsThatMove.Platform;
+import AttackStuff.Attack;
 
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
     private boolean [] keys;
 	private ArrayList <Platform> platforms;
+	private HashMap <String, Double> shooterStats; //statName -> value
+	private HashMap <String, Attack> shooterAtks; //attackName -> hitboxes
 
     Timer timer;
-    BetterShooter p2 = new BetterShooter(300, 30);
-	BetterShooter p1 = new BetterShooter(400, 30);
+    EvenBetterPlayer p2; 
+	EvenBetterPlayer p1;
     public static final int WIDTH = 800, HEIGHT = 600;
 
 	int shootCoolDown;
@@ -33,6 +41,63 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		timer.start();
 		shootCoolDown = 10;
 
+		platforms = new ArrayList<Platform>();
+		platforms.add(new Platform(250, 240, 100, 1));
+		platforms.add(new Platform(300, 300, WIDTH-300, 300));
+
+		shooterStats = new HashMap<String, Double>();
+		shooterAtks = new HashMap<String, Attack>();
+
+		try{
+			Scanner shooterFile = new Scanner(new BufferedReader(new FileReader("shooterStats.txt"))); 
+			for (int i=1; i<=11; i++){
+				String name = shooterFile.next();
+				Double val = shooterFile.nextDouble();
+				shooterFile.nextLine();
+				shooterStats.put(name, val);
+			}
+
+			String curName;
+			int numHitboxes;
+
+			while (true){
+				String name = shooterFile.next();
+				if (name.equals("---END---")) break;
+				if (name.contains("---")){
+					curName = name.replaceAll("-", "");
+					numHitboxes = shooterFile.nextInt();
+					shooterFile.nextLine();
+
+					shooterAtks.put(curName, new Attack());
+
+					for (int i=0; i<numHitboxes; i++){
+						HashMap <String, Double> hitStats = new HashMap<String, Double>();
+
+						for (int k=0; k<14; k++){
+							String KEY = shooterFile.next();
+							Double val = shooterFile.nextDouble();
+							shooterFile.nextLine();
+							//System.out.println(KEY + " " + val);
+							hitStats.put(KEY, val);
+						}
+						
+						shooterFile.next();
+						int cdown = shooterFile.nextInt();
+						shooterFile.nextLine();
+						shooterAtks.get(curName).addHitbox(new Hitbox(hitStats));
+						shooterAtks.get(curName).setCoolDown(cdown);
+					}
+				}
+				
+			}
+
+			shooterFile.close();
+		}
+		catch (IOException e){
+
+		}
+
+		p1 = new EvenBetterPlayer(400, 30, shooterStats, shooterAtks);
         p1.setDKey(KeyEvent.VK_S);
         p1.setLKey(KeyEvent.VK_A);
         p1.setRKey(KeyEvent.VK_D);
@@ -40,16 +105,13 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
         p1.setUKey2(KeyEvent.VK_Q);
 		p1.setFastKey(KeyEvent.VK_E);
 
+		p2 = new EvenBetterPlayer(300, 30, shooterStats, shooterAtks);
 		p2.setDKey(KeyEvent.VK_K);
         p2.setLKey(KeyEvent.VK_J);
         p2.setRKey(KeyEvent.VK_L);
         p2.setUKey1(KeyEvent.VK_I);
         p2.setUKey2(KeyEvent.VK_U);
 		p2.setFastKey(KeyEvent.VK_O);
-
-		platforms = new ArrayList<Platform>();
-		platforms.add(new Platform(250, 240, 100, 1));
-		platforms.add(new Platform(300, 300, WIDTH-300, 300));
 	}
 
     public void move(){		

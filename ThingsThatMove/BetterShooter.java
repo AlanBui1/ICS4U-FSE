@@ -1,7 +1,7 @@
 package ThingsThatMove;
 import java.awt.*;
 
-import Force;
+import AttackStuff.Force;
 
 public class BetterShooter extends BetterPlayer{
     public static final int FASTSIDEATK = 0, FASTUPATK = 1, FASTDOWNATK = 2;

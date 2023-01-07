@@ -1,10 +1,22 @@
 package AttackStuff;
 import java.awt.*;
+import java.util.HashMap;
 
 import ThingsThatMove.Mover;
 public class Hitbox extends Mover{
     private double w, h, time;
+    private double startOffsetX, startOffsetY;
     private Force knockBack;
+
+    public Hitbox(HashMap <String, Double> stats){
+        super(-1,-1, stats.get("vx"), stats.get("vy"), stats.get("ax"), stats.get("ay"));
+
+        w = stats.get("width");
+        h = stats.get("height");
+        time = stats.get("timeactive");
+        // knockBack = new Force() TO DO FINISH THIS with knockback growth and base knockback
+        //startoffset 
+    }
 
     public Hitbox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double T, double knockBackX, double knockBackY, int knockBackTime, int stunTime){
         super(X, Y, VX, VY, AX, AY);

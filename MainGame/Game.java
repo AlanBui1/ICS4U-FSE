@@ -1,3 +1,6 @@
+package MainGame;
+import java.io.*;
+
 /*
 Game.java
 ICS4U-01
@@ -8,6 +11,7 @@ import javax.swing.*;
 
 public class Game extends JFrame{ 
     public static final int WIDTH = 800, HEIGHT = 800; //width and height of the window
+
     Gamepanel game = new Gamepanel();
     public static Game frame;
 
