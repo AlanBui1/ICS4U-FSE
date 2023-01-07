@@ -17,8 +17,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
     private boolean [] keysPressed;
 	private int [] keysHeldTime, keysReleasedTime;
 	private ArrayList <Platform> platforms;
-	private HashMap <String, Double> shooterStats; //statName -> value
-	private HashMap <String, Attack> shooterAtks; //attackName -> hitboxes
+	public static final HashMap <String, Double> shooterStats = new HashMap<String, Double>(); //statName -> value
+	public static final HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
 
     Timer timer;
     EvenBetterPlayer p2; 
@@ -42,9 +42,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		platforms = new ArrayList<Platform>();
 		platforms.add(new Platform(250, 240, 100, 1));
 		platforms.add(new Platform(300, 300, WIDTH-300, 300));
-
-		shooterStats = new HashMap<String, Double>();
-		shooterAtks = new HashMap<String, Attack>();
 
 		try{
 			Scanner shooterFile = new Scanner(new BufferedReader(new FileReader("shooterStats.txt"))); 
