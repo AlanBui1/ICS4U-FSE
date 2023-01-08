@@ -1,8 +1,8 @@
-package AttackStuff;
+package GameObjects.ThingsThatMove.AttackStuff;
 import java.awt.*;
 import java.util.HashMap;
 
-import ThingsThatMove.Mover;
+import GameObjects.ThingsThatMove.Mover;
 
 public class Hitbox extends Mover{
     private double w, h, time;
@@ -10,7 +10,15 @@ public class Hitbox extends Mover{
     private Force knockBack;
 
     public Hitbox(HashMap <String, Double> stats){
-        super(-1,-1, stats.get("vx"), stats.get("vy"), stats.get("ax"), stats.get("ay"), stats.get("maxvx"), stats.get("maxvy"));
+        super(-1,
+              -1, 
+              stats.get("vx"), 
+              stats.get("vy"), 
+              stats.get("ax"), 
+              stats.get("ay"), 
+              stats.get("maxvx"), 
+              stats.get("maxvy")
+            );
         
         w = stats.get("width");
         h = stats.get("height");
@@ -28,6 +36,8 @@ public class Hitbox extends Mover{
         time = T;
         knockBack = new Force(knockBackX, knockBackY, stunTime);
     }
+
+    // TO DO USE MORE HASHMAPS
 
     public Hitbox cloneHitbox(){
         return new Hitbox(getKnockBackX(), getKnockBackY(), getWidth(), getHeight(), getVX(), getVY(), getAX(), getAY(), getMAXVX(), getMAXVY(), getTime(), knockBack.getMX(), knockBack.getMY(), knockBack.getStun());

@@ -8,11 +8,11 @@ import java.io.*;
 
 import javax.swing.*;
 
-import AttackStuff.Hitbox;
 import ThingsThatMove.EvenBetterPlayer;
 import ThingsThatMove.Platform;
+import ThingsThatMove.AttackStuff.Attack;
+import ThingsThatMove.AttackStuff.Hitbox;
 import Utility.Util;
-import AttackStuff.Attack;
 
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
     private boolean [] keysPressed;

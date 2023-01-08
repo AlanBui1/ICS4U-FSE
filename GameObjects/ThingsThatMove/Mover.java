@@ -1,4 +1,4 @@
-package ThingsThatMove;
+package GameObjects.ThingsThatMove;
 public class Mover {
     private double  x, //x coordinate
                     y, //y coordinate

@@ -1,12 +1,13 @@
-package ThingsThatMove;
+package GameObjects.ThingsThatMove;
 
 import java.util.*;
 import java.awt.*;
 import javax.swing.*;
-import MainGame.*;
-import AttackStuff.*;
 
-public class EvenBetterPlayer extends Mover{
+import GameObjects.ThingsThatMove.AttackStuff.*;
+import MainGame.*;
+
+public class Player extends Mover{
     public static final int LEFT = -1, RIGHT = 1;
 
     private int LKey, RKey, UKey1, DKey, fastKey, chargeKey; //keys used to move in respective directions
@@ -35,7 +36,7 @@ public class EvenBetterPlayer extends Mover{
 
     private HashMap <String, Attack> attacks; //attacks in the form {name, Attack}
 
-    public EvenBetterPlayer(double x, double y, HashMap<String, Double> stats, HashMap<String, Attack> atks){
+    public Player(double x, double y, HashMap<String, Double> stats, HashMap<String, Attack> atks){
         super(x, y);
 
         this.height = stats.get("height");

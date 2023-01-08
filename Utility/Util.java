@@ -2,8 +2,10 @@ package Utility;
 import java.util.*;
 import java.awt.*;
 import javax.swing.*;
+
+import ThingsThatMove.AttackStuff.*;
+
 import java.io.*;
-import AttackStuff.*;
 
 public class Util {
 	public static final double GRAVITY = 100;
