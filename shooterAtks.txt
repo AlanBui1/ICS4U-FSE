@@ -104,4 +104,20 @@ height 7
 timeactive 15
 stuntime 10
 cooldown 0
+---ChargeSideAtk--- 1
+basekbx 5
+basekby -5
+startoffsetx 10
+startoffsety 15
+vx 5
+vy 0
+ax 0
+ay 0
+maxvx 0
+maxvy 0
+width 10
+height 10
+timeactive 70
+stuntime 10
+cooldown 30
 ---END---

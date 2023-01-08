@@ -24,6 +24,7 @@ public class EvenBetterPlayer extends Mover{
                     height; //height (pixels) is the number of pixels high the Player is
 
     private int stunTime, dir, atkCooldown;
+    private double chargeShotSize;
 
     private boolean jump1, //jump1 is true if the Player can use their first jump
                     jump2, //jump2 is true if the Player can use their second jump
@@ -52,6 +53,7 @@ public class EvenBetterPlayer extends Mover{
         attacks = atks;
         stunTime = 0;
         atkCooldown = 0;
+        chargeShotSize= 0;
         dir =1;
         onGround = false;
         hitboxes = new ArrayList<Hitbox>();
@@ -147,21 +149,17 @@ public class EvenBetterPlayer extends Mover{
             }
 
             if (keysPressed[UKey1]){
-                if (keysPressed[UKey1]){
-                    if (jump1){
-                        // // setVY(getVY() - 20);
-                        // addForce(new Force(0, -800, 1, 0));
-                        setVY(-jumpforce);
-                        if (keysPressed[DKey]) setVY(-jumpforce*.85);
-                        jump1 = false;
-                        onGround = false;
-                    }
+                if (jump1){
+                    setVY(-jumpforce);
+                    if (keysPressed[DKey]) setVY(-jumpforce*.85);
+                    jump1 = false;
+                    onGround = false;
+                }
 
-                    else if (jump2 && getVY() > 0){
-                        setVY(-jumpforce*.95);
-                        jump2 = false;
-                        onGround = false;
-                    }
+                else if (jump2 && getVY() > 0){
+                    setVY(-jumpforce*.95);
+                    jump2 = false;
+                    onGround = false;
                 }
             }
 
@@ -248,33 +246,55 @@ public class EvenBetterPlayer extends Mover{
         if (getCoolDown() <= 0){
             
             if (1 <= keysReleasedTime[getFastKey()] && keysReleasedTime[getFastKey()] <= 5){
-                attack(attacks.get("BonusAtk"));
+                attack(attacks.get("BonusAtk"), 1);
                 keysReleasedTime[getFastKey()] = 0;
             }
             if (keysPressed[getFastKey()]){
                 if (keysPressed[getUKey1()]){
-                    attack(attacks.get("FastUpAtk"));
+                    attack(attacks.get("FastUpAtk"), 1);
                 }
                 else if (keysPressed[getDKey()]){
-                    attack(attacks.get("FastDownAtk"));
+                    attack(attacks.get("FastDownAtk"), 1);
                 }
                 else{
-                    attack(attacks.get("FastSideAtk"));
+                    attack(attacks.get("FastSideAtk"), 1);
                 }
+            }
 
+            else if (keysPressed[chargeKey]){
+                chargeShotSize = Math.min(chargeShotSize+1, 50);
+            }
+
+            else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
+                attack("ChargeSideAtk");
+                keysReleasedTime[chargeKey] = 0;
             }
         }
     }
 
-    public void attack(Attack a){
-        
+    public void attack(String atkName){
+        double scale = 1;
+        if (atkName == "ChargeSideAtk"){
+            scale = chargeShotSize/10;
+            chargeShotSize = 0;
+        }
+        attack(attacks.get(atkName), scale);
+    }
+
+    public void attack(Attack a, double factor){
+        // System.out.println(factor);
         for (Hitbox h : a.getHitboxes()){
             Hitbox toAdd = h.cloneHitbox();
             toAdd.setX(getX() + toAdd.getOffsetX());
             toAdd.setY(getY() + toAdd.getOffsetY());
             toAdd.setVX(toAdd.getVX()*dir);
             toAdd.setAX(toAdd.getAX()*dir);
-            toAdd.setKnockBackX(toAdd.getKnockBackX()*dir);
+            toAdd.setKnockBackX(toAdd.getKnockBackX()*dir*factor);
+
+            //for charged attacks
+            toAdd.setWidth(toAdd.getWidth() * factor);
+            toAdd.setHeight(toAdd.getHeight() * factor);
+            
             addHitBox(toAdd);
         }
         setCoolDown(a.getCoolDown());
@@ -282,6 +302,7 @@ public class EvenBetterPlayer extends Mover{
 
     public void draw(Graphics g){
         g.setColor(Color.BLUE);
+        if (chargeShotSize == 50) g.setColor(Color.CYAN);
         if (stunTime > 0) g.setColor(Color.RED);
         g.fillRect((int)getX(), (int)getY(), (int)width, (int)height);
     }
