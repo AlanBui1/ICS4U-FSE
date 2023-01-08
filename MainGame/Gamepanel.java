@@ -11,14 +11,15 @@ import javax.swing.*;
 import AttackStuff.Hitbox;
 import ThingsThatMove.EvenBetterPlayer;
 import ThingsThatMove.Platform;
+import Utility.Util;
 import AttackStuff.Attack;
 
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
     private boolean [] keysPressed;
 	private int [] keysHeldTime, keysReleasedTime;
 	private ArrayList <Platform> platforms;
-	public static final HashMap <String, Double> shooterStats = new HashMap<String, Double>(); //statName -> value
-	public static final HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
+	public static  HashMap <String, Double> shooterStats = new HashMap<String, Double>(); //statName -> value
+	public static  HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
 
     Timer timer;
     EvenBetterPlayer p2; 
@@ -43,62 +44,15 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		platforms.add(new Platform(250, 240, 100, 1));
 		platforms.add(new Platform(300, 300, WIDTH-300, 300));
 
-		try{
-			Scanner shooterFile = new Scanner(new BufferedReader(new FileReader("shooterStats.txt"))); 
-			for (int i=1; i<=11; i++){ //CHANGE THE 11 to however many fields there are
-				String name = shooterFile.next();
-				Double val = shooterFile.nextDouble();
-				shooterFile.nextLine();
-				shooterStats.put(name, val);
-			}
-
-			String curName; //name of the current attack that's being loaded in
-			int numHitboxes;
-
-			while (true){
-				String name = shooterFile.next();
-				if (name.equals("---END---")) break;
-				if (name.contains("---")){
-					curName = name.replaceAll("-", "");
-					numHitboxes = shooterFile.nextInt();
-					shooterFile.nextLine();
-
-					shooterAtks.put(curName, new Attack());
-
-					for (int i=0; i<numHitboxes; i++){
-						HashMap <String, Double> hitStats = new HashMap<String, Double>();
-
-						for (int k=0; k<14; k++){ //CHANGE THE 14 to however many fields there are
-							String KEY = shooterFile.next();
-							Double val = shooterFile.nextDouble();
-							shooterFile.nextLine();
-							//System.out.println(KEY + " " + val);
-							hitStats.put(KEY, val);
-						}
-						shooterAtks.get(curName).addHitbox(new Hitbox(hitStats));
-						
-					}
-
-					shooterFile.next();
-					int cdown = shooterFile.nextInt();
-					shooterFile.nextLine();
-					shooterAtks.get(curName).setCoolDown(cdown);
-				}
-				
-			}
-
-			shooterFile.close();
-		}
-		catch (IOException e){
-
-		}
+		shooterStats= Util.loadStats("shooterStats.txt");
+		shooterAtks = Util.loadAtks("shooterAtks.txt");;
 
 		p1 = new EvenBetterPlayer(400, 30, shooterStats, shooterAtks);
         p1.setDKey(KeyEvent.VK_S);
         p1.setLKey(KeyEvent.VK_A);
         p1.setRKey(KeyEvent.VK_D);
         p1.setUKey1(KeyEvent.VK_W);
-        p1.setUKey2(KeyEvent.VK_Q);
+        p1.setChargeKey(KeyEvent.VK_Q);
 		p1.setFastKey(KeyEvent.VK_E);
 
 		p2 = new EvenBetterPlayer(300, 30, shooterStats, shooterAtks);
@@ -106,29 +60,29 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
         p2.setLKey(KeyEvent.VK_J);
         p2.setRKey(KeyEvent.VK_L);
         p2.setUKey1(KeyEvent.VK_I);
-        p2.setUKey2(KeyEvent.VK_U);
+		p2.setChargeKey(KeyEvent.VK_U);
 		p2.setFastKey(KeyEvent.VK_O);
 	}
 
     public void move(){		
 		try{
-		if (p1.getStun() > 0) p1.addStun(-1);
-		if (p2.getStun() > 0) p2.addStun(-1);
-		
-		p1.setCoolDown(p1.getCoolDown()-1);
-        p1.move(keysPressed, keysReleasedTime, platforms);
-		p1.attack(keysPressed);
-		p2.setCoolDown(p2.getCoolDown()-1);
-        p2.move(keysPressed, keysReleasedTime, platforms);
-		p2.attack(keysPressed);
+			if (p1.getStun() > 0) p1.addStun(-1);
+			if (p2.getStun() > 0) p2.addStun(-1);
+			
+			p1.setCoolDown(p1.getCoolDown()-1);
+			p1.attack(keysPressed, keysReleasedTime);
+			p1.move(keysPressed, keysReleasedTime, platforms);
+			p2.setCoolDown(p2.getCoolDown()-1);
+			p2.move(keysPressed, keysReleasedTime, platforms);
+			p2.attack(keysPressed, keysReleasedTime);
 
-		// System.out.println(p1.getVX());
-		// System.out.println(p2.getX());
+			// System.out.println(p1.getVX());
+			// System.out.println(p2.getX());
 
-		checkCollisions();
+			checkCollisions();
+		}
+		catch(Exception e){}
 	}
-	catch(Exception e){}
-    }
 
 	public void checkCollisions(){
 		ArrayList<Hitbox> toDelH = new ArrayList<Hitbox>();
@@ -155,8 +109,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 				keysHeldTime[i]++;
 			}
 		}
-
-		// System.out.println(keysPressed[KeyEvent.VK_W] + " " + keysHeldTime[KeyEvent.VK_W] + " " + keysReleasedTime[KeyEvent.VK_W]);
+		
+		// System.out.println(keysPressed[KeyEvent.VK_E] + " " + keysHeldTime[KeyEvent.VK_E] + " " + keysReleasedTime[KeyEvent.VK_E]);
 		move(); 	// never draw in move
 		repaint(); 	// only draw
 	}

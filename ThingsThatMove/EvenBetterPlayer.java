@@ -9,7 +9,7 @@ import AttackStuff.*;
 public class EvenBetterPlayer extends Mover{
     public static final int LEFT = -1, RIGHT = 1;
 
-    private int LKey, RKey, UKey1, UKey2, DKey, fastKey; //keys used to move in respective directions
+    private int LKey, RKey, UKey1, DKey, fastKey, chargeKey; //keys used to move in respective directions
 
     private double  weight, //weight () is a measure of how much a Player can resist knockback i.e. more weight => less knockback
                     airaccel, //airaccel (pixels / frame^2) is the rate a Player can change their horizontal velocity midair
@@ -146,21 +146,19 @@ public class EvenBetterPlayer extends Mover{
                 
             }
 
-            if (keysPressed[UKey1] || keysPressed[UKey2]){
+            if (keysPressed[UKey1]){
                 if (keysPressed[UKey1]){
                     if (jump1){
                         // // setVY(getVY() - 20);
                         // addForce(new Force(0, -800, 1, 0));
                         setVY(-jumpforce);
+                        if (keysPressed[DKey]) setVY(-jumpforce*.85);
                         jump1 = false;
                         onGround = false;
                     }
-                }
-                else if (keysPressed[UKey2]){
-                    if (jump2){
-                        // addForce(new Force(0, -1000, 1, 0));
-                        // setVY(getVY() - 20);
-                        setVY(-jumpforce*.85);
+
+                    else if (jump2 && getVY() > 0){
+                        setVY(-jumpforce*.95);
                         jump2 = false;
                         onGround = false;
                     }
@@ -225,7 +223,6 @@ public class EvenBetterPlayer extends Mover{
 			// currently overlaps
 			if(guyr.intersects(p.getRect())){
 				// moving down
-                onGround = true;
 				if(getVY() > 0){
 					// caused by moving down
 					if(!guyrNoVY.intersects(p.getRect())){
@@ -247,8 +244,13 @@ public class EvenBetterPlayer extends Mover{
         setAY(0);
     }
 
-    public void attack(boolean [] keysPressed){
+    public void attack(boolean [] keysPressed, int [] keysReleasedTime){
         if (getCoolDown() <= 0){
+            
+            if (1 <= keysReleasedTime[getFastKey()] && keysReleasedTime[getFastKey()] <= 5){
+                attack(attacks.get("BonusAtk"));
+                keysReleasedTime[getFastKey()] = 0;
+            }
             if (keysPressed[getFastKey()]){
                 if (keysPressed[getUKey1()]){
                     attack(attacks.get("FastUpAtk"));
@@ -259,6 +261,7 @@ public class EvenBetterPlayer extends Mover{
                 else{
                     attack(attacks.get("FastSideAtk"));
                 }
+
             }
         }
     }
@@ -267,8 +270,8 @@ public class EvenBetterPlayer extends Mover{
         
         for (Hitbox h : a.getHitboxes()){
             Hitbox toAdd = h.cloneHitbox();
-            toAdd.setX(getX() - toAdd.getOffsetX());
-            toAdd.setY(getY() - toAdd.getOffsetY());
+            toAdd.setX(getX() + toAdd.getOffsetX());
+            toAdd.setY(getY() + toAdd.getOffsetY());
             toAdd.setVX(toAdd.getVX()*dir);
             toAdd.setAX(toAdd.getAX()*dir);
             toAdd.setKnockBackX(toAdd.getKnockBackX()*dir);
@@ -279,6 +282,7 @@ public class EvenBetterPlayer extends Mover{
 
     public void draw(Graphics g){
         g.setColor(Color.BLUE);
+        if (stunTime > 0) g.setColor(Color.RED);
         g.fillRect((int)getX(), (int)getY(), (int)width, (int)height);
     }
 
@@ -304,8 +308,8 @@ public class EvenBetterPlayer extends Mover{
     public void setLKey(int k){LKey = k;}
     public void setRKey(int k){RKey = k;}
     public void setUKey1(int k){UKey1 = k;}
-    public void setUKey2(int k){UKey2 = k;}
     public void setDKey(int k){DKey = k;}
     public void setFastKey(int k){fastKey = k;}
+    public void setChargeKey(int k){chargeKey = k;}
     public void setCoolDown(int time){atkCooldown = time;}
 }

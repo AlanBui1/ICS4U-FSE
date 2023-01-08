@@ -23,14 +23,14 @@ public class Hitbox extends Mover{
 
     public Hitbox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double MAXVX, double MAXVY, double T, double knockBackX, double knockBackY, int stunTime){
         super(X, Y, VX, VY, AX, AY, MAXVX, MAXVY);
-
+        startOffsetX = X; startOffsetY = Y;
         w = W; h = H;
         time = T;
         knockBack = new Force(knockBackX, knockBackY, stunTime);
     }
 
     public Hitbox cloneHitbox(){
-        return new Hitbox(getX(), getY(), getWidth(), getHeight(), getVX(), getVY(), getAX(), getAY(), getMAXVX(), getMAXVY(), getTime(), knockBack.getMX(), knockBack.getMY(), knockBack.getStun());
+        return new Hitbox(getKnockBackX(), getKnockBackY(), getWidth(), getHeight(), getVX(), getVY(), getAX(), getAY(), getMAXVX(), getMAXVY(), getTime(), knockBack.getMX(), knockBack.getMY(), knockBack.getStun());
     }
     
     public double getTime(){return time;};
@@ -55,7 +55,6 @@ public class Hitbox extends Mover{
 
     @Override
     public void move(){
-        System.out.println(getVX());
         time --;
         if (time < 0){
             return;
