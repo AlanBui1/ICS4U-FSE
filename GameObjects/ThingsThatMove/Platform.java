@@ -1,4 +1,4 @@
-package ThingsThatMove;
+package GameObjects.ThingsThatMove;
 import java.awt.*;
 
 public class Platform extends Mover{

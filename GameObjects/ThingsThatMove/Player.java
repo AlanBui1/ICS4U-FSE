@@ -10,7 +10,7 @@ import MainGame.*;
 public class Player extends Mover{
     public static final int LEFT = -1, RIGHT = 1;
 
-    private int LKey, RKey, UKey1, DKey, fastKey, chargeKey; //keys used to move in respective directions
+    private int LKey, RKey, UKey, DKey, fastKey, chargeKey; //keys used to move in respective directions
 
     private double  weight, //weight () is a measure of how much a Player can resist knockback i.e. more weight => less knockback
                     airaccel, //airaccel (pixels / frame^2) is the rate a Player can change their horizontal velocity midair
@@ -25,10 +25,12 @@ public class Player extends Mover{
                     height; //height (pixels) is the number of pixels high the Player is
 
     private int stunTime, dir, atkCooldown;
-    private double chargeShotSize;
+    private double  chargedMoveSize,
+                    damage;
 
     private boolean jump1, //jump1 is true if the Player can use their first jump
                     jump2, //jump2 is true if the Player can use their second jump
+                    jump3, //jump3 is true if the Player can use their ChargeUpAtk 
                     onGround; //onGround is true if the Player is on a platform
 
     ArrayList <Hitbox> hitboxes; //hitboxes the Player sends out e.g. bullets
@@ -54,7 +56,8 @@ public class Player extends Mover{
         attacks = atks;
         stunTime = 0;
         atkCooldown = 0;
-        chargeShotSize= 0;
+        chargedMoveSize= 0;
+        damage = 0;
         dir =1;
         onGround = false;
         hitboxes = new ArrayList<Hitbox>();
@@ -111,6 +114,7 @@ public class Player extends Mover{
             if (onGround){ //on temporary ground
                 jump1 = true;
                 jump2 = true;
+                jump3 = true;
                 setVY(0);
             }
 
@@ -149,7 +153,7 @@ public class Player extends Mover{
                 
             }
 
-            if (keysPressed[UKey1]){
+            if (keysPressed[UKey]){
                 if (jump1){
                     setVY(-jumpforce);
                     if (keysPressed[DKey]) setVY(-jumpforce*.85);
@@ -241,17 +245,18 @@ public class Player extends Mover{
         setVY(0);
         setAX(0);
         setAY(0);
+        damage = 0;
     }
 
     public void attack(boolean [] keysPressed, int [] keysReleasedTime){
         if (getCoolDown() <= 0){
             
-            if (1 <= keysReleasedTime[getFastKey()] && keysReleasedTime[getFastKey()] <= 5){
+            if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 5){
                 attack(attacks.get("BonusAtk"), 1);
-                keysReleasedTime[getFastKey()] = 0;
+                keysReleasedTime[fastKey] = 0;
             }
-            if (keysPressed[getFastKey()]){
-                if (keysPressed[getUKey1()]){
+            if (keysPressed[fastKey]){
+                if (keysPressed[UKey]){
                     attack(attacks.get("FastUpAtk"), 1);
                 }
                 else if (keysPressed[getDKey()]){
@@ -263,11 +268,22 @@ public class Player extends Mover{
             }
 
             else if (keysPressed[chargeKey]){
-                chargeShotSize = Math.min(chargeShotSize+1, 50);
+                chargedMoveSize = Math.min(chargedMoveSize+1, 50);
             }
 
             else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
-                attack("ChargeSideAtk");
+                if (keysPressed[UKey]){
+                    if (jump3){
+                        jump3 = false;
+                        setVY(-jumpforce);
+                        attack("ChargeUpAtk");
+                    }
+                    
+                }
+                else{
+                    attack("ChargeSideAtk");
+                }
+
                 keysReleasedTime[chargeKey] = 0;
             }
         }
@@ -275,9 +291,9 @@ public class Player extends Mover{
 
     public void attack(String atkName){
         double scale = 1;
-        if (atkName == "ChargeSideAtk"){
-            scale = chargeShotSize/10;
-            chargeShotSize = 0;
+        if (atkName.contains("Charge")){
+            scale = chargedMoveSize/10;
+            chargedMoveSize = 0;
         }
         attack(attacks.get(atkName), scale);
     }
@@ -303,33 +319,35 @@ public class Player extends Mover{
 
     public void draw(Graphics g){
         g.setColor(Color.BLUE);
-        if (chargeShotSize == 50) g.setColor(Color.CYAN);
+        if (chargedMoveSize == 50) g.setColor(Color.CYAN);
         if (stunTime > 0) g.setColor(Color.RED);
         g.fillRect((int)getX(), (int)getY(), (int)width, (int)height);
     }
 
-    public void addHitBox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double KBX, double KBY, int stun){hitboxes.add(new Hitbox(X, Y, W, H, VX, VY, AX, AY, Double.MAX_VALUE, Double.MAX_VALUE, KBX, KBY, 10, stun));}
-    public void addHitBox(Mover m, Force f, double w, double h, double time){hitboxes.add(new Hitbox(m.getX(), m.getY(), w, h, m.getVX(), m.getVY(), m.getAX(), m.getAY(), m.getMAXVX(), m.getMAXVY(), time, f.getMX(), f.getMY(), f.getStun()));}
     public void addHitBox(Hitbox h){hitboxes.add(h);}
 
     public void addForce(double magX, double magY, int stun){forces.add(new Force(magX, magY, stun));}
     public void addForce(Force f){forces.add(f);}
 
     public void addStun(int time){stunTime += time;}
+
+    public void addDamage(double d){damage += d;}
     
     public Rectangle getRect(){return new Rectangle((int)getX(), (int)getY(), (int)width+1, (int)height+1);}
 
     public int getCoolDown(){return atkCooldown;}
     public int getFastKey(){return fastKey;}
-    public int getUKey1(){return UKey1;}
+    public int getUKey(){return UKey;}
     public int getDKey(){return DKey;}
     public int getDir(){return dir;}
     public int getStun(){return stunTime;}
+    public double getWeight(){return weight;}
+    public double getDamage(){return damage;}
     public ArrayList <Hitbox> getHitBoxes(){return hitboxes;} 
     
     public void setLKey(int k){LKey = k;}
     public void setRKey(int k){RKey = k;}
-    public void setUKey1(int k){UKey1 = k;}
+    public void setUKey(int k){UKey = k;}
     public void setDKey(int k){DKey = k;}
     public void setFastKey(int k){fastKey = k;}
     public void setChargeKey(int k){chargeKey = k;}

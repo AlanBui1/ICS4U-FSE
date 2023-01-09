@@ -6,64 +6,58 @@ import GameObjects.ThingsThatMove.Mover;
 
 public class Hitbox extends Mover{
     private double w, h, time;
-    private double startOffsetX, startOffsetY;
-    private Force knockBack;
+    private double  startOffsetX, 
+                    startOffsetY,
+                    baseKnockbackX,
+                    baseKnockbackY,
+                    damage;
+
+    private HashMap<String, Double> data; 
+    private int stunTime;
 
     public Hitbox(HashMap <String, Double> stats){
-        super(-1,
-              -1, 
-              stats.get("vx"), 
-              stats.get("vy"), 
-              stats.get("ax"), 
-              stats.get("ay"), 
-              stats.get("maxvx"), 
-              stats.get("maxvy")
-            );
+        super(stats);
         
         w = stats.get("width");
         h = stats.get("height");
         time = stats.get("timeactive");
         startOffsetX = stats.get("startoffsetx");
         startOffsetY = stats.get("startoffsety");
-        // knockBack = new Force() TO DO FINISH THIS with knockback growth and base knockback
-        knockBack = new Force((double)stats.get("basekbx"), (double)stats.get("basekby"), (int)(double)stats.get("stuntime")); 
-    }
+        baseKnockbackX = (double)stats.get("basekbx");
+        baseKnockbackY = (double)stats.get("basekby");
+        stunTime = (int)(double)stats.get("stuntime");
+        damage = stats.get("damage");
 
-    public Hitbox(double X, double Y, double W, double H, double VX, double VY, double AX, double AY, double MAXVX, double MAXVY, double T, double knockBackX, double knockBackY, int stunTime){
-        super(X, Y, VX, VY, AX, AY, MAXVX, MAXVY);
-        startOffsetX = X; startOffsetY = Y;
-        w = W; h = H;
-        time = T;
-        knockBack = new Force(knockBackX, knockBackY, stunTime);
+        data = stats;
     }
 
     // TO DO USE MORE HASHMAPS
 
     public Hitbox cloneHitbox(){
-        return new Hitbox(getKnockBackX(), getKnockBackY(), getWidth(), getHeight(), getVX(), getVY(), getAX(), getAY(), getMAXVX(), getMAXVY(), getTime(), knockBack.getMX(), knockBack.getMY(), knockBack.getStun());
+        return new Hitbox(data);
     }
     
     public double getTime(){return time;};
     public Rectangle getRect(){return new Rectangle((int)this.getX(), (int)this.getY(), (int)w, (int)h);}
-    public Force getForce(){return knockBack;}
     public double getOffsetX(){return startOffsetX;}
     public double getOffsetY(){return startOffsetY;}
     public double getWidth(){return w;}
     public double getHeight(){return h;}
-    public double getKnockBackX(){return knockBack.magnitudeX;}
-    public double getKnockBackY(){return knockBack.magnitudeY;}
+    public double getKnockBackX(){return baseKnockbackX;}
+    public double getKnockBackY(){return baseKnockbackY;}
+    public double getDamage(){return damage;}
 
     public void addTime(double t){
         time += t;
     }
     public int getStun(){
-        return knockBack.getStun();
+        return stunTime;
     }
 
-    public void setKnockBackX(double kb){knockBack.setMX(kb);}
-    public void setKnockBackY(double kb){knockBack.setMX(kb);}
     public void setWidth(double W){w = W;}
     public void setHeight(double H){h = H;}
+    public void setKnockBackX(double kb){baseKnockbackX = kb;}
+    public void setKnockBackY(double kb){baseKnockbackY = kb;}
 
     @Override
     public void move(){

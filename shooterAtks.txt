@@ -13,6 +13,7 @@ width 7
 height 7
 timeactive 20
 stuntime 10
+damage 4
 cooldown 10
 ---FastDownAtk--- 1
 basekbx 0
@@ -29,6 +30,7 @@ width 20
 height 20
 timeactive 15
 stuntime 10
+damage 4
 cooldown 15
 ---FastUpAtk--- 1
 basekbx 0
@@ -45,6 +47,7 @@ width 7
 height 7
 timeactive 15
 stuntime 10
+damage 4
 cooldown 15
 ---BonusAtk--- 4
 basekbx 5
@@ -61,6 +64,7 @@ width 7
 height 7
 timeactive 15
 stuntime 10
+damage 4
 basekbx 5
 basekby -5
 startoffsetx 10
@@ -75,6 +79,7 @@ width 7
 height 7
 timeactive 15
 stuntime 10
+damage 4
 basekbx -5
 basekby 5
 startoffsetx 10
@@ -89,6 +94,7 @@ width 7
 height 7
 timeactive 15
 stuntime 10
+damage 4
 basekbx -5
 basekby -5
 startoffsetx 10
@@ -103,10 +109,11 @@ width 7
 height 7
 timeactive 15
 stuntime 10
+damage 4
 cooldown 0
 ---ChargeSideAtk--- 1
 basekbx 5
-basekby -5
+basekby -20
 startoffsetx 10
 startoffsety 15
 vx 5
@@ -119,5 +126,23 @@ width 10
 height 10
 timeactive 70
 stuntime 10
+damage 4
+cooldown 30
+---ChargeUpAtk--- 1
+basekbx 5
+basekby -30
+startoffsetx 10
+startoffsety 15
+vx 0
+vy -20
+ax 0
+ay 2
+maxvx 0
+maxvy 0
+width 10
+height 10
+timeactive 10
+stuntime 1
+damage 4
 cooldown 30
 ---END---

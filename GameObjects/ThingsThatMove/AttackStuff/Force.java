@@ -1,4 +1,4 @@
-package ThingsThatMove.AttackStuff;
+package GameObjects.ThingsThatMove.AttackStuff;
 public class Force {
     String name;
     double magnitudeX, magnitudeY;

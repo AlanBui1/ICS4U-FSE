@@ -8,10 +8,10 @@ import java.io.*;
 
 import javax.swing.*;
 
-import ThingsThatMove.EvenBetterPlayer;
-import ThingsThatMove.Platform;
-import ThingsThatMove.AttackStuff.Attack;
-import ThingsThatMove.AttackStuff.Hitbox;
+import GameObjects.ThingsThatMove.Player;
+import GameObjects.ThingsThatMove.Platform;
+import GameObjects.ThingsThatMove.AttackStuff.*;
+import GameObjects.ThingsThatMove.AttackStuff.Hitbox;
 import Utility.Util;
 
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
@@ -22,8 +22,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	public static  HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
 
     Timer timer;
-    EvenBetterPlayer p2; 
-	EvenBetterPlayer p1;
+    Player p2; 
+	Player p1;
     public static final int WIDTH = 800, HEIGHT = 600;
 
 	public Gamepanel(){
@@ -47,19 +47,19 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		shooterStats= Util.loadStats("shooterStats.txt");
 		shooterAtks = Util.loadAtks("shooterAtks.txt");;
 
-		p1 = new EvenBetterPlayer(400, 30, shooterStats, shooterAtks);
+		p1 = new Player(400, 30, shooterStats, shooterAtks);
         p1.setDKey(KeyEvent.VK_S);
         p1.setLKey(KeyEvent.VK_A);
         p1.setRKey(KeyEvent.VK_D);
-        p1.setUKey1(KeyEvent.VK_W);
+        p1.setUKey(KeyEvent.VK_W);
         p1.setChargeKey(KeyEvent.VK_Q);
 		p1.setFastKey(KeyEvent.VK_E);
 
-		p2 = new EvenBetterPlayer(300, 30, shooterStats, shooterAtks);
+		p2 = new Player(300, 30, shooterStats, shooterAtks);
 		p2.setDKey(KeyEvent.VK_K);
         p2.setLKey(KeyEvent.VK_J);
         p2.setRKey(KeyEvent.VK_L);
-        p2.setUKey1(KeyEvent.VK_I);
+        p2.setUKey(KeyEvent.VK_I);
 		p2.setChargeKey(KeyEvent.VK_U);
 		p2.setFastKey(KeyEvent.VK_O);
 	}
@@ -89,8 +89,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		for (Hitbox h : p1.getHitBoxes()){
 			if (p2.getRect().intersects(h.getRect())){
 				toDelH.add(h);
-				//System.out.println("ASDJASILL");
-				p2.addForce(h.getForce());
+				p2.addForce(new Force(Util.knockBack(h.getKnockBackX(), p2.getWeight(), p2.getDamage()), Util.knockBack(h.getKnockBackY(), p2.getWeight(), p2.getDamage()), h.getStun())); //FORMULA TO DO
 				// p2.loseLife();
 			}
 		}
@@ -98,6 +97,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		for (Hitbox h : toDelH){
 			p2.addStun(h.getStun());
 			p1.getHitBoxes().remove(h);
+			p2.addDamage(h.getDamage());
 		}
 		//System.out.println(p2.getStun());
 	}
@@ -188,9 +188,13 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		for (Hitbox h : p1.getHitBoxes()){
 			h.draw(g);
 		}
+
+		g.drawString(""+p1.getDamage(), 40, 40);
+
 		p2.draw(g);
 		for (Hitbox h : p2.getHitBoxes()){
 			h.draw(g);
 		}
+		g.drawString(""+p2.getDamage(), 740, 40);
     }
 }

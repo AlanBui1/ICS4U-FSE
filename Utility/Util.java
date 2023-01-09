@@ -3,7 +3,7 @@ import java.util.*;
 import java.awt.*;
 import javax.swing.*;
 
-import ThingsThatMove.AttackStuff.*;
+import GameObjects.ThingsThatMove.AttackStuff.*;
 
 import java.io.*;
 
@@ -24,6 +24,10 @@ public class Util {
 	public static Image loadScaledImg(String fileName, int width, int height){ //returns scaled Image with file name fileName, width, and height
 		Image img = loadImg(fileName);
 		return img.getScaledInstance(width, height, Image.SCALE_SMOOTH); //returns scaled image
+	}
+
+	public static double knockBack(double base, double weight, double damage){
+		return base * (100 / weight) * (damage / 100);
 	}
 
 	public static HashMap <String, Double> loadStats(String fileName){
@@ -63,11 +67,10 @@ public class Util {
 				for (int i=0; i<numHitboxes; i++){
 					HashMap <String, Double> hitStats = new HashMap<String, Double>();
 
-					for (int k=0; k<14; k++){ //CHANGE THE 14 to however many fields there are
+					for (int k=0; k<15; k++){ //CHANGE THE 15 to however many fields there are
 						String KEY = inFile.next();
 						Double val = inFile.nextDouble();
 						inFile.nextLine();
-						//System.out.println(KEY + " " + val);
 						hitStats.put(KEY, val);
 					}
 					atks.get(curName).addHitbox(new Hitbox(hitStats));

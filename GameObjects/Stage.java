@@ -1,5 +1,8 @@
+package GameObjects;
 import java.util.ArrayList;
-import ThingsThatMove.Platform;
+
+import GameObjects.ThingsThatMove.Platform;
+
 import java.awt.*;
 
 public class Stage {

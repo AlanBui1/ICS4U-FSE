@@ -1,4 +1,7 @@
 package GameObjects.ThingsThatMove;
+
+import java.util.HashMap;
+
 public class Mover {
     private double  x, //x coordinate
                     y, //y coordinate
@@ -9,20 +12,6 @@ public class Mover {
                     maxVX, //maximum velocity in the x direction,
                     maxVY; //maximum velocity in the y direction
 
-    public Mover(double X, double Y, double VX, double VY, double AX, double AY){
-        x = X; y = Y;
-        vx = VX; vy = VY;
-        ax = AX; ay = AY;
-        maxVX = Double.MAX_VALUE; maxVY = Double.MAX_VALUE;
-    }
-
-    public Mover(double X, double Y, double VX, double VY){
-        x = X; y = Y;
-        vx = VX; vy = VY;
-        ax = 0; ay = 0;
-        maxVX = Double.MAX_VALUE; maxVY = Double.MAX_VALUE;
-    }
-
     public Mover(double X, double Y){
         x = X; y = Y;
         vx = 0; vy = 0;
@@ -30,11 +19,13 @@ public class Mover {
         maxVX = Double.MAX_VALUE; maxVY = Double.MAX_VALUE;
     }
 
-    public Mover(double X, double Y, double VX, double VY, double AX, double AY, double MAXVX, double MAXVY){
-        x = X; y = Y;
-        vx = VX; vy = VY;
-        ax = AX; ay = AY;
-        maxVX = MAXVX; maxVY = MAXVY;
+    public Mover(HashMap <String, Double> stats){
+        vx = stats.get("vx");
+        vy = stats.get("vy"); 
+        ax = stats.get("ax"); 
+        ay = stats.get("ay"); 
+        maxVX = stats.get("maxvx"); 
+        maxVY = stats.get("maxvy");
     }
 
     public void move(){
