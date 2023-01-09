@@ -299,7 +299,6 @@ public class Player extends Mover{
     }
 
     public void attack(Attack a, double factor){
-        // System.out.println(factor);
         for (Hitbox h : a.getHitboxes()){
             Hitbox toAdd = h.cloneHitbox();
             toAdd.setX(getX() + toAdd.getOffsetX());

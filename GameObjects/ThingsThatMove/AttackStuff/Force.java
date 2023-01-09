@@ -1,6 +1,5 @@
 package GameObjects.ThingsThatMove.AttackStuff;
 public class Force {
-    String name;
     double magnitudeX, magnitudeY;
     int origTime, stunTime;
 
@@ -10,9 +9,6 @@ public class Force {
         stunTime = stun;
     }
 
-    public String getName(){
-        return name;
-    }
     public double getMX(){
         return magnitudeX;
     }

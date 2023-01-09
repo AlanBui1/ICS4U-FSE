@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import GameObjects.ThingsThatMove.AttackStuff.*;
+import MainGame.Gamepanel;
 
 import java.io.*;
 
@@ -27,7 +28,7 @@ public class Util {
 	}
 
 	public static double knockBack(double base, double weight, double damage){
-		return base * (100 / weight) * (damage / 100);
+		return base * (100 / weight) * ((damage+10) / 100);
 	}
 
 	public static HashMap <String, Double> loadStats(String fileName){
@@ -73,8 +74,16 @@ public class Util {
 						inFile.nextLine();
 						hitStats.put(KEY, val);
 					}
-					atks.get(curName).addHitbox(new Hitbox(hitStats));
+
+					String [] stuff = {"basekb", "v", "a", "maxv"};
+					for (int j=0; j<4; j++){
+						hitStats.put(stuff[j] + "x", hitStats.get(stuff[j] + "x") * Gamepanel.WIDTH);
+						hitStats.put(stuff[j] + "y", hitStats.get(stuff[j] + "y") * Gamepanel.HEIGHT);
+					}
+					hitStats.put("width", hitStats.get("width") * Gamepanel.WIDTH);
+					hitStats.put("height", hitStats.get("height") * Gamepanel.HEIGHT);
 					
+					atks.get(curName).addHitbox(new Hitbox(hitStats));
 				}
 
 				inFile.next();
@@ -104,7 +113,6 @@ java Game
 
   later have an arraylist of players probably
   change the draw() in Hitbox for images
-  change Hitbox class to have Polygons hitboxes
-  make a stage class that has Gravity, platforms, etc.
+  change Hitbox class to have Polygons hitboxes -> going to use bunch of rects instead
 
   */

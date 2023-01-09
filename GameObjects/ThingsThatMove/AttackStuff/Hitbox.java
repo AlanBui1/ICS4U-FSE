@@ -3,6 +3,7 @@ import java.awt.*;
 import java.util.HashMap;
 
 import GameObjects.ThingsThatMove.Mover;
+import MainGame.Gamepanel;
 
 public class Hitbox extends Mover{
     private double w, h, time;
@@ -70,6 +71,6 @@ public class Hitbox extends Mover{
 
     public void draw(Graphics g){
         g.setColor(Color.GREEN);
-        g.fillRect((int)this.getX(), (int)this.getY(), (int)w, (int)h);
+        g.fillRect((int)(this.getX()), (int)(this.getY()), (int)w, (int)h);
     }
 }

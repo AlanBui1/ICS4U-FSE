@@ -24,7 +24,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
     Timer timer;
     Player p2; 
 	Player p1;
-    public static final int WIDTH = 800, HEIGHT = 600;
+    public static final int WIDTH = 1600, HEIGHT = 1200;
 
 	public Gamepanel(){
 		keysPressed = new boolean[KeyEvent.KEY_LAST+1];
@@ -76,9 +76,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			p2.move(keysPressed, keysReleasedTime, platforms);
 			p2.attack(keysPressed, keysReleasedTime);
 
-			// System.out.println(p1.getVX());
-			// System.out.println(p2.getX());
-
 			checkCollisions();
 		}
 		catch(Exception e){}
@@ -89,8 +86,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		for (Hitbox h : p1.getHitBoxes()){
 			if (p2.getRect().intersects(h.getRect())){
 				toDelH.add(h);
-				p2.addForce(new Force(Util.knockBack(h.getKnockBackX(), p2.getWeight(), p2.getDamage()), Util.knockBack(h.getKnockBackY(), p2.getWeight(), p2.getDamage()), h.getStun())); //FORMULA TO DO
-				// p2.loseLife();
+				p2.addForce(new Force(Util.knockBack(h.getKnockBackX(), p2.getWeight(), p2.getDamage()), 
+									  Util.knockBack(h.getKnockBackY(), p2.getWeight(), p2.getDamage()), 
+									  h.getStun()));
 			}
 		}
 
@@ -154,9 +152,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		platforms.get(0).draw(g, Color.BLUE);
 		platforms.get(1).draw(g, Color.GREEN);
-		// for (Platform p : platforms){
-		// 	p.draw(g);
-		// }
 
 		// DRAWING LIVES
 		Polygon test = new Polygon(new int []{10+300, 25+300, 40+300, 25+300}, new int []{25+250,40+250,25+250,10+250}, 4);
