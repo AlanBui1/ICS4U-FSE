@@ -201,7 +201,7 @@ public class Player extends Mover{
             setVY(Math.min(getVY() + gravity, fallspd));
         }
 
-        if (Math.abs(getVX()) < 1){
+        if (Math.abs(getVX()) < 2){
             setVX(0);
         }
 
@@ -252,38 +252,37 @@ public class Player extends Mover{
         if (getCoolDown() <= 0){
             
             if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 5){
-                attack(attacks.get("BonusAtk"), 1);
+                attack("BonusAtk", 1);
                 keysReleasedTime[fastKey] = 0;
             }
             if (keysPressed[fastKey]){
                 if (keysPressed[UKey]){
-                    attack(attacks.get("FastUpAtk"), 1);
+                    attack("FastUpAtk", 1);
                 }
                 else if (keysPressed[getDKey()]){
-                    attack(attacks.get("FastDownAtk"), 1);
+                    attack("FastDownAtk", 1);
                 }
                 else{
-                    attack(attacks.get("FastSideAtk"), 1);
+                    attack("FastSideAtk", 1);
                 }
             }
 
             else if (keysPressed[chargeKey]){
-                chargedMoveSize = Math.min(chargedMoveSize+1, 50);
-            }
-
-            else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
                 if (keysPressed[UKey]){
                     if (jump3){
                         jump3 = false;
                         setVY(-jumpforce);
                         attack("ChargeUpAtk");
-                    }
-                    
+                    }   
                 }
-                else{
-                    attack("ChargeSideAtk");
-                }
+                else chargedMoveSize = Math.min(chargedMoveSize+1, 50);
+            }
 
+            else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
+                if (keysPressed[DKey]){
+                    attack("ChargeDownAtk");
+                }
+                else attack("ChargeSideAtk");
                 keysReleasedTime[chargeKey] = 0;
             }
         }
@@ -292,21 +291,23 @@ public class Player extends Mover{
     public void attack(String atkName){
         double scale = 1;
         if (atkName.contains("Charge")){
-            scale = chargedMoveSize/10;
+            scale = chargedMoveSize/50;
             chargedMoveSize = 0;
         }
-        attack(attacks.get(atkName), scale);
+        attack(atkName, scale);
     }
 
-    public void attack(Attack a, double factor){
+    public void attack(String name, double factor){
+        Attack a = attacks.get(name);
         for (Hitbox h : a.getHitboxes()){
             Hitbox toAdd = h.cloneHitbox();
-            toAdd.setX(getX() + toAdd.getOffsetX());
-            toAdd.setY(getY() + toAdd.getOffsetY());
+            if (name.contains("Side")) toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*factor*(dir > 0 ? 0 : 1));
+            else toAdd.setX(getX() + toAdd.getOffsetX() - (toAdd.getWidth()/2)*factor);
+            
+            toAdd.setY(getY() + toAdd.getOffsetY() - (toAdd.getHeight()/2)*factor);
             toAdd.setVX(toAdd.getVX()*dir);
             toAdd.setAX(toAdd.getAX()*dir);
             toAdd.setKnockBackX(toAdd.getKnockBackX()*dir*factor);
-
             //for charged attacks
             toAdd.setWidth(toAdd.getWidth() * factor);
             toAdd.setHeight(toAdd.getHeight() * factor);

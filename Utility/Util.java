@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import GameObjects.ThingsThatMove.AttackStuff.*;
+import MainGame.Game;
 import MainGame.Gamepanel;
 
 import java.io.*;
@@ -42,6 +43,16 @@ public class Util {
 				stats.put(name, val);
 			}
 			inFile.close();
+
+			String [] statsY = {"height", "gravity", "fallspd", "jumpforce"},
+					  statsX = {"width", "runspd", "airspd", "airaccel", "groundfriction", "airfriction"};
+			for (int i=0; i<statsX.length; i++){
+				stats.put(statsX[i], stats.get(statsX[i]) * Gamepanel.WIDTH);		
+			}
+			for (int i=0; i<statsY.length; i++){
+				stats.put(statsY[i], stats.get(statsY[i]) * Gamepanel.HEIGHT);
+			}
+			
 		}
 		catch(IOException e){}
 
@@ -75,8 +86,8 @@ public class Util {
 						hitStats.put(KEY, val);
 					}
 
-					String [] stuff = {"basekb", "v", "a", "maxv"};
-					for (int j=0; j<4; j++){
+					String [] stuff = {"basekb", "v", "a", "maxv", "startoffset"};
+					for (int j=0; j<stuff.length; j++){
 						hitStats.put(stuff[j] + "x", hitStats.get(stuff[j] + "x") * Gamepanel.WIDTH);
 						hitStats.put(stuff[j] + "y", hitStats.get(stuff[j] + "y") * Gamepanel.HEIGHT);
 					}
