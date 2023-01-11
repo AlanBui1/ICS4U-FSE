@@ -30,4 +30,6 @@ public class Platform extends Mover{
     public Rectangle getRect(){
         return new Rectangle((int)getX(), (int)getY(), w, h);
     }
+
+    public int getWidth(){return w;}
 }

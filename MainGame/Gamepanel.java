@@ -9,6 +9,7 @@ import java.io.*;
 import javax.swing.*;
 
 import GameObjects.ThingsThatMove.Player;
+import GameObjects.ThingsThatMove.ShooterAI;
 import GameObjects.ThingsThatMove.Platform;
 import GameObjects.ThingsThatMove.AttackStuff.*;
 import GameObjects.ThingsThatMove.AttackStuff.Hitbox;
@@ -22,7 +23,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	public static  HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
 
     Timer timer;
-    Player p2; 
+    ShooterAI p2; 
 	Player p1;
     public static final int WIDTH = 1600, HEIGHT = 1200;
 
@@ -55,13 +56,14 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
         p1.setChargeKey(KeyEvent.VK_Q);
 		p1.setFastKey(KeyEvent.VK_E);
 
-		p2 = new Player(300, 30, shooterStats, shooterAtks);
+		p2 = new ShooterAI(300, 30, shooterStats, shooterAtks);
 		p2.setDKey(KeyEvent.VK_K);
         p2.setLKey(KeyEvent.VK_J);
         p2.setRKey(KeyEvent.VK_L);
         p2.setUKey(KeyEvent.VK_I);
 		p2.setChargeKey(KeyEvent.VK_U);
 		p2.setFastKey(KeyEvent.VK_O);
+		p2.setKeys();
 	}
 
     public void move(){		
@@ -76,28 +78,28 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			p2.move(keysPressed, keysReleasedTime, platforms);
 			p2.attack(keysPressed, keysReleasedTime);
 
-			checkCollisions();
+			checkCollisions(p1, p2);
+			checkCollisions(p2, p1);
 		}
 		catch(Exception e){}
 	}
 
-	public void checkCollisions(){
+	public void checkCollisions(Player curPlayer, Player oppoPlayer){
 		ArrayList<Hitbox> toDelH = new ArrayList<Hitbox>();
-		for (Hitbox h : p1.getHitBoxes()){
-			if (p2.getRect().intersects(h.getRect())){
+		for (Hitbox h : curPlayer.getHitBoxes()){
+			if (oppoPlayer.getRect().intersects(h.getRect())){
 				toDelH.add(h);
-				p2.addForce(new Force(Util.knockBack(h.getKnockBackX(), p2.getWeight(), p2.getDamage()), 
-									  Util.knockBack(h.getKnockBackY(), p2.getWeight(), p2.getDamage()), 
+				oppoPlayer.addForce(new Force(Util.knockBack(h.getKnockBackX(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
+									  Util.knockBack(h.getKnockBackY(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
 									  h.getStun()));
 			}
 		}
 
 		for (Hitbox h : toDelH){
-			p2.addStun(h.getStun());
-			p1.getHitBoxes().remove(h);
-			p2.addDamage(h.getDamage());
+			oppoPlayer.addStun(h.getStun());
+			curPlayer.getHitBoxes().remove(h);
+			oppoPlayer.addDamage(h.getDamage());
 		}
-		//System.out.println(p2.getStun());
 	}
 	
 	@Override

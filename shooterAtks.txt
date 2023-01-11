@@ -13,7 +13,7 @@ startoffsetx	0.01
 startoffsety	0
 timeactive	15
 stuntime	10
-damage	10
+damage	4
 cooldown 10
 ---FastDownAtk--- 1
 basekbx	0

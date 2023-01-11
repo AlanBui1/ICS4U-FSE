@@ -18,6 +18,9 @@ public class Util {
 	public static double randDouble(double low, double high){ //returns a random double in the range [low, high]
 		return Math.random()*(high-low+1)+low;
 	}
+	public static boolean randBoolean(){
+		return randint(0, 1) == 0 ? false : true;
+	}
 
 	public static Image loadImg(String fileName){ //returns Image with file name fileName
 		return new ImageIcon(fileName).getImage();

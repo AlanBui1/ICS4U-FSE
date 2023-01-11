@@ -76,14 +76,10 @@ public class Player extends Mover{
         //player dies by going off-screen
         if (getX() <= 0 || getX()+width >= Gamepanel.WIDTH){
             loseLife();
-            setX(300);
-            setY(30);
             // System.out.println(lives);
         }
         if (getY() <= 0 || getY()+height >= Gamepanel.HEIGHT){
             loseLife();
-            setX(300);
-            setY(30);
             // System.out.println(lives);
         }
 
@@ -240,7 +236,7 @@ public class Player extends Mover{
     
     public void loseLife(){
         // lives--;
-        setX(300); setY(30);
+        setX(1000); setY(30);
         setVX(0);
         setVY(0);
         setAX(0);
@@ -317,6 +313,14 @@ public class Player extends Mover{
         setCoolDown(a.getCoolDown());
     }
 
+    public Platform platOn(ArrayList <Platform> plats){
+        Platform ret = new Platform(0,0,0,0);
+        for (Platform p : plats){
+            if (getRect().contains(p.getRect())) return p;
+        }
+        return ret;
+    }
+
     public void draw(Graphics g){
         g.setColor(Color.BLUE);
         if (chargedMoveSize == 50) g.setColor(Color.CYAN);
@@ -339,10 +343,13 @@ public class Player extends Mover{
     public int getFastKey(){return fastKey;}
     public int getUKey(){return UKey;}
     public int getDKey(){return DKey;}
+    public int getLKey(){return LKey;}
+    public int getRKey(){return RKey;}
     public int getDir(){return dir;}
     public int getStun(){return stunTime;}
     public double getWeight(){return weight;}
     public double getDamage(){return damage;}
+    public boolean getOnGround(){return onGround;}
     public ArrayList <Hitbox> getHitBoxes(){return hitboxes;} 
     
     public void setLKey(int k){LKey = k;}
@@ -352,4 +359,5 @@ public class Player extends Mover{
     public void setFastKey(int k){fastKey = k;}
     public void setChargeKey(int k){chargeKey = k;}
     public void setCoolDown(int time){atkCooldown = time;}
+    public void setKeyPressed(int k, boolean [] keysPressed, boolean b){keysPressed[k] = b;}
 }
