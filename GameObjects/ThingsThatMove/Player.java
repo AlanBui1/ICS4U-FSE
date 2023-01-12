@@ -5,7 +5,9 @@ import java.awt.*;
 import javax.swing.*;
 
 import GameObjects.ThingsThatMove.AttackStuff.*;
+import GameObjects.Stage;
 import MainGame.*;
+import Utility.Util;
 
 public class Player extends Mover{
     public static final int LEFT = -1, RIGHT = 1;
@@ -64,7 +66,7 @@ public class Player extends Mover{
         forces = new ArrayList<Force>();
     }
 
-    public void move(boolean [] keysPressed, int [] keysReleasedTime, ArrayList <Platform> plats){ //moves the Player
+    public void move(boolean [] keysPressed, int [] keysReleasedTime, Stage stage){ //moves the Player
         if (keysPressed[32]){
             loseLife();
         }
@@ -89,7 +91,7 @@ public class Player extends Mover{
         //System.out.println(onGround + " " + getVX() + " " + getVY());
         move();
 
-        checkPlats(plats); //checks if on a platform and adjusts position 
+        checkPlats(stage.getPlats()); //checks if on a platform and adjusts position 
 
         ArrayList <Hitbox> toDel = new ArrayList<Hitbox>();
         for (Hitbox h : hitboxes){
@@ -313,10 +315,15 @@ public class Player extends Mover{
         setCoolDown(a.getCoolDown());
     }
 
-    public Platform platOn(ArrayList <Platform> plats){
+    public Platform nearestPlat(ArrayList <Platform> plats){
         Platform ret = new Platform(0,0,0,0);
+        double nearestDist = Gamepanel.WIDTH;
         for (Platform p : plats){
-            if (getRect().contains(p.getRect())) return p;
+            double distToPlat= Util.taxicabDist(getX(), getY(), p.getX(), p.getY()); 
+            if (distToPlat < nearestDist){
+                nearestDist = distToPlat;
+                ret = p;
+            }
         }
         return ret;
     }

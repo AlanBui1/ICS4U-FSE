@@ -13,12 +13,14 @@ import GameObjects.ThingsThatMove.ShooterAI;
 import GameObjects.ThingsThatMove.Platform;
 import GameObjects.ThingsThatMove.AttackStuff.*;
 import GameObjects.ThingsThatMove.AttackStuff.Hitbox;
+import GameObjects.Stage;
 import Utility.Util;
 
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
     private boolean [] keysPressed;
 	private int [] keysHeldTime, keysReleasedTime;
 	private ArrayList <Platform> platforms;
+	private Stage curStage;
 	public static  HashMap <String, Double> shooterStats = new HashMap<String, Double>(); //statName -> value
 	public static  HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
 
@@ -42,8 +44,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		timer.start();
 
 		platforms = new ArrayList<Platform>();
-		platforms.add(new Platform(250, 240, 100, 1));
-		platforms.add(new Platform(300, 300, WIDTH-300, 300));
+		platforms.add(new Platform(300, 800, 800, 10));
+		platforms.add(new Platform(250, 800, 100, 10, 250, 1100, 800, 800, 5, 0));
+		curStage = new Stage(platforms);
 
 		shooterStats= Util.loadStats("shooterStats.txt");
 		shooterAtks = Util.loadAtks("shooterAtks.txt");;
@@ -56,7 +59,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
         p1.setChargeKey(KeyEvent.VK_Q);
 		p1.setFastKey(KeyEvent.VK_E);
 
-		p2 = new ShooterAI(300, 30, shooterStats, shooterAtks);
+		p2 = new ShooterAI(400, 30, shooterStats, shooterAtks);
 		p2.setDKey(KeyEvent.VK_K);
         p2.setLKey(KeyEvent.VK_J);
         p2.setRKey(KeyEvent.VK_L);
@@ -73,13 +76,17 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			
 			p1.setCoolDown(p1.getCoolDown()-1);
 			p1.attack(keysPressed, keysReleasedTime);
-			p1.move(keysPressed, keysReleasedTime, platforms);
+			p1.move(keysPressed, keysReleasedTime, curStage);
 			p2.setCoolDown(p2.getCoolDown()-1);
-			p2.move(keysPressed, keysReleasedTime, platforms);
+			p2.move(keysPressed, keysReleasedTime, curStage);
 			p2.attack(keysPressed, keysReleasedTime);
 
 			checkCollisions(p1, p2);
 			checkCollisions(p2, p1);
+
+			for (Platform p : curStage.getPlats()){
+				p.move();
+			}
 		}
 		catch(Exception e){}
 	}
@@ -152,8 +159,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		g.setColor(Color.BLACK);
 		g.fillRect(0,0,WIDTH,HEIGHT);
 
-		platforms.get(0).draw(g, Color.BLUE);
-		platforms.get(1).draw(g, Color.GREEN);
+		for (Platform p : curStage.getPlats()){
+			p.draw(g, Color.GREEN);
+		}
 
 		// DRAWING LIVES
 		Polygon test = new Polygon(new int []{10+300, 25+300, 40+300, 25+300}, new int []{25+250,40+250,25+250,10+250}, 4);

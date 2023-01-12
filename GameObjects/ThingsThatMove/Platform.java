@@ -10,6 +10,15 @@ public class Platform extends Mover{
         h = hh;
     }
 
+    public Platform(int xx, int yy, int ww, int hh, int MINX, int MAXX, int MINY, int MAXY, int vx, int vy){
+        super(xx, yy);
+        w = ww;
+        h = hh;
+        minX = MINX; minY = MINY;
+        maxX = MAXX; maxY = MAXY;
+        setVX(vx); setVY(vy);
+    }
+
     @Override
     public void move(){
         if (!(minX <= getX() + getVX() && getX() + getVX() <= maxX)){ //check if moving will put Platform out of the right range in the X

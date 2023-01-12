@@ -112,8 +112,8 @@ stuntime	10
 damage	10
 cooldown 0
 ---ChargeSideAtk--- 1
-basekbx	0.00625
-basekby	-0.0025
+basekbx	0.05
+basekby	-0.03
 vx	0.00625
 vy	0
 ax	0

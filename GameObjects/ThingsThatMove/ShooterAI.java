@@ -1,9 +1,9 @@
 package GameObjects.ThingsThatMove;
 
 import java.util.HashMap;
-import java.util.ArrayList;
 import Utility.Util;
 import GameObjects.ThingsThatMove.AttackStuff.*;
+import GameObjects.Stage;
 
 public class ShooterAI extends Player{
     private int [] movementKeys = new int[4];
@@ -22,20 +22,28 @@ public class ShooterAI extends Player{
     }
 
     @Override
-    public void move(boolean [] keysPressed, int [] keysReleasedTime, ArrayList <Platform> plats){
-        keysPressed[getUKey()] = Util.randBoolean();
+    public void move(boolean [] keysPressed, int [] keysReleasedTime, Stage stage){
         keysPressed[getRKey()] = false; keysPressed[getLKey()] = false;
-        if (getOnGround()){
-            Platform curPlat = platOn(plats);
+        keysPressed[getFastKey()] = true;
+        if (true){
+            Platform curPlat = nearestPlat(stage.getPlats());
             int midX = ((int)curPlat.getX() + (curPlat.getWidth()/2));
             
-            if (getX() < midX){
-                keysPressed[getRKey()] = true;
-            }
-            else if (getX() > midX){
-                keysPressed[getLKey()] = true;
+            if (Util.randint(1, 100) < 5) keysPressed[getUKey()] = Util.randBoolean();
+            if (getY() > curPlat.getY()) keysPressed[getUKey()] = true;
+ 
+            // System.out.println((int)curPlat.getX() + " " + (curPlat.getWidth()/2));
+            if (!(midX - 50 <= getX() && getX() <= midX+1)){
+                if (getX() < midX){
+                    //System.out.println("LEFT");
+                    keysPressed[getRKey()] = true;
+                }
+                else if (getX() > midX){
+                    //System.out.println("RIGHT");
+                    keysPressed[getLKey()] = true;
+                }
             }
         }
-        super.move(keysPressed, keysReleasedTime, plats);
+        super.move(keysPressed, keysReleasedTime, stage);
     }
 }

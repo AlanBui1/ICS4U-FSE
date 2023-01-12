@@ -31,6 +31,10 @@ public class Util {
 		return img.getScaledInstance(width, height, Image.SCALE_SMOOTH); //returns scaled image
 	}
 
+	public static double taxicabDist(double x1, double y1, double x2, double y2){
+		return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+	}
+
 	public static double knockBack(double base, double weight, double damage){
 		return base * (100 / weight) * ((damage+10) / 100);
 	}
