@@ -59,6 +59,7 @@ public class Hitbox extends Mover{
     public void setHeight(double H){h = H;}
     public void setKnockBackX(double kb){baseKnockbackX = kb;}
     public void setKnockBackY(double kb){baseKnockbackY = kb;}
+    public void setDamage(double d){damage = d;}
 
     @Override
     public void move(){

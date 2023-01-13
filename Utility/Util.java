@@ -22,6 +22,10 @@ public class Util {
 		return randint(0, 1) == 0 ? false : true;
 	}
 
+	public static String fDouble(double n, int decimals){
+		return String.format("%."+decimals+"f", n);
+	}
+
 	public static Image loadImg(String fileName){ //returns Image with file name fileName
 		return new ImageIcon(fileName).getImage();
 	}

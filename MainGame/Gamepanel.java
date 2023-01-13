@@ -25,8 +25,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	public static  HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
 
     Timer timer;
-    ShooterAI p2; 
+    // Player p2; 
 	Player p1;
+	ShooterAI p2;
     public static final int WIDTH = 1600, HEIGHT = 1200;
 
 	public Gamepanel(){
@@ -44,8 +45,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		timer.start();
 
 		platforms = new ArrayList<Platform>();
-		platforms.add(new Platform(300, 800, 800, 10));
-		platforms.add(new Platform(250, 800, 100, 10, 250, 1100, 800, 800, 5, 0));
+		platforms.add(new Platform(300, 700, 800, 10));
+		platforms.add(new Platform(250, 700, 100, 10, 250, 1100, 800, 800, 10, 0));
 		curStage = new Stage(platforms);
 
 		shooterStats= Util.loadStats("shooterStats.txt");
@@ -91,7 +92,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		catch(Exception e){}
 	}
 
-	public void checkCollisions(Player curPlayer, Player oppoPlayer){
+	public void checkCollisions(Player curPlayer, Player oppoPlayer){ //curPlayer attacking oppoPlayer
 		ArrayList<Hitbox> toDelH = new ArrayList<Hitbox>();
 		for (Hitbox h : curPlayer.getHitBoxes()){
 			if (oppoPlayer.getRect().intersects(h.getRect())){
@@ -103,7 +104,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		}
 
 		for (Hitbox h : toDelH){
-			oppoPlayer.addStun(h.getStun());
+			oppoPlayer.setStun(Math.max(h.getStun(), oppoPlayer.getStun()));
 			curPlayer.getHitBoxes().remove(h);
 			oppoPlayer.addDamage(h.getDamage());
 		}
@@ -194,12 +195,12 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			h.draw(g);
 		}
 
-		g.drawString(""+p1.getDamage(), 40, 40);
+		g.drawString(""+Util.fDouble(p1.getDamage(), 1), 40, 40);
 
 		p2.draw(g);
 		for (Hitbox h : p2.getHitBoxes()){
 			h.draw(g);
 		}
-		g.drawString(""+p2.getDamage(), 740, 40);
+		g.drawString(""+Util.fDouble(p2.getDamage(), 1), 740, 40);
     }
 }

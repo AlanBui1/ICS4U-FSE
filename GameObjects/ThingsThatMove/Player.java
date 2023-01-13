@@ -165,11 +165,6 @@ public class Player extends Mover{
                     onGround = false;
                 }
             }
-
-            if (keysPressed[DKey]){
-                // y+=7;
-                // vy += 5;
-            }
         }
     }
 
@@ -265,6 +260,14 @@ public class Player extends Mover{
                 }
             }
 
+            else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
+                if (keysPressed[DKey]){
+                    attack("ChargeDownAtk");
+                }
+                else attack("ChargeSideAtk");
+                keysReleasedTime[chargeKey] = 0;
+            }
+
             else if (keysPressed[chargeKey]){
                 if (keysPressed[UKey]){
                     if (jump3){
@@ -273,16 +276,9 @@ public class Player extends Mover{
                         attack("ChargeUpAtk");
                     }   
                 }
-                else chargedMoveSize = Math.min(chargedMoveSize+1, 50);
+                else chargeMove();
             }
-
-            else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
-                if (keysPressed[DKey]){
-                    attack("ChargeDownAtk");
-                }
-                else attack("ChargeSideAtk");
-                keysReleasedTime[chargeKey] = 0;
-            }
+            
         }
     }
 
@@ -309,6 +305,7 @@ public class Player extends Mover{
             //for charged attacks
             toAdd.setWidth(toAdd.getWidth() * factor);
             toAdd.setHeight(toAdd.getHeight() * factor);
+            toAdd.setDamage(toAdd.getDamage() * factor);
             
             addHitBox(toAdd);
         }
@@ -341,18 +338,24 @@ public class Player extends Mover{
     public void addForce(Force f){forces.add(f);}
 
     public void addStun(int time){stunTime += time;}
+    public void setStun(int time){stunTime = time;}
 
     public void addDamage(double d){damage += d;}
+
+    public void chargeMove(){chargedMoveSize = Math.min(chargedMoveSize+1, 50);}
+    public double getCharge(){return chargedMoveSize;}
     
     public Rectangle getRect(){return new Rectangle((int)getX(), (int)getY(), (int)width+1, (int)height+1);}
 
-    public int getCoolDown(){return atkCooldown;}
     public int getFastKey(){return fastKey;}
+    public int getChargeKey(){return chargeKey;}
     public int getUKey(){return UKey;}
     public int getDKey(){return DKey;}
     public int getLKey(){return LKey;}
     public int getRKey(){return RKey;}
+
     public int getDir(){return dir;}
+    public int getCoolDown(){return atkCooldown;}
     public int getStun(){return stunTime;}
     public double getWeight(){return weight;}
     public double getDamage(){return damage;}
