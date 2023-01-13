@@ -6,6 +6,8 @@ import javax.swing.*;
 import GameObjects.ThingsThatMove.AttackStuff.*;
 import MainGame.Game;
 import MainGame.Gamepanel;
+import GameObjects.*;
+import GameObjects.ThingsThatMove.*;
 
 import java.io.*;
 
@@ -120,6 +122,29 @@ public class Util {
 		}
 		catch (IOException e){}
 		return atks;
+	}
+
+	public static Stage loadStage(String fileName){
+		ArrayList <Platform> plats = new ArrayList<Platform>();
+		try{
+			Scanner inFile = new Scanner(new BufferedReader(new FileReader(fileName))); 
+			int numPlats = inFile.nextInt();
+
+			for (int i=0; i<numPlats; i++){
+				HashMap <String, Integer> platStats = new HashMap<String, Integer>();
+
+				for (int k=0; k<11; k++){
+					platStats.put(inFile.next(), (int)(inFile.nextDouble() * (k%2 == 0 ? Gamepanel.WIDTH : Gamepanel.HEIGHT)));
+					inFile.nextLine();
+				}
+
+				plats.add(new Platform(platStats));
+			}
+
+			inFile.close();
+		}
+		catch (IOException e){}
+		return new Stage(plats);
 	}
 }
 

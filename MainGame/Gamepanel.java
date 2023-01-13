@@ -19,7 +19,7 @@ import Utility.Util;
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
     private boolean [] keysPressed;
 	private int [] keysHeldTime, keysReleasedTime;
-	private ArrayList <Platform> platforms;
+	// private ArrayList <Platform> platforms;
 	private Stage curStage;
 	public static  HashMap <String, Double> shooterStats = new HashMap<String, Double>(); //statName -> value
 	public static  HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
@@ -28,7 +28,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
     // Player p2; 
 	Player p1;
 	ShooterAI p2;
-    public static final int WIDTH = 1600, HEIGHT = 1200;
+    public static final int WIDTH = 800, HEIGHT = 600;
 
 	public Gamepanel(){
 		keysPressed = new boolean[KeyEvent.KEY_LAST+1];
@@ -44,10 +44,10 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		timer = new Timer(20, this);
 		timer.start();
 
-		platforms = new ArrayList<Platform>();
-		platforms.add(new Platform(300, 700, 800, 10));
-		platforms.add(new Platform(250, 700, 100, 10, 250, 1100, 800, 800, 10, 0));
-		curStage = new Stage(platforms);
+		// platforms = new ArrayList<Platform>();
+		// platforms.add(new Platform(300, 700, 800, 10));
+		// platforms.add(new Platform(250, 700, 100, 10, 250, 1100, 800, 800, 10, 0));
+		curStage = Util.loadStage("stages/verticalPlat.txt");
 
 		shooterStats= Util.loadStats("shooterStats.txt");
 		shooterAtks = Util.loadAtks("shooterAtks.txt");;

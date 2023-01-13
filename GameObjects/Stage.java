@@ -12,6 +12,7 @@ public class Stage {
     public Stage(){
         platforms = new ArrayList<Platform>();
     }
+    
     public Stage(ArrayList <Platform> plats){
         platforms = new ArrayList<Platform>();
         for (Platform p : plats){

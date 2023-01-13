@@ -233,7 +233,7 @@ public class Player extends Mover{
     
     public void loseLife(){
         // lives--;
-        setX(1000); setY(30);
+        setX(Gamepanel.WIDTH/2); setY(30);
         setVX(0);
         setVY(0);
         setAX(0);
@@ -242,13 +242,12 @@ public class Player extends Mover{
     }
 
     public void attack(boolean [] keysPressed, int [] keysReleasedTime){
+
         if (getCoolDown() <= 0){
             
-            if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 5){
-                attack("BonusAtk", 1);
-                keysReleasedTime[fastKey] = 0;
-            }
-            if (keysPressed[fastKey]){
+            if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){
+                if (keysReleasedTime[fastKey] <= 5) attack("BonusAtk", 1);
+                
                 if (keysPressed[UKey]){
                     attack("FastUpAtk", 1);
                 }
@@ -258,7 +257,20 @@ public class Player extends Mover{
                 else{
                     attack("FastSideAtk", 1);
                 }
+
+                keysReleasedTime[fastKey] = 0;
             }
+            // if (keysPressed[fastKey]){
+            //     if (keysPressed[UKey]){
+            //         attack("FastUpAtk", 1);
+            //     }
+            //     else if (keysPressed[getDKey()]){
+            //         attack("FastDownAtk", 1);
+            //     }
+            //     else{
+            //         attack("FastSideAtk", 1);
+            //     }
+            // }
 
             else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
                 if (keysPressed[DKey]){
@@ -316,6 +328,7 @@ public class Player extends Mover{
         Platform ret = new Platform(0,0,0,0);
         double nearestDist = Gamepanel.WIDTH;
         for (Platform p : plats){
+            if (p.getInvis()) continue;
             double distToPlat= Util.taxicabDist(getX(), getY(), p.getX(), p.getY()); 
             if (distToPlat < nearestDist){
                 nearestDist = distToPlat;
