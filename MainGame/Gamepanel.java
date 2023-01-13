@@ -72,6 +72,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
     public void move(){		
 		try{
+			for (Platform p : curStage.getPlats()){
+				p.move();
+			}
 			if (p1.getStun() > 0) p1.addStun(-1);
 			if (p2.getStun() > 0) p2.addStun(-1);
 			
@@ -84,10 +87,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 			checkCollisions(p1, p2);
 			checkCollisions(p2, p1);
-
-			for (Platform p : curStage.getPlats()){
-				p.move();
-			}
 		}
 		catch(Exception e){}
 	}

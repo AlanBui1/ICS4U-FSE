@@ -219,7 +219,7 @@ public class Player extends Mover{
 			// currently overlaps
 			if(guyr.intersects(p.getRect())){
 				// moving down
-				if(getVY() > 0){
+				if(getVY() >= 0){
 					// caused by moving down
 					if(!guyrNoVY.intersects(p.getRect())){
 						setY(p.getY()-height);
