@@ -12,17 +12,7 @@ public class Platform extends Mover{
         h = hh;
         invis = false;
     }
-
-    public Platform(int xx, int yy, int ww, int hh, int MINX, int MAXX, int MINY, int MAXY, int vx, int vy){
-        super(xx, yy);
-        w = ww;
-        h = hh;
-        minX = MINX; minY = MINY;
-        maxX = MAXX; maxY = MAXY;
-        setVX(vx); setVY(vy);
-        invis = false;
-    }
-
+    
     public Platform(HashMap<String, Integer> stats){
         super(stats.get("x"), stats.get("y"));
         w = stats.get("width"); h = stats.get("height");
