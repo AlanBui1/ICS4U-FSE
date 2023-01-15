@@ -1,6 +1,7 @@
 package GameObjects.ThingsThatMove;
 
-import java.util.HashMap;
+import java.util.*;
+import MainGame.Gamepanel;
 import Utility.Util;
 import GameObjects.ThingsThatMove.AttackStuff.*;
 import GameObjects.Stage;
@@ -25,15 +26,14 @@ public class ShooterAI extends Player{
     @Override
     public void move(boolean [] keysPressed, int [] keysReleasedTime, Stage stage){
         keysPressed[getRKey()] = false; keysPressed[getLKey()] = false;
-        // keysPressed[getFastKey()] = true;
         
-        Platform curPlat = nearestPlat(stage.getPlats());
+        Platform curPlat = nearestPlat(stage);
         int midX = ((int)curPlat.getX() + (curPlat.getWidth()/2));
         
         if (Util.randint(1, 100) < 2) keysPressed[getUKey()] = Util.randBoolean(); //random jumps
         if (getY() > curPlat.getY()) keysPressed[getUKey()] = true; //jumps if below nearest platform
 
-        if (!(midX - 50 <= getX() && getX() <= midX+1)){ //moves to the middle of the nearest platform
+        if (!(midX - 50 <= getX() && getX() <= midX+1)){ //moves towards the middle of the nearest platform
             if (getX() < midX){
                 keysPressed[getRKey()] = true;
             }
@@ -64,5 +64,23 @@ public class ShooterAI extends Player{
         super.attack(keysPressed, keysReleasedTime);
         keysReleasedTime[randAtk] = 0;
         keysPressed[randAtk] = false;
+    }
+
+    public Platform nearestPlat(Stage curStage){ //returns the nearest Platform to the Player in the stage 
+        Platform nearestPlat = curStage.getMainPlat(); //by default is the main platform of the Stage
+        ArrayList <Platform> plats = curStage.getPlats(); //platforms of the Stage
+        double nearestDist = Util.taxicabDist(getCenterPoint(), nearestPlat.getCenterPoint()); //sets initial nearest distance
+
+        for (Platform p : plats){ //loops through all Platforms of the Stage
+            if (p.getInvis()) continue; //if the Platform is set to invisible, doesn't check it
+
+            double distToPlat= Util.taxicabDist(getX(), getY(), p.getX(), p.getY()); //distance from Player to Platform
+            if (distToPlat < nearestDist){
+                //if the distance was less, sets new nearestDist and nearestPlat 
+                nearestDist = distToPlat;
+                nearestPlat = p;
+            }
+        }
+        return nearestPlat; //returns the nearest Platform to the Player
     }
 }

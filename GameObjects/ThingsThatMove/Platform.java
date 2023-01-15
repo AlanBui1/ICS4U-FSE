@@ -3,23 +3,22 @@ import java.awt.*;
 import java.util.*;
 
 public class Platform extends Mover{
-    private int w, h, minX, minY, maxX, maxY;
-    private boolean invis;
+    private int width, //width of the rectangular Platform
+                height, //height of the rectangular Platform
+                minX, //minimum x-coordinate of the Platform
+                minY, //minimum y-coordinate of the Platform
+                maxX, //maximum x-coordinate of the Platform
+                maxY; //maximum y-coordinate of the Platform
 
-    public Platform(int xx, int yy, int ww, int hh){
-        super(xx, yy);
-        w = ww;
-        h = hh;
-        invis = false;
-    }
+    private boolean invis; //true if the AI can NOT detect this Platform 
     
-    public Platform(HashMap<String, Integer> stats){
+    public Platform(HashMap<String, Integer> stats){ //constructor uses HashMap to load values
         super(stats.get("x"), stats.get("y"));
-        w = stats.get("width"); h = stats.get("height");
+        width = stats.get("width"); height = stats.get("height");
         minX = stats.get("minX"); maxX = stats.get("maxX");
         minY = stats.get("minY"); maxY = stats.get("maxY");
         setVX(stats.get("vx")); setVY(stats.get("vy"));
-        invis = stats.get("invisible") >= 1 ? true : false;
+        invis = stats.get("invisible") == 0 ? false : true; //a value of 0 means not invisible, anything else corresponds to invisible
     }
 
     @Override
@@ -34,16 +33,18 @@ public class Platform extends Mover{
         super.move();
     }
 
-    public void draw(Graphics g, Color c){
+    public void draw(Graphics g, Color c){ //draws the Platform
         g.setColor(c);
-        g.fillRect((int)getX(), (int)getY(), w, h);
+        g.fillRect((int)getX(), (int)getY(), width, height);
     }
 
-    public Rectangle getRect(){
-        return new Rectangle((int)getX(), (int)getY(), w, h);
+    public Rectangle getRect(){ //returns the Rectangle area where the Platform is
+        return new Rectangle((int)getX(), (int)getY(), width, height);
     }
 
-    public boolean getInvis(){return invis;}
+    public boolean getInvis(){return invis;} //returns if the Platform can't/can be detected by the AI
 
-    public int getWidth(){return w;}
+    public int getWidth(){return width;} //returns width of the Platform
+
+    public Point getCenterPoint(){return new Point((int)getX() + width/2, (int)getY() + height/2);}
 }

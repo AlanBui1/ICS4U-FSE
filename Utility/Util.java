@@ -11,6 +11,7 @@ import GameObjects.ThingsThatMove.*;
 
 import java.io.*;
 
+//Utility methods that are used throughout the entire program
 public class Util {
 	public static final double GRAVITY = 100;
 
@@ -20,11 +21,11 @@ public class Util {
 	public static double randDouble(double low, double high){ //returns a random double in the range [low, high]
 		return Math.random()*(high-low+1)+low;
 	}
-	public static boolean randBoolean(){
+	public static boolean randBoolean(){ //returns a random boolean
 		return randint(0, 1) == 0 ? false : true;
 	}
 
-	public static String fDouble(double n, int decimals){
+	public static String fDouble(double n, int decimals){ //returns the String of a double formatted to a certain number of decimal places
 		return String.format("%."+decimals+"f", n);
 	}
 
@@ -37,19 +38,19 @@ public class Util {
 		return img.getScaledInstance(width, height, Image.SCALE_SMOOTH); //returns scaled image
 	}
 
-	public static double taxicabDist(double x1, double y1, double x2, double y2){
+	public static double taxicabDist(double x1, double y1, double x2, double y2){ //returns the taxicab distance between (x1, y1) and (x2, y2)
 		return Math.abs(x1 - x2) + Math.abs(y1 - y2);
 	}
-
-	public static double knockBack(double base, double weight, double damage){
-		return base * (100 / weight) * ((damage+10) / 100);
+	public static double taxicabDist(Point p1, Point p2){
+		return taxicabDist(p1.getX(), p1.getY(), p2.getX(), p2.getY());
 	}
 
-	public static HashMap <String, Double> loadStats(String fileName){
+	public static HashMap <String, Double> loadStats(String fileName){ //returns a HashMap with all the fields of a Player given the filename of the file with its data
 		HashMap <String, Double> stats = new HashMap<String, Double>();
 		try{
 			Scanner inFile = new Scanner(new BufferedReader(new FileReader(fileName))); 
-			for (int i=1; i<=11; i++){ //CHANGE THE 11 to however many fields there are
+			int NUMSTATS = 11;
+			for (int i=1; i<=NUMSTATS; i++){
 				String name = inFile.next();
 				Double val = inFile.nextDouble();
 				inFile.nextLine();
@@ -59,6 +60,7 @@ public class Util {
 
 			String [] statsY = {"height", "gravity", "fallspd", "jumpforce"},
 					  statsX = {"width", "runspd", "airspd", "airaccel", "groundfriction", "airfriction"};
+
 			for (int i=0; i<statsX.length; i++){
 				stats.put(statsX[i], stats.get(statsX[i]) * Gamepanel.WIDTH);		
 			}

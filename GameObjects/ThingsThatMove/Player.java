@@ -2,7 +2,6 @@ package GameObjects.ThingsThatMove;
 
 import java.util.*;
 import java.awt.*;
-import javax.swing.*;
 
 import GameObjects.ThingsThatMove.AttackStuff.*;
 import GameObjects.Stage;
@@ -12,7 +11,15 @@ import Utility.Util;
 public class Player extends Mover{
     public static final int LEFT = -1, RIGHT = 1;
 
-    private int LKey, RKey, UKey, DKey, fastKey, chargeKey; //keys used to move in respective directions
+    private int LKey, //key used to move left
+                RKey, //key used to move right
+                UKey, //key used to move up
+                DKey, //key used to move down
+                fastKey, //key used to use the fast attack
+                chargeKey, //key used to use the charged attack
+                stunTime, //how long the Player is stunned for
+                dir, //direction the Player is facing (-1 is LEFT, 1 is RIGHT)
+                atkCooldown; //how long until the Player can attack again
 
     private double  weight, //weight () is a measure of how much a Player can resist knockback i.e. more weight => less knockback
                     airaccel, //airaccel (pixels / frame^2) is the rate a Player can change their horizontal velocity midair
@@ -26,8 +33,7 @@ public class Player extends Mover{
                     width, //width (pixels) is the number of pixels wide the Player is
                     height; //height (pixels) is the number of pixels high the Player is
 
-    private int stunTime, dir, atkCooldown;
-    private double  chargedMoveSize,
+    private double  chargedMoveSize, 
                     damage;
 
     private boolean jump1, //jump1 is true if the Player can use their first jump
@@ -85,7 +91,7 @@ public class Player extends Mover{
             // System.out.println(lives);
         }
 
-        keyBoardMovement(keysPressed, keysReleasedTime);
+        keyBoardMovement(keysPressed, keysReleasedTime); //applies the keyboard movement
 
         applyForces(); 
         //System.out.println(onGround + " " + getVX() + " " + getVY());
@@ -103,8 +109,6 @@ public class Player extends Mover{
         for (Hitbox h : toDel){
             hitboxes.remove(h);
         }
-        // System.out.println(stunTime);
-        
     }
 
     public void keyBoardMovement(boolean [] keysPressed, int [] keysReleasedTime){
@@ -324,57 +328,41 @@ public class Player extends Mover{
         setCoolDown(a.getCoolDown());
     }
 
-    public Platform nearestPlat(ArrayList <Platform> plats){
-        Platform ret = new Platform(0,0,0,0);
-        double nearestDist = Gamepanel.WIDTH;
-        for (Platform p : plats){
-            if (p.getInvis()) continue;
-            double distToPlat= Util.taxicabDist(getX(), getY(), p.getX(), p.getY()); 
-            if (distToPlat < nearestDist){
-                nearestDist = distToPlat;
-                ret = p;
-            }
-        }
-        return ret;
-    }
-
-    public void draw(Graphics g){
+    public void draw(Graphics g){ //draws the Player
         g.setColor(Color.BLUE);
         if (chargedMoveSize == 50) g.setColor(Color.CYAN);
         if (stunTime > 0) g.setColor(Color.RED);
         g.fillRect((int)getX(), (int)getY(), (int)width, (int)height);
     }
 
+    //adder methods????
     public void addHitBox(Hitbox h){hitboxes.add(h);}
-
     public void addForce(double magX, double magY, int stun){forces.add(new Force(magX, magY, stun));}
     public void addForce(Force f){forces.add(f);}
-
     public void addStun(int time){stunTime += time;}
-    public void setStun(int time){stunTime = time;}
-
     public void addDamage(double d){damage += d;}
 
     public void chargeMove(){chargedMoveSize = Math.min(chargedMoveSize+1, 50);}
-    public double getCharge(){return chargedMoveSize;}
     
+    //getter methods
+    public double getCharge(){return chargedMoveSize;}
     public Rectangle getRect(){return new Rectangle((int)getX(), (int)getY(), (int)width+1, (int)height+1);}
-
     public int getFastKey(){return fastKey;}
     public int getChargeKey(){return chargeKey;}
     public int getUKey(){return UKey;}
     public int getDKey(){return DKey;}
     public int getLKey(){return LKey;}
     public int getRKey(){return RKey;}
-
     public int getDir(){return dir;}
     public int getCoolDown(){return atkCooldown;}
     public int getStun(){return stunTime;}
     public double getWeight(){return weight;}
     public double getDamage(){return damage;}
     public boolean getOnGround(){return onGround;}
+    public Point getCenterPoint(){return new Point((int)(getX() + width/2), (int)(getY() + height/2));}
     public ArrayList <Hitbox> getHitBoxes(){return hitboxes;} 
     
+    //setter methods
     public void setLKey(int k){LKey = k;}
     public void setRKey(int k){RKey = k;}
     public void setUKey(int k){UKey = k;}
@@ -383,4 +371,5 @@ public class Player extends Mover{
     public void setChargeKey(int k){chargeKey = k;}
     public void setCoolDown(int time){atkCooldown = time;}
     public void setKeyPressed(int k, boolean [] keysPressed, boolean b){keysPressed[k] = b;}
+    public void setStun(int time){stunTime = time;}
 }

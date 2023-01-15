@@ -19,7 +19,7 @@ import Utility.Util;
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
     private boolean [] keysPressed;
 	private int [] keysHeldTime, keysReleasedTime;
-	// private ArrayList <Platform> platforms;
+
 	private Stage curStage;
 	public static  HashMap <String, Double> shooterStats = new HashMap<String, Double>(); //statName -> value
 	public static  HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
@@ -44,9 +44,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		timer = new Timer(20, this);
 		timer.start();
 
-		// platforms = new ArrayList<Platform>();
-		// platforms.add(new Platform(300, 700, 800, 10));
-		// platforms.add(new Platform(250, 700, 100, 10, 250, 1100, 800, 800, 10, 0));
 		curStage = Util.loadStage("stages/verticalPlat.txt");
 
 		shooterStats= Util.loadStats("shooterStats.txt");
@@ -67,7 +64,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
         p2.setUKey(KeyEvent.VK_I);
 		p2.setChargeKey(KeyEvent.VK_U);
 		p2.setFastKey(KeyEvent.VK_O);
-		p2.setKeys();
 	}
 
     public void move(){		
@@ -96,8 +92,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		for (Hitbox h : curPlayer.getHitBoxes()){
 			if (oppoPlayer.getRect().intersects(h.getRect())){
 				toDelH.add(h);
-				oppoPlayer.addForce(new Force(Util.knockBack(h.getKnockBackX(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
-									  Util.knockBack(h.getKnockBackY(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
+				oppoPlayer.addForce(new Force(Force.knockBack(h.getKnockBackX(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
+									  Force.knockBack(h.getKnockBackY(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
 									  h.getStun()));
 			}
 		}
