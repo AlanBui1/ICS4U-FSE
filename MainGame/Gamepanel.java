@@ -18,12 +18,17 @@ import Utility.Util;
 
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
 	public static final int WIDTH = 800, HEIGHT = 600;
+	public static final int LEFTCLICK = 1, RIGHTCLICK = 3;
 	public static final int START = 0, 
 							CONTROLSELECT = 1, 
 							CHARACTERSELECT = 2,
 							STAGESELECT = 3,
 							BATTLE = 4,
 							ENDSCREEN = 5;
+	
+	public static final String [] keyNames = {"UKey", "DKey", "LKey", "RKey", "fastKey", "chargeKey"};
+	public static final HashMap<String, Integer> defaultKeys1 = new HashMap<String, Integer>();
+	public static final HashMap<String, Integer> defaultKeys2 = new HashMap<String, Integer>();
 
     private boolean [] keysPressed;
 	private int [] keysHeldTime, keysReleasedTime;
@@ -33,9 +38,15 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	private int curScreen;
 	private Stage curStage;
 
-	//moves these into another class with just stats and attacks
-	public static  HashMap <String, Double> shooterStats = new HashMap<String, Double>(); //statName -> value 
-	public static  HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
+	private ArrayList <Rectangle> stageSelectRects;
+	private ArrayList <Stage> allStages;
+
+	private ArrayList <Rectangle> charSelectRects;
+	private ArrayList <String> allCharacters;
+
+	private String player1, player2;
+
+	private Rectangle defaultRect;
 
     Timer timer;
     // Player p2; 
@@ -62,28 +73,37 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		curStage = Util.loadStage("stages/verticalPlat.txt");
 
-		shooterStats= Util.loadStats("shooterStats.txt");
-		shooterAtks = Util.loadAtks("shooterAtks.txt");
 		nextScreenRect = new Rectangle(500, 400, 50, 50);
 
 		curScreen = START;
 
-		p1 = new Player(400, 30, shooterStats, shooterAtks);
-        p1.setDKey(KeyEvent.VK_S);
-        p1.setLKey(KeyEvent.VK_A);
-        p1.setRKey(KeyEvent.VK_D);
-        p1.setUKey(KeyEvent.VK_W);
-        p1.setChargeKey(KeyEvent.VK_Q);
-		p1.setFastKey(KeyEvent.VK_E);
+		//PRECOMPUTE STAGES
+		allStages = new ArrayList<Stage>();
+		String [] stageNames = {"noPlats", "verticalPlat"};
+		for (int i=0; i<stageNames.length; i++){
+			allStages.add(Util.loadStage("stages/"+stageNames[i]+".txt"));
+		} 
+		stageSelectRects = new ArrayList<Rectangle>();
+		stageSelectRects.add(new Rectangle(100, 100, 100, 100));
+		stageSelectRects.add(new Rectangle(300, 300, 100, 100));
 
-		p2 = new ShooterAI(400, 30, shooterStats, shooterAtks);
-		p2.setDKey(KeyEvent.VK_K);
-        p2.setLKey(KeyEvent.VK_J);
-        p2.setRKey(KeyEvent.VK_L);
-        p2.setUKey(KeyEvent.VK_I);
-		p2.setChargeKey(KeyEvent.VK_U);
-		p2.setFastKey(KeyEvent.VK_O);
-		p2.setKeys();
+		//PRECOMPUTE PLAYERS
+		allCharacters = new ArrayList<String>();
+		String [] characterNames = {"shooter"};
+		for (int i=0; i<characterNames.length; i++){
+			allCharacters.add(characterNames[i]);
+		}
+		charSelectRects = new ArrayList<Rectangle>();
+		charSelectRects.add(new Rectangle(50, 50, 200, 200));
+
+		//PRECOMPUTE DEFAULT KEYS
+		int [] default1 = {KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_E, KeyEvent.VK_Q},
+			   default2 = {KeyEvent.VK_I, KeyEvent.VK_K, KeyEvent.VK_J, KeyEvent.VK_L, KeyEvent.VK_U, KeyEvent.VK_O};			
+
+		for (int i=0; i<6; i++){
+			defaultKeys1.put(keyNames[i], default1[i]);
+			defaultKeys2.put(keyNames[i], default2[i]);
+		}
 
 		//loads font
 		String fName = "NeonLight-Regular.ttf"; 
@@ -156,23 +176,51 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 					curScreen = CHARACTERSELECT;
 				}
 			}
-			else if (curScreen == CONTROLSELECT){
-
-			}
 			else if (curScreen == CHARACTERSELECT){
 				if (mousePressed){
+					for (int i=0; i<charSelectRects.size(); i++){
+						if (charSelectRects.get(i).contains(mouseX, mouseY)){
+							if (mouseButton == LEFTCLICK){
+								player1 = allCharacters.get(i);
+							}
+							else if (mouseButton == RIGHTCLICK){
+								player2 = allCharacters.get(i);
+							}
+						}
+					}
 					if (nextScreenRect.contains(mouseX, mouseY)){
-						curScreen = STAGESELECT;
+						curScreen = CONTROLSELECT;
+						mousePressed = false;
+
+						p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"));
+						p1.loadKeyLayout(defaultKeys1);
+						p2 = new ShooterAI(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"));
+						p2.loadKeyLayout(defaultKeys2);
 					}
 				}
 			}
 			else if (curScreen == STAGESELECT){
 				if (mousePressed){
+					for (int i=0; i<stageSelectRects.size(); i++){
+						if (stageSelectRects.get(i).contains(mouseX, mouseY)){
+							curStage = allStages.get(i);
+						}
+					}
 					if (nextScreenRect.contains(mouseX, mouseY)){
-						curScreen = BATTLE;
+						curScreen = CONTROLSELECT;
+						mousePressed = false;
 					}
 				}
 			}
+			else if (curScreen == CONTROLSELECT){
+				if (mousePressed){
+					if (nextScreenRect.contains(mouseX, mouseY)){
+						curScreen = BATTLE;
+						mousePressed = false;
+					}
+				}
+			}
+			
 			else if (curScreen == BATTLE){
 				move(); 	// never draw in move
 			}
@@ -271,6 +319,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		g.fillRect(0,0, WIDTH, HEIGHT);
 		g.setColor(Color.BLACK);
 		g.drawString("control select", WIDTH/2, HEIGHT/2);
+		g.setColor(Color.RED);
+		Util.drawFilledRect(nextScreenRect, g);
 	}
 	public void paintCharacterSelect(Graphics g){
 		g.setColor(Color.GRAY);
@@ -278,7 +328,11 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		g.setColor(Color.BLACK);
 		g.drawString("char select SCREEN", WIDTH/2, HEIGHT/2);
 		g.setColor(Color.RED);
-		g.fillRect((int)nextScreenRect.getX(), (int)nextScreenRect.getY(), (int)nextScreenRect.getWidth(), (int)nextScreenRect.getHeight());
+		Util.drawFilledRect(nextScreenRect, g);
+
+		for (int i=0; i<charSelectRects.size(); i++){
+			Util.drawFilledRect(charSelectRects.get(i), g);
+		}
 	}
 	public void paintStageSelect(Graphics g){
 		g.setColor(Color.GRAY);
@@ -286,7 +340,11 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		g.setColor(Color.BLACK);
 		g.drawString("Stage Select SCREEN", WIDTH/2, HEIGHT/2);
 		g.setColor(Color.RED);
-		g.fillRect((int)nextScreenRect.getX(), (int)nextScreenRect.getY(), (int)nextScreenRect.getWidth(), (int)nextScreenRect.getHeight());
+		Util.drawFilledRect(nextScreenRect, g);
+
+		for (int i=0; i<stageSelectRects.size(); i++){
+			Util.drawFilledRect(stageSelectRects.get(i), g);
+		}
 	}
 	public void paintEnd(Graphics g){
 		g.setColor(Color.GRAY);
@@ -295,11 +353,16 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		g.drawString("END SCREEN", WIDTH/2, HEIGHT/2);
 	}
 	public void paintBattle(Graphics g){
-		//draw Stage and Platforms
-		curStage.draw(g);
+		try{
+			//draw Stage and Platforms
+			curStage.draw(g);
 
-		//draw Players and their Hitboxes
-        p1.draw(g, 30, 30);
-		p2.draw(g, 730, 30);
+			//draw Players and their Hitboxes
+			p1.draw(g, 30, 30);
+			p2.draw(g, 730, 30);
+		}
+		catch(NullPointerException ex){
+			System.out.println(player1 + " " + player2);
+		}
 	}
 }

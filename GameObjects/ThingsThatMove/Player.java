@@ -2,6 +2,7 @@ package GameObjects.ThingsThatMove;
 
 import java.util.*;
 import java.awt.*;
+import java.awt.event.*;
 
 import GameObjects.ThingsThatMove.AttackStuff.*;
 import GameObjects.Stage;
@@ -70,6 +71,15 @@ public class Player extends Mover{
         onGround = false;
         hitboxes = new ArrayList<Hitbox>();
         forces = new ArrayList<Force>();
+    }
+
+    public void loadKeyLayout(HashMap<String, Integer> keyVals){
+        UKey = keyVals.get("UKey");
+        DKey = keyVals.get("DKey");
+        LKey = keyVals.get("LKey");
+        RKey = keyVals.get("RKey");
+        fastKey = keyVals.get("fastKey");
+        chargeKey = keyVals.get("chargeKey");
     }
 
     public void move(boolean [] keysPressed, int [] keysReleasedTime, Stage stage){ //moves the Player

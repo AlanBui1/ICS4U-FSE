@@ -45,6 +45,10 @@ public class Util {
 		return taxicabDist(p1.getX(), p1.getY(), p2.getX(), p2.getY());
 	}
 
+	public static void drawFilledRect(Rectangle r, Graphics g){ //method to draw a filled rectangle given a Rectangle
+		g.fillRect((int)r.getX(), (int)r.getY(), (int)r.getWidth(), (int)r.getHeight());
+	}
+
 	public static HashMap <String, Double> loadStats(String fileName){ //returns a HashMap with all the fields of a Player given the filename of the file with its data
 		HashMap <String, Double> stats = new HashMap<String, Double>();
 		try{

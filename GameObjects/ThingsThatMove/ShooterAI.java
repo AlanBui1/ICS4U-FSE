@@ -4,9 +4,9 @@ import java.util.*;
 import MainGame.Gamepanel;
 import Utility.Util;
 import GameObjects.ThingsThatMove.AttackStuff.*;
-import GameObjects.Stage;
+import GameObjects.*;
 
-public class ShooterAI extends Player{
+public class ShooterAI extends Player{ //MOVE INTO PLAYER CLASS
     private int []  movementKeys = new int[4],
                     attackKeys = new int[2];
 
