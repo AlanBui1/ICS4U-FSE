@@ -30,10 +30,15 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	public static final HashMap<String, Integer> defaultKeys1 = new HashMap<String, Integer>();
 	public static final HashMap<String, Integer> defaultKeys2 = new HashMap<String, Integer>();
 
+	private ArrayList<HashMap <String, Integer>> playerKeys;
+	private HashMap<Rectangle, String> keyRects;
+
     private boolean [] keysPressed;
 	private int [] keysHeldTime, keysReleasedTime;
 	private boolean mousePressed;
 	private int mouseX, mouseY, mouseButton;
+	private String selectedKey;
+	private int selectedPlayer;
 	
 	private int curScreen;
 	private Stage curStage;
@@ -79,13 +84,15 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		//PRECOMPUTE STAGES
 		allStages = new ArrayList<Stage>();
-		String [] stageNames = {"noPlats", "verticalPlat"};
+		String [] stageNames = {"noPlats", "verticalPlat", "triPlat", "twoMoving"};
 		for (int i=0; i<stageNames.length; i++){
 			allStages.add(Util.loadStage("stages/"+stageNames[i]+".txt"));
 		} 
 		stageSelectRects = new ArrayList<Rectangle>();
 		stageSelectRects.add(new Rectangle(100, 100, 100, 100));
 		stageSelectRects.add(new Rectangle(300, 300, 100, 100));
+		stageSelectRects.add(new Rectangle(100, 300, 100, 100));
+		stageSelectRects.add(new Rectangle(300, 100, 100, 100));
 
 		//PRECOMPUTE PLAYERS
 		allCharacters = new ArrayList<String>();
@@ -96,6 +103,17 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		charSelectRects = new ArrayList<Rectangle>();
 		charSelectRects.add(new Rectangle(50, 50, 200, 200));
 
+		//INITIALIZE KEY SELECT
+		playerKeys = new ArrayList<HashMap<String, Integer>>();
+		playerKeys.add(new HashMap<String, Integer>());
+		playerKeys.add(new HashMap<String, Integer>());
+
+		keyRects = new HashMap<Rectangle, String>();
+		for (int i=100; i<700; i+=100){
+			keyRects.put(new Rectangle(i, 10, 50, 50), keyNames[i/100-1]);
+			keyRects.put(new Rectangle(i, 400, 50, 50), keyNames[i/100-1]);
+		}
+
 		//PRECOMPUTE DEFAULT KEYS
 		int [] default1 = {KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_E, KeyEvent.VK_Q},
 			   default2 = {KeyEvent.VK_I, KeyEvent.VK_K, KeyEvent.VK_J, KeyEvent.VK_L, KeyEvent.VK_U, KeyEvent.VK_O};			
@@ -103,7 +121,12 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		for (int i=0; i<6; i++){
 			defaultKeys1.put(keyNames[i], default1[i]);
 			defaultKeys2.put(keyNames[i], default2[i]);
+			playerKeys.get(0).put(keyNames[i], default1[i]);
+			playerKeys.get(1).put(keyNames[i], default2[i]);
 		}
+		
+		player1 = "shooter";
+		player2 = "shooter";
 
 		//loads font
 		String fName = "NeonLight-Regular.ttf"; 
@@ -189,13 +212,13 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 						}
 					}
 					if (nextScreenRect.contains(mouseX, mouseY)){
-						curScreen = CONTROLSELECT;
+						curScreen = STAGESELECT;
 						mousePressed = false;
 
 						p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"));
-						p1.loadKeyLayout(defaultKeys1);
+						p1.loadKeyLayout(playerKeys.get(0));
 						p2 = new ShooterAI(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"));
-						p2.loadKeyLayout(defaultKeys2);
+						p2.loadKeyLayout(playerKeys.get(1));
 					}
 				}
 			}
@@ -218,14 +241,28 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 						curScreen = BATTLE;
 						mousePressed = false;
 					}
+
+					for (Rectangle r : keyRects.keySet()){
+						if (r.contains(mouseX, mouseY)){
+							selectedKey = keyRects.get(r);
+							selectedPlayer = mouseButton == 1 ? 0 : 1;
+							break;
+						}
+					}
 				}
 			}
 			
 			else if (curScreen == BATTLE){
 				move(); 	// never draw in move
+				if (p1.getLives() <= 0 || p2.getLives() <= 0){
+					curScreen = ENDSCREEN;
+				}
 			}
 			else if (curScreen == ENDSCREEN){
-
+				if (mousePressed){
+					mousePressed = false;
+					curScreen = START;
+				}
 			}
 			
 			repaint(); 	// only draw
@@ -247,6 +284,10 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		int key = ke.getKeyCode();
 		keysPressed[key] = true;
 		keysReleasedTime[key] = 0;
+
+		if (curScreen == CONTROLSELECT){
+			playerKeys.get(selectedPlayer).put(selectedKey, ke.getKeyCode());
+		}
 	}
 	
 	@Override
@@ -321,6 +362,15 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		g.drawString("control select", WIDTH/2, HEIGHT/2);
 		g.setColor(Color.RED);
 		Util.drawFilledRect(nextScreenRect, g);
+
+		g.setColor(Color.BLUE);
+		for (Rectangle r : keyRects.keySet()){
+			Util.drawFilledRect(r, g);
+			g.drawString(keyRects.get(r), (int)r.getX(), (int)(r.getY()+2*r.getHeight()));
+
+			g.drawString(""+(char)(int)(playerKeys.get(0).get(keyRects.get(r))), (int)r.getX(), 180);
+			g.drawString(""+(char)(int)(playerKeys.get(1).get(keyRects.get(r))), (int)r.getX(), 550);
+		}
 	}
 	public void paintCharacterSelect(Graphics g){
 		g.setColor(Color.GRAY);

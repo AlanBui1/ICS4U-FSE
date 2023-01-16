@@ -5,7 +5,7 @@ vx	0
 vy	0
 ax	0.00625
 ay	0
-maxvx	0.03125
+maxvx	0.02125
 maxvy	0
 width	0.01
 height	0.01
@@ -62,7 +62,7 @@ width	0.0075
 height	0.01
 startoffsetx	0.0125
 startoffsety	0.01875
-timeactive	15
+timeactive	6
 stuntime	10
 damage	1.6
 basekbx	-0.00625
@@ -77,7 +77,7 @@ width	0.0075
 height	0.01
 startoffsetx	0.0125
 startoffsety	0.01875
-timeactive	15
+timeactive	6
 stuntime	10
 damage	1.6
 basekbx	0.00625
@@ -92,7 +92,7 @@ width	0.0075
 height	0.01
 startoffsetx	0.0125
 startoffsety	0.01875
-timeactive	15
+timeactive	6
 stuntime	10
 damage	1.6
 basekbx	-0.00625
@@ -107,7 +107,7 @@ width	0.0075
 height	0.01
 startoffsetx	0.0125
 startoffsety	0.01875
-timeactive	15
+timeactive	6
 stuntime	10
 damage	1.6
 cooldown 0
@@ -159,7 +159,7 @@ height	0.060
 startoffsetx	0.05
 startoffsety	-0.01
 timeactive	10
-stuntime	10
+stuntime	20
 damage	20
 basekbx	0
 basekby	0
@@ -174,7 +174,7 @@ height	0.060
 startoffsetx	-0.025
 startoffsety	-0.01
 timeactive	10
-stuntime	10
+stuntime	20
 damage	20
 cooldown 5
 ---END---

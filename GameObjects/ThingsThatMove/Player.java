@@ -20,7 +20,8 @@ public class Player extends Mover{
                 chargeKey, //key used to use the charged attack
                 stunTime, //how long the Player is stunned for
                 dir, //direction the Player is facing (-1 is LEFT, 1 is RIGHT)
-                atkCooldown; //how long until the Player can attack again
+                atkCooldown, //how long until the Player can attack again
+                lives; //number of lives the Player has left
 
     private double  weight, //weight () is a measure of how much a Player can resist knockback i.e. more weight => less knockback
                     airaccel, //airaccel (pixels / frame^2) is the rate a Player can change their horizontal velocity midair
@@ -71,6 +72,7 @@ public class Player extends Mover{
         onGround = false;
         hitboxes = new ArrayList<Hitbox>();
         forces = new ArrayList<Force>();
+        lives = 4;
     }
 
     public void loadKeyLayout(HashMap<String, Integer> keyVals){
@@ -246,13 +248,14 @@ public class Player extends Mover{
     }
     
     public void loseLife(){
-        // lives--;
+        lives--;
         setX(Gamepanel.WIDTH/2); setY(30);
         setVX(0);
         setVY(0);
         setAX(0);
         setAY(0);
         damage = 0;
+        System.out.println(lives);
     }
 
     public void attack(boolean [] keysPressed, int [] keysReleasedTime){
@@ -372,6 +375,7 @@ public class Player extends Mover{
     public int getDir(){return dir;}
     public int getCoolDown(){return atkCooldown;}
     public int getStun(){return stunTime;}
+    public int getLives(){return lives;}
     public double getWeight(){return weight;}
     public double getDamage(){return damage;}
     public boolean getOnGround(){return onGround;}
