@@ -17,18 +17,34 @@ import GameObjects.Stage;
 import Utility.Util;
 
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
+	public static final int WIDTH = 800, HEIGHT = 600;
+	public static final int START = 0, 
+							CONTROLSELECT = 1, 
+							CHARACTERSELECT = 2,
+							STAGESELECT = 3,
+							BATTLE = 4,
+							ENDSCREEN = 5;
+
     private boolean [] keysPressed;
 	private int [] keysHeldTime, keysReleasedTime;
-
+	private boolean mousePressed;
+	private int mouseX, mouseY, mouseButton;
+	
+	private int curScreen;
 	private Stage curStage;
-	public static  HashMap <String, Double> shooterStats = new HashMap<String, Double>(); //statName -> value
+
+	//moves these into another class with just stats and attacks
+	public static  HashMap <String, Double> shooterStats = new HashMap<String, Double>(); //statName -> value 
 	public static  HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
 
     Timer timer;
     // Player p2; 
 	Player p1;
 	ShooterAI p2;
-    public static final int WIDTH = 800, HEIGHT = 600;
+
+	private Font fontLocal; //Font used for text to be drawn on screen
+
+	private Rectangle nextScreenRect;
 
 	public Gamepanel(){
 		keysPressed = new boolean[KeyEvent.KEY_LAST+1];
@@ -47,7 +63,10 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		curStage = Util.loadStage("stages/verticalPlat.txt");
 
 		shooterStats= Util.loadStats("shooterStats.txt");
-		shooterAtks = Util.loadAtks("shooterAtks.txt");;
+		shooterAtks = Util.loadAtks("shooterAtks.txt");
+		nextScreenRect = new Rectangle(500, 400, 50, 50);
+
+		curScreen = START;
 
 		p1 = new Player(400, 30, shooterStats, shooterAtks);
         p1.setDKey(KeyEvent.VK_S);
@@ -64,8 +83,24 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
         p2.setUKey(KeyEvent.VK_I);
 		p2.setChargeKey(KeyEvent.VK_U);
 		p2.setFastKey(KeyEvent.VK_O);
+		p2.setKeys();
+
+		//loads font
+		String fName = "NeonLight-Regular.ttf"; 
+    	InputStream is = Gamepanel.class.getResourceAsStream(fName);
+    	try{
+    		fontLocal = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(32f);
+    	}
+    	catch(IOException ex){
+    		System.out.println(ex);	
+    	}
+    	catch(FontFormatException ex){
+    		System.out.println(ex);	
+    	}
 	}
 
+//###########################################################################################################################
+//STUFF FOR THE BATTLE
     public void move(){		
 		try{
 			for (Platform p : curStage.getPlats()){
@@ -104,7 +139,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			oppoPlayer.addDamage(h.getDamage());
 		}
 	}
-	
+//###########################################################################################################################
+
+
 	@Override
 	public void actionPerformed(ActionEvent e){
 		for (int i=0; i<KeyEvent.KEY_LAST; i++){
@@ -112,10 +149,41 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 				keysHeldTime[i]++;
 			}
 		}
-		
-		// System.out.println(keysPressed[KeyEvent.VK_E] + " " + keysHeldTime[KeyEvent.VK_E] + " " + keysReleasedTime[KeyEvent.VK_E]);
-		move(); 	// never draw in move
-		repaint(); 	// only draw
+
+		try{
+			if (curScreen == START){
+				if (mousePressed){
+					curScreen = CHARACTERSELECT;
+				}
+			}
+			else if (curScreen == CONTROLSELECT){
+
+			}
+			else if (curScreen == CHARACTERSELECT){
+				if (mousePressed){
+					if (nextScreenRect.contains(mouseX, mouseY)){
+						curScreen = STAGESELECT;
+					}
+				}
+			}
+			else if (curScreen == STAGESELECT){
+				if (mousePressed){
+					if (nextScreenRect.contains(mouseX, mouseY)){
+						curScreen = BATTLE;
+					}
+				}
+			}
+			else if (curScreen == BATTLE){
+				move(); 	// never draw in move
+			}
+			else if (curScreen == ENDSCREEN){
+
+			}
+			
+			repaint(); 	// only draw
+		}
+
+		catch(NullPointerException ex){}
 	}
 	
 	@Override
@@ -135,67 +203,103 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	
 	@Override
 	public void keyTyped(KeyEvent ke){}
+
+	public void updateMouse(MouseEvent e){
+		mouseX = e.getX();
+		mouseY = e.getY();
+		mouseButton = e.getButton();
+	}
 	@Override
-	public void	mouseClicked(MouseEvent e){}
+	public void	mouseClicked(MouseEvent e){
+		updateMouse(e);
+	}
 
 	@Override
-	public void	mouseEntered(MouseEvent e){}
+	public void	mouseEntered(MouseEvent e){
+		updateMouse(e);
+	}
 
 	@Override
-	public void	mouseExited(MouseEvent e){}
+	public void	mouseExited(MouseEvent e){
+		updateMouse(e);
+	}
 
 	@Override
-	public void	mousePressed(MouseEvent e){}
+	public void	mousePressed(MouseEvent e){
+		updateMouse(e);
+		mousePressed = true;
+	}
 
 	@Override
-	public void	mouseReleased(MouseEvent e){}
+	public void	mouseReleased(MouseEvent e){
+		updateMouse(e);
+		mousePressed = false;
+	}
 
 	@Override
 	public void paint(Graphics g){
-		g.setColor(Color.BLACK);
-		g.fillRect(0,0,WIDTH,HEIGHT);
-
-		for (Platform p : curStage.getPlats()){
-			p.draw(g, Color.GREEN);
+		g.setFont(fontLocal);
+		//paint appropriate screen depending on screen name
+		if (curScreen == START){
+			paintStart(g);
 		}
-
-		// DRAWING LIVES
-		Polygon test = new Polygon(new int []{10+300, 25+300, 40+300, 25+300}, new int []{25+250,40+250,25+250,10+250}, 4);
-		if (test.intersects(p1.getRect()) || test.intersects(p2.getRect())){
-			//System.out.println("AS");
-			g.setColor(Color.WHITE);
+		else if (curScreen == CONTROLSELECT){
+			paintControlSelect(g);
 		}
-		else{
-			g.setColor(Color.RED);
+		else if (curScreen == CHARACTERSELECT){
+			paintCharacterSelect(g);
 		}
-		g.fillPolygon(test);
-		g.setColor(Color.RED);
-		// for (int L = 0; L < 3; L++){
-		// 	if (p1.getLives()-L == 0){
-		// 		g.setColor(Color.WHITE);
-		// 	}
-		// 	g.fillRect(20 + L*30, 570, 20, 20);
-		// }
-
-		// g.setColor(Color.RED);
-		// for (int L = 0; L < 3; L++){
-		// 	if (p2.getLives()-L == 0){
-		// 		g.setColor(Color.WHITE);
-		// 	}
-		// 	g.fillRect(700 + L*30, 570, 20, 20);
-		// }
-
-        p1.draw(g);
-		for (Hitbox h : p1.getHitBoxes()){
-			h.draw(g);
+		else if (curScreen == STAGESELECT){
+			paintStageSelect(g);
 		}
-
-		g.drawString(""+Util.fDouble(p1.getDamage(), 1), 40, 40);
-
-		p2.draw(g);
-		for (Hitbox h : p2.getHitBoxes()){
-			h.draw(g);
+		else if (curScreen == BATTLE){
+			paintBattle(g);
 		}
-		g.drawString(""+Util.fDouble(p2.getDamage(), 1), 740, 40);
+		else if (curScreen == ENDSCREEN){
+			paintEnd(g);
+		}
     }
+
+	public void paintStart(Graphics g){
+		g.setColor(Color.GRAY);
+		g.fillRect(0,0, WIDTH, HEIGHT);
+		g.setColor(Color.BLACK);
+		g.drawString("CLICK TO START", WIDTH/2, HEIGHT/2);
+	}
+	public void paintControlSelect(Graphics g){
+		g.setColor(Color.GRAY);
+		g.fillRect(0,0, WIDTH, HEIGHT);
+		g.setColor(Color.BLACK);
+		g.drawString("control select", WIDTH/2, HEIGHT/2);
+	}
+	public void paintCharacterSelect(Graphics g){
+		g.setColor(Color.GRAY);
+		g.fillRect(0,0, WIDTH, HEIGHT);
+		g.setColor(Color.BLACK);
+		g.drawString("char select SCREEN", WIDTH/2, HEIGHT/2);
+		g.setColor(Color.RED);
+		g.fillRect((int)nextScreenRect.getX(), (int)nextScreenRect.getY(), (int)nextScreenRect.getWidth(), (int)nextScreenRect.getHeight());
+	}
+	public void paintStageSelect(Graphics g){
+		g.setColor(Color.GRAY);
+		g.fillRect(0,0, WIDTH, HEIGHT);
+		g.setColor(Color.BLACK);
+		g.drawString("Stage Select SCREEN", WIDTH/2, HEIGHT/2);
+		g.setColor(Color.RED);
+		g.fillRect((int)nextScreenRect.getX(), (int)nextScreenRect.getY(), (int)nextScreenRect.getWidth(), (int)nextScreenRect.getHeight());
+	}
+	public void paintEnd(Graphics g){
+		g.setColor(Color.GRAY);
+		g.fillRect(0,0, WIDTH, HEIGHT);
+		g.setColor(Color.BLACK);
+		g.drawString("END SCREEN", WIDTH/2, HEIGHT/2);
+	}
+	public void paintBattle(Graphics g){
+		//draw Stage and Platforms
+		curStage.draw(g);
+
+		//draw Players and their Hitboxes
+        p1.draw(g, 30, 30);
+		p2.draw(g, 730, 30);
+	}
 }

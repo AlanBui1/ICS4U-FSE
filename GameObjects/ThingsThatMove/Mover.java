@@ -28,7 +28,7 @@ public class Mover {
         maxVY = stats.get("maxvy");
     }
 
-    public void move(){
+    public void move(){ //method to change the location of the Mover according to its velocity and acceleration
         if (Math.abs(vx + ax) < Math.abs(maxVX)) vx += ax;
         if (Math.abs(vy + ay) < Math.abs(maxVY)) vy += ay;
         x += vx;

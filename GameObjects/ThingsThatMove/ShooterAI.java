@@ -46,24 +46,26 @@ public class ShooterAI extends Player{
 
     @Override
     public void attack(boolean [] keysPressed, int [] keysReleasedTime){
+        if (getCoolDown() > 0) return;
         if (Util.randint(0, 4) %5 != 0) return;
 
-        chargeMove();
-
         int randAtk = attackKeys[Util.randint(0, 1)];
-        keysReleasedTime[randAtk] = 1;
-        keysPressed[randAtk] = true;
 
         if (randAtk == getChargeKey()){
+            System.out.println(1);
             if (getCharge() < 50){
                 keysReleasedTime[randAtk] = 0;
                 keysPressed[randAtk] = false;
             }
+            else{
+                super.attack("ChargeSideAtk");
+            }
         }
-        
-        super.attack(keysPressed, keysReleasedTime);
-        keysReleasedTime[randAtk] = 0;
-        keysPressed[randAtk] = false;
+
+        else{
+            super.attack("BonusAtk");
+            super.attack("FastSideAtk");
+        }
     }
 
     public Platform nearestPlat(Stage curStage){ //returns the nearest Platform to the Player in the stage 

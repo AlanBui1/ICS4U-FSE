@@ -328,11 +328,17 @@ public class Player extends Mover{
         setCoolDown(a.getCoolDown());
     }
 
-    public void draw(Graphics g){ //draws the Player
+    public void draw(Graphics g, int xx, int yy){ //draws the Player
         g.setColor(Color.BLUE);
         if (chargedMoveSize == 50) g.setColor(Color.CYAN);
         if (stunTime > 0) g.setColor(Color.RED);
         g.fillRect((int)getX(), (int)getY(), (int)width, (int)height);
+
+        for (Hitbox h : hitboxes){ //draws Hitboxes
+			h.draw(g);
+		}
+
+		g.drawString(""+Util.fDouble(damage, 1), xx, yy); //draws Player percent
     }
 
     //adder methods????
