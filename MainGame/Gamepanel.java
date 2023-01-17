@@ -23,9 +23,10 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 							CHARACTERSELECT = 2,
 							STAGESELECT = 3,
 							BATTLE = 4,
-							ENDSCREEN = 5;
+							PAUSESCREEN = 5,
+							ENDSCREEN = 6;
 	
-	public static final String [] keyNames = {"UKey", "DKey", "LKey", "RKey", "fastKey", "chargeKey"};
+	public static final String [] keyNames = {"UKey", "DKey", "LKey", "RKey", "fastKey", "chargeKey", "shieldKey"};
 	public static final HashMap<String, Integer> defaultKeys1 = new HashMap<String, Integer>();
 	public static final HashMap<String, Integer> defaultKeys2 = new HashMap<String, Integer>();
 
@@ -50,7 +51,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 	private String player1, player2;
 
-	private Rectangle defaultRect;
+	private Rectangle defaultRect, controlScreenRect, pauseRect;
 
     Timer timer;
     // Player p2; 
@@ -78,6 +79,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		curStage = Util.loadStage("stages/verticalPlat.txt");
 
 		nextScreenRect = new Rectangle(500, 400, 50, 50);
+		controlScreenRect = new Rectangle(0, 0, 100, 100);
+		pauseRect = new Rectangle(WIDTH/2, HEIGHT-100, 100, 100);
 
 		curScreen = START;
 
@@ -114,10 +117,10 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		}
 
 		//PRECOMPUTE DEFAULT KEYS
-		int [] default1 = {KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_E, KeyEvent.VK_Q},
-			   default2 = {KeyEvent.VK_I, KeyEvent.VK_K, KeyEvent.VK_J, KeyEvent.VK_L, KeyEvent.VK_U, KeyEvent.VK_O};			
+		int [] default1 = {KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z},
+			   default2 = {KeyEvent.VK_I, KeyEvent.VK_K, KeyEvent.VK_J, KeyEvent.VK_L, KeyEvent.VK_U, KeyEvent.VK_O, KeyEvent.VK_SLASH};			
 
-		for (int i=0; i<6; i++){
+		for (int i=0; i<default1.length; i++){
 			defaultKeys1.put(keyNames[i], default1[i]);
 			defaultKeys2.put(keyNames[i], default2[i]);
 			playerKeys.get(0).put(keyNames[i], default1[i]);
@@ -145,9 +148,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 //STUFF FOR THE BATTLE
     public void move(){ //moves Objects on the screen during a Battle
 		try{
-			//counts down the stunTime and attack cooldown of Players
-			if (p1.getStun() > 0) p1.addStun(-1); p1.setCoolDown(p1.getCoolDown()-1);
-			if (p2.getStun() > 0) p2.addStun(-1); p2.setCoolDown(p2.getCoolDown()-1);
+			//counts down the stunTime, shieldTime, and attack cooldown of Players
+			if (p1.getStun() > 0) p1.addStun(-1); p1.setCoolDown(p1.getCoolDown()-1); p1.setShieldTime(p1.getShieldTime()-1);
+			if (p2.getStun() > 0) p2.addStun(-1); p2.setCoolDown(p2.getCoolDown()-1); p2.setShieldTime(p2.getShieldTime()-1);
 
 			//moves Platforms
 			for (Platform p : curStage.getPlats()){
@@ -172,15 +175,19 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		for (Hitbox h : curPlayer.getHitBoxes()){
 			if (oppoPlayer.getRect().intersects(h.getRect())){
 				toDelH.add(h);
-				oppoPlayer.addForce(new Force(Force.knockBack(h.getKnockBackX(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
-									  Force.knockBack(h.getKnockBackY(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
-									  h.getStun()));
 			}
 		}
 
 		for (Hitbox h : toDelH){
-			oppoPlayer.setStun(Math.max(h.getStun(), oppoPlayer.getStun()));
 			curPlayer.getHitBoxes().remove(h);
+			if (oppoPlayer.getShieldTime() > 0){
+				oppoPlayer.setShieldTime(0);
+				continue;
+			}
+			oppoPlayer.addForce(new Force(Force.knockBack(h.getKnockBackX(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
+									  Force.knockBack(h.getKnockBackY(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
+									  h.getStun()));
+			oppoPlayer.setStun(Math.max(h.getStun(), oppoPlayer.getStun()));
 			oppoPlayer.addDamage(h.getDamage());
 		}
 	}
@@ -219,7 +226,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 						p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
 						p1.loadKeyLayout(playerKeys.get(0));
-						p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), true);
+						p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), false);
 						p2.loadKeyLayout(playerKeys.get(1));
 					}
 				}
@@ -255,11 +262,31 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			}
 			
 			else if (curScreen == BATTLE){
+				if (mousePressed && pauseRect.contains(mouseX, mouseY)){
+					curScreen = PAUSESCREEN;
+					mousePressed = false;
+					return;
+				}
+
 				move(); 	// never draw in move
 				if (p1.getLives() <= 0 || p2.getLives() <= 0){
 					curScreen = ENDSCREEN;
 				}
 			}
+
+			else if (curScreen == PAUSESCREEN){
+				if (mousePressed){
+					if (pauseRect.contains(mouseX, mouseY)){
+						curScreen = BATTLE;
+						mousePressed = false;
+					}
+					if (controlScreenRect.contains(mouseX, mouseY)){
+						curScreen = CONTROLSELECT;
+						mousePressed = false;
+					}
+				}
+			}
+
 			else if (curScreen == ENDSCREEN){
 				if (mousePressed){
 					mousePressed = false;
@@ -346,6 +373,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		else if (curScreen == BATTLE){
 			paintBattle(g);
 		}
+		else if (curScreen == PAUSESCREEN){
+			paintPause(g);
+		}
 		else if (curScreen == ENDSCREEN){
 			paintEnd(g);
 		}
@@ -412,9 +442,20 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			//draw Players and their Hitboxes
 			p1.draw(g, 30, 30);
 			p2.draw(g, 730, 30);
+			
+			Util.drawFilledRect(pauseRect, g);
 		}
 		catch(NullPointerException ex){
 			System.out.println(player1 + " " + player2);
 		}
+	}
+	public void paintPause(Graphics g){
+		g.setColor(Color.GRAY);
+		g.fillRect(0,0, WIDTH, HEIGHT);
+		g.setColor(Color.BLACK);
+		g.drawString("PAUSE SCREEN", WIDTH/2, HEIGHT/2);
+		g.setColor(Color.RED);
+		Util.drawFilledRect(pauseRect, g);
+		Util.drawFilledRect(controlScreenRect, g);
 	}
 }

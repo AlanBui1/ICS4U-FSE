@@ -20,10 +20,12 @@ public class Player extends Mover{
                 DKey, //key used to move down
                 fastKey, //key used to use the fast attack
                 chargeKey, //key used to use the charged attack
+                shieldKey, //key used to activate shield
                 stunTime, //how long the Player is stunned for
                 dir, //direction the Player is facing (-1 is LEFT, 1 is RIGHT)
                 atkCooldown, //how long until the Player can attack again
-                lives; //number of lives the Player has left
+                lives, //number of lives the Player has left
+                shieldTime; //how long the Player has shield active for
 
     private double  weight, //weight () is a measure of how much a Player can resist knockback i.e. more weight => less knockback
                     airaccel, //airaccel (pixels / frame^2) is the rate a Player can change their horizontal velocity midair
@@ -68,6 +70,7 @@ public class Player extends Mover{
 
         attacks = atks;
         stunTime = 0;
+        shieldTime = 0;
         atkCooldown = 0;
         chargedMoveSize= 0;
         damage = 0;
@@ -85,6 +88,7 @@ public class Player extends Mover{
         RKey = keyVals.get("RKey");
         fastKey = keyVals.get("fastKey");
         chargeKey = keyVals.get("chargeKey");
+        shieldKey = keyVals.get("shieldKey");
     }
 
     public void move(boolean [] keysPressed, int [] keysReleasedTime, Stage stage){ //moves the Player
@@ -262,7 +266,7 @@ public class Player extends Mover{
     }
 
     public void attack(boolean [] keysPressed, int [] keysReleasedTime){
-        if (getCoolDown() > 0) return; //doesn't attack if still on cooldown
+        if (stunTime > 0 || atkCooldown > 0) return; //doesn't attack if still on cooldown or is stunned
 
         if (isComputer){
             if (Util.randint(0, 4) %5 != 0) return; //randomly chooses not to attack
@@ -282,8 +286,14 @@ public class Player extends Mover{
             }
             return;
         }
+
+        if (keysPressed[shieldKey]){
+            stunTime = 25;
+            atkCooldown = 25;
+            shieldTime = 20;
+        }
             
-        if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){
+        else if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){
             if (keysReleasedTime[fastKey] <= 5) attack("BonusAtk", 1);
             
             if (keysPressed[UKey]){
@@ -371,6 +381,7 @@ public class Player extends Mover{
         g.setColor(Color.BLUE);
         if (chargedMoveSize == 50) g.setColor(Color.CYAN);
         if (stunTime > 0) g.setColor(Color.RED);
+        if (shieldTime > 0) g.setColor(Color.GREEN);
         g.fillRect((int)getX(), (int)getY(), (int)width, (int)height);
 
         for (Hitbox h : hitboxes){ //draws Hitboxes
@@ -379,7 +390,6 @@ public class Player extends Mover{
 
 		g.drawString(""+Util.fDouble(damage, 1), xx, yy); //draws Player percent
     }
-
 
     //adder methods????
     public void addHitBox(Hitbox h){hitboxes.add(h);}
@@ -402,6 +412,7 @@ public class Player extends Mover{
     public int getDir(){return dir;}
     public int getCoolDown(){return atkCooldown;}
     public int getStun(){return stunTime;}
+    public int getShieldTime(){return shieldTime;}
     public int getLives(){return lives;}
     public double getWeight(){return weight;}
     public double getDamage(){return damage;}
@@ -419,4 +430,5 @@ public class Player extends Mover{
     public void setCoolDown(int time){atkCooldown = time;}
     public void setKeyPressed(int k, boolean [] keysPressed, boolean b){keysPressed[k] = b;}
     public void setStun(int time){stunTime = time;}
+    public void setShieldTime(int time){shieldTime = time;}
 }
