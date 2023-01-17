@@ -46,5 +46,5 @@ public class Platform extends Mover{
 
     public int getWidth(){return width;} //returns width of the Platform
 
-    public Point getCenterPoint(){return new Point((int)getX() + width/2, (int)getY() + height/2);}
+    public Point getCenterPoint(){return new Point((int)getX() + width/2, (int)getY() + height/2);} // returns the point in the center of the Platform
 }

@@ -9,7 +9,6 @@ import java.io.*;
 import javax.swing.*;
 
 import GameObjects.ThingsThatMove.Player;
-import GameObjects.ThingsThatMove.ShooterAI;
 import GameObjects.ThingsThatMove.Platform;
 import GameObjects.ThingsThatMove.AttackStuff.*;
 import GameObjects.ThingsThatMove.AttackStuff.Hitbox;
@@ -56,7 +55,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
     Timer timer;
     // Player p2; 
 	Player p1;
-	ShooterAI p2;
+	Player p2;
 
 	private Font fontLocal; //Font used for text to be drawn on screen
 
@@ -144,18 +143,21 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 //###########################################################################################################################
 //STUFF FOR THE BATTLE
-    public void move(){		
+    public void move(){ //moves Objects on the screen during a Battle
 		try{
+			//counts down the stunTime and attack cooldown of Players
+			if (p1.getStun() > 0) p1.addStun(-1); p1.setCoolDown(p1.getCoolDown()-1);
+			if (p2.getStun() > 0) p2.addStun(-1); p2.setCoolDown(p2.getCoolDown()-1);
+
+			//moves Platforms
 			for (Platform p : curStage.getPlats()){
 				p.move();
 			}
-			if (p1.getStun() > 0) p1.addStun(-1);
-			if (p2.getStun() > 0) p2.addStun(-1);
 			
-			p1.setCoolDown(p1.getCoolDown()-1);
+			
 			p1.attack(keysPressed, keysReleasedTime);
 			p1.move(keysPressed, keysReleasedTime, curStage);
-			p2.setCoolDown(p2.getCoolDown()-1);
+			
 			p2.move(keysPressed, keysReleasedTime, curStage);
 			p2.attack(keysPressed, keysReleasedTime);
 
@@ -215,9 +217,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 						curScreen = STAGESELECT;
 						mousePressed = false;
 
-						p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"));
+						p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
 						p1.loadKeyLayout(playerKeys.get(0));
-						p2 = new ShooterAI(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"));
+						p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), true);
 						p2.loadKeyLayout(playerKeys.get(1));
 					}
 				}

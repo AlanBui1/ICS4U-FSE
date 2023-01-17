@@ -12,6 +12,8 @@ import Utility.Util;
 public class Player extends Mover{
     public static final int LEFT = -1, RIGHT = 1;
 
+    private boolean isComputer;
+
     private int LKey, //key used to move left
                 RKey, //key used to move right
                 UKey, //key used to move up
@@ -48,7 +50,7 @@ public class Player extends Mover{
 
     private HashMap <String, Attack> attacks; //attacks in the form {name, Attack}
 
-    public Player(double x, double y, HashMap<String, Double> stats, HashMap<String, Attack> atks){
+    public Player(double x, double y, HashMap<String, Double> stats, HashMap<String, Attack> atks, boolean cpu){
         super(x, y);
 
         this.height = stats.get("height");
@@ -62,6 +64,7 @@ public class Player extends Mover{
         this.gravity = stats.get("gravity");
         this.runspd = stats.get("runspd");
         this.jumpforce = stats.get("jumpforce");
+        isComputer = cpu;
 
         attacks = atks;
         stunTime = 0;
@@ -85,6 +88,24 @@ public class Player extends Mover{
     }
 
     public void move(boolean [] keysPressed, int [] keysReleasedTime, Stage stage){ //moves the Player
+        if (isComputer){
+            keysPressed[getRKey()] = false; keysPressed[getLKey()] = false;
+        
+            Platform curPlat = nearestPlat(stage);
+            int midX = ((int)curPlat.getX() + (curPlat.getWidth()/2));
+            
+            if (Util.randint(1, 100) < 2) keysPressed[getUKey()] = Util.randBoolean(); //random jumps
+            if (getY() > curPlat.getY()) keysPressed[getUKey()] = true; //jumps if below nearest platform
+
+            if (!(midX - 50 <= getX() && getX() <= midX+1)){ //moves towards the middle of the nearest platform
+                if (getX() < midX){
+                    keysPressed[getRKey()] = true;
+                }
+                else if (getX() > midX){
+                    keysPressed[getLKey()] = true;
+                }
+            }
+        }
         if (keysPressed[32]){
             loseLife();
         }
@@ -106,7 +127,6 @@ public class Player extends Mover{
         keyBoardMovement(keysPressed, keysReleasedTime); //applies the keyboard movement
 
         applyForces(); 
-        //System.out.println(onGround + " " + getVX() + " " + getVY());
         move();
 
         checkPlats(stage.getPlats()); //checks if on a platform and adjusts position 
@@ -123,60 +143,47 @@ public class Player extends Mover{
         }
     }
 
-    public void keyBoardMovement(boolean [] keysPressed, int [] keysReleasedTime){
+    public void keyBoardMovement(boolean [] keysPressed, int [] keysReleasedTime){ //method to move the Player according to the keyboard movement by the user
         if (stunTime <= 0){
-            if (onGround){ //on temporary ground
-                jump1 = true;
-                jump2 = true;
-                jump3 = true;
-                setVY(0);
+            if (onGround){ //if on a Platform
+                jump1 = true; jump2 = true; jump3 = true; //enables all 3 jumps
+                setVY(0); //stops falling
             }
 
-            if (1 <= keysReleasedTime[LKey] && keysReleasedTime[LKey] <= 10){
-                setVX(0);
-                dir = LEFT;
+            if ((1 <= keysReleasedTime[LKey] && keysReleasedTime[LKey] <= 10) || (1 <= keysReleasedTime[RKey] && keysReleasedTime[RKey] <= 10)){
+                setVX(0); //stops moving in the X direction, brakes
                 keysReleasedTime[LKey] = 0;
-            }
-            else if (keysPressed[LKey]){ //moves left with constant velocity
-                if (onGround){
-                    setVX(Math.max(-runspd, getVX() - runspd));
-                }
-                else{
-                    setVX(Math.max(-airspd, getVX() - airspd));
-                    // setVX(-airspd);
-                    // setVX(-Math.min(airspd, airaccel + getVX()));
-                }
-                dir = LEFT;
-            }
-
-            if (1 <= keysReleasedTime[RKey] && keysReleasedTime[RKey] <= 10){
-                setVX(0);
-                dir = RIGHT;
                 keysReleasedTime[RKey] = 0;
             }
-            else if (keysPressed[RKey]){ //moves right with constant velocity
+
+            if (keysPressed[LKey]){ //moves left with constant velocity
                 if (onGround){
-                    setVX(Math.min(runspd, getVX() + runspd));
+                    setVX(Math.max(-runspd, getVX() - runspd)); //velocity x goes at most the runspd
                 }
                 else{
-                    setVX(Math.min(airspd, getVX() + airspd));
-                    // setVX(airspd);
-                    // setVX(Math.min(airspd, airaccel + getVX()));
+                    setVX(Math.max(-airspd, getVX() - airspd)); //velocity x goes at most the airspd
                 }
-                dir = RIGHT;
-                
+                dir = LEFT; //sets direction
+            }
+            if (keysPressed[RKey]){ //moves right with constant velocity
+                if (onGround){
+                    setVX(Math.min(runspd, getVX() + runspd)); //velocity x goes at most the runspd
+                }
+                else{
+                    setVX(Math.min(airspd, getVX() + airspd)); //velocity x goes at most the airspd
+                }
+                dir = RIGHT; //sets direction
             }
 
             if (keysPressed[UKey]){
                 if (jump1){
-                    setVY(-jumpforce);
-                    if (keysPressed[DKey]) setVY(-jumpforce*.85);
-                    jump1 = false;
+                    setVY(-jumpforce); //activates the first jump
+                    if (keysPressed[DKey]) setVY(-jumpforce*.85); //shorter jump if the down key is pressed
+                    jump1 = false; 
                     onGround = false;
                 }
-
-                else if (jump2 && getVY() > 0){
-                    setVY(-jumpforce*.95);
+                else if (jump2 && getVY() > 0){ //if second jump is available and the Player is falling
+                    setVY(-jumpforce*.95); //activates second jump
                     jump2 = false;
                     onGround = false;
                 }
@@ -184,8 +191,7 @@ public class Player extends Mover{
         }
     }
 
-    public void applyForces(){
-
+    public void applyForces(){ //applies forces onto the Player
         //GROUND FRICTION
         if (onGround){
             if (getVX() < 0){ //moving left
@@ -195,9 +201,7 @@ public class Player extends Mover{
                 addVX(-groundfriction);
             }
         }
-
         else{
-
             //AIR FRICTION
             if (getVX() < 0){ //moving left
                 addVX(airfriction);
@@ -210,17 +214,15 @@ public class Player extends Mover{
             setVY(Math.min(getVY() + gravity, fallspd));
         }
 
-        if (Math.abs(getVX()) < 2){
+        if (Math.abs(getVX()) < 2){ //stops moving in the x direction if velocity is too small
             setVX(0);
         }
 
         for (int i=forces.size()-1; i>=0; i--){
             Force f = forces.get(i);
-            addVX(f.getMX());
+            addVX(f.getMX()); //applies the external Forces such as Hitboxes
             addVY(f.getMY());
-
             forces.remove(i);
-            
         }
     }
     
@@ -248,66 +250,72 @@ public class Player extends Mover{
     }
     
     public void loseLife(){
-        lives--;
-        setX(Gamepanel.WIDTH/2); setY(30);
-        setVX(0);
-        setVY(0);
-        setAX(0);
-        setAY(0);
+        lives--; //reduces number of lives of this Player
+        setX(Gamepanel.WIDTH/2); setY(30); //goes back to starting position TO DO
+        
+        //reset values
+        setVX(0); setVY(0);
+        setAX(0); setAY(0);
         damage = 0;
+
         System.out.println(lives);
     }
 
     public void attack(boolean [] keysPressed, int [] keysReleasedTime){
+        if (getCoolDown() > 0) return; //doesn't attack if still on cooldown
 
-        if (getCoolDown() <= 0){
-            
-            if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){
-                if (keysReleasedTime[fastKey] <= 5) attack("BonusAtk", 1);
-                
-                if (keysPressed[UKey]){
-                    attack("FastUpAtk", 1);
-                }
-                else if (keysPressed[getDKey()]){
-                    attack("FastDownAtk", 1);
+        if (isComputer){
+            if (Util.randint(0, 4) %5 != 0) return; //randomly chooses not to attack
+
+            if (Util.randBoolean()){ //randomly decides which move to use
+                if (getCharge() < 50){ //charges move if it's not fully charged
+                    chargeMove();
                 }
                 else{
-                    attack("FastSideAtk", 1);
+                    attack("ChargeSideAtk"); //attacks if the move is fully charged
                 }
-
-                keysReleasedTime[fastKey] = 0;
             }
-            // if (keysPressed[fastKey]){
-            //     if (keysPressed[UKey]){
-            //         attack("FastUpAtk", 1);
-            //     }
-            //     else if (keysPressed[getDKey()]){
-            //         attack("FastDownAtk", 1);
-            //     }
-            //     else{
-            //         attack("FastSideAtk", 1);
-            //     }
-            // }
-
-            else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
-                if (keysPressed[DKey]){
-                    attack("ChargeDownAtk");
-                }
-                else attack("ChargeSideAtk");
-                keysReleasedTime[chargeKey] = 0;
+    
+            else{
+                attack("BonusAtk"); //attacks with fast attacks
+                attack("FastSideAtk");
             }
-
-            else if (keysPressed[chargeKey]){
-                if (keysPressed[UKey]){
-                    if (jump3){
-                        jump3 = false;
-                        setVY(-jumpforce);
-                        attack("ChargeUpAtk");
-                    }   
-                }
-                else chargeMove();
-            }
+            return;
+        }
             
+        if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){
+            if (keysReleasedTime[fastKey] <= 5) attack("BonusAtk", 1);
+            
+            if (keysPressed[UKey]){
+                attack("FastUpAtk", 1);
+            }
+            else if (keysPressed[getDKey()]){
+                attack("FastDownAtk", 1);
+            }
+            else{
+                attack("FastSideAtk", 1);
+            }
+
+            keysReleasedTime[fastKey] = 0;
+        }
+
+        else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
+            if (keysPressed[DKey]){
+                attack("ChargeDownAtk");
+            }
+            else attack("ChargeSideAtk");
+            keysReleasedTime[chargeKey] = 0;
+        }
+
+        else if (keysPressed[chargeKey]){
+            if (keysPressed[UKey]){
+                if (jump3){
+                    jump3 = false;
+                    setVY(-jumpforce);
+                    attack("ChargeUpAtk");
+                }   
+            }
+            else chargeMove();
         }
     }
 
@@ -341,6 +349,24 @@ public class Player extends Mover{
         setCoolDown(a.getCoolDown());
     }
 
+    public Platform nearestPlat(Stage curStage){ //returns the nearest Platform to the Player in the stage 
+        Platform nearestPlat = curStage.getMainPlat(); //by default is the main platform of the Stage
+        ArrayList <Platform> plats = curStage.getPlats(); //platforms of the Stage
+        double nearestDist = Util.taxicabDist(getCenterPoint(), nearestPlat.getCenterPoint()); //sets initial nearest distance
+
+        for (Platform p : plats){ //loops through all Platforms of the Stage
+            if (p.getInvis()) continue; //if the Platform is set to invisible, doesn't check it
+
+            double distToPlat= Util.taxicabDist(getX(), getY(), p.getX(), p.getY()); //distance from Player to Platform
+            if (distToPlat < nearestDist){
+                //if the distance was less, sets new nearestDist and nearestPlat 
+                nearestDist = distToPlat;
+                nearestPlat = p;
+            }
+        }
+        return nearestPlat; //returns the nearest Platform to the Player
+    }
+
     public void draw(Graphics g, int xx, int yy){ //draws the Player
         g.setColor(Color.BLUE);
         if (chargedMoveSize == 50) g.setColor(Color.CYAN);
@@ -353,6 +379,7 @@ public class Player extends Mover{
 
 		g.drawString(""+Util.fDouble(damage, 1), xx, yy); //draws Player percent
     }
+
 
     //adder methods????
     public void addHitBox(Hitbox h){hitboxes.add(h);}

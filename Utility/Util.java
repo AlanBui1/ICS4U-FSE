@@ -62,13 +62,15 @@ public class Util {
 			}
 			inFile.close();
 
-			String [] statsY = {"height", "gravity", "fallspd", "jumpforce"},
-					  statsX = {"width", "runspd", "airspd", "airaccel", "groundfriction", "airfriction"};
+			String [] statsX = {"width", "runspd", "airspd", "airaccel", "groundfriction", "airfriction"}, //stats that scale with the width of the screen
+					  statsY = {"height", "gravity", "fallspd", "jumpforce"}; //stats that scale with the height of the screen
 
 			for (int i=0; i<statsX.length; i++){
-				stats.put(statsX[i], stats.get(statsX[i]) * Gamepanel.WIDTH);		
+				//scales stats with the width
+				stats.put(statsX[i], stats.get(statsX[i]) * Gamepanel.WIDTH);	
 			}
 			for (int i=0; i<statsY.length; i++){
+				//scales stats with the height
 				stats.put(statsY[i], stats.get(statsY[i]) * Gamepanel.HEIGHT);
 			}
 			
@@ -94,24 +96,25 @@ public class Util {
 				inFile.nextLine();
 
 				atks.put(curName, new Attack());
+				int NUMSTATS = 15; //number of stats each Hitbox has
 
 				for (int i=0; i<numHitboxes; i++){
 					HashMap <String, Double> hitStats = new HashMap<String, Double>();
 
-					for (int k=0; k<15; k++){ //CHANGE THE 15 to however many fields there are
-						String KEY = inFile.next();
+					for (int k=0; k<NUMSTATS; k++){ 
+						String key = inFile.next();
 						Double val = inFile.nextDouble();
 						inFile.nextLine();
-						hitStats.put(KEY, val);
+						hitStats.put(key, val);
 					}
 
-					String [] stuff = {"basekb", "v", "a", "maxv", "startoffset"};
-					for (int j=0; j<stuff.length; j++){
-						hitStats.put(stuff[j] + "x", hitStats.get(stuff[j] + "x") * Gamepanel.WIDTH);
-						hitStats.put(stuff[j] + "y", hitStats.get(stuff[j] + "y") * Gamepanel.HEIGHT);
+					String [] stats = {"basekb", "v", "a", "maxv", "startoffset"};
+					for (int j=0; j<stats.length; j++){
+						hitStats.put(stats[j] + "x", hitStats.get(stats[j] + "x") * Gamepanel.WIDTH); //scales stats with width of the screen
+						hitStats.put(stats[j] + "y", hitStats.get(stats[j] + "y") * Gamepanel.HEIGHT); //scales stats with height of the screen
 					}
-					hitStats.put("width", hitStats.get("width") * Gamepanel.WIDTH);
-					hitStats.put("height", hitStats.get("height") * Gamepanel.HEIGHT);
+					hitStats.put("width", hitStats.get("width") * Gamepanel.WIDTH);//scales with width of the screen
+					hitStats.put("height", hitStats.get("height") * Gamepanel.HEIGHT);//scales with height of the screen
 					
 					atks.get(curName).addHitbox(new Hitbox(hitStats));
 				}
@@ -120,8 +123,6 @@ public class Util {
 				int cdown = inFile.nextInt();
 				inFile.nextLine();
 				atks.get(curName).setCoolDown(cdown);
-				
-				
 			}
 
 			inFile.close();
@@ -130,17 +131,18 @@ public class Util {
 		return atks;
 	}
 
-	public static Stage loadStage(String fileName){
+	public static Stage loadStage(String fileName){ //returns a Stage with the stats from the given filename
 		ArrayList <Platform> plats = new ArrayList<Platform>();
 		try{
 			Scanner inFile = new Scanner(new BufferedReader(new FileReader(fileName))); 
 			int numPlats = inFile.nextInt();
+			int PLATSTATS = 11; //number of stats each Platform has
 
 			for (int i=0; i<numPlats; i++){
 				HashMap <String, Integer> platStats = new HashMap<String, Integer>();
 
-				for (int k=0; k<11; k++){
-					platStats.put(inFile.next(), (int)(inFile.nextDouble() * (k%2 == 0 ? Gamepanel.WIDTH : Gamepanel.HEIGHT)));
+				for (int k=0; k<PLATSTATS; k++){
+					platStats.put(inFile.next(), (int)(inFile.nextDouble() * (k%2 == 0 ? Gamepanel.WIDTH : Gamepanel.HEIGHT))); //scales with WIDTH or HEIGHT of the screen depending on if the stat affects X or Y direction
 					inFile.nextLine();
 				}
 
@@ -153,19 +155,3 @@ public class Util {
 		return new Stage(plats);
 	}
 }
-
-/*
-cd C:\Users\alanb\OneDrive - Greater Essex County District School Board\Documents\ICS4U\ICS4U-FSE
-javac Platform.java Gamepanel.java Game.java Player.java Util.java Hitbox.java Shooter.java Mover.java BetterPlayer.java BetterShooter.java
-java Game
- */
-
- /*
-  MAKE shooter class have a Player inside? -> it's using inheritance
-  maybe have a super class with x, y, vx, vy, ax, ay for "cleaner code" -> Mover class 
-
-  later have an arraylist of players probably
-  change the draw() in Hitbox for images
-  change Hitbox class to have Polygons hitboxes -> going to use bunch of rects instead
-
-  */
