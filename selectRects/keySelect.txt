@@ -1,0 +1,16 @@
+15
+0.15625	0.25	0.125	0.125	0	UKey	stage2.png
+0.15625	0.375	0.125	0.125	0	LKey	stage2.png
+0.15625	0.5	0.125	0.125	0	DKey	stage2.png
+0.15625	0.625	0.125	0.125	0	RKey	stage2.png
+0.3125	0.25	0.125	0.125	0	fastKey	stage2.png
+0.3125	0.375	0.125	0.125	0	chargeKey	stage2.png
+0.3125	0.5	0.125	0.125	0	shieldKey	stage2.png
+0.65625	0.25	0.125	0.125	1	UKey	stage3.png
+0.65625	0.375	0.125	0.125	1	LKey	stage3.png
+0.65625	0.5	0.125	0.125	1	DKey	stage3.png
+0.65625	0.625	0.125	0.125	1	RKey	stage3.png
+0.8125	0.25	0.125	0.125	1	fastKey	stage3.png
+0.8125	0.375	0.125	0.125	1	chargeKey	stage3.png
+0.8125	0.5	0.125	0.125	1	shieldKey	stage3.png
+0.9	0.9	0.1	0.1	1	START	stage3.png

@@ -268,11 +268,12 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 									curScreen = BATTLE;
 									mousePressed = false;
 								}
+								else{
+									selectedKey = curRect.name;
+									selectedPlayer = curRect.val;
+								}
 							}
-							else{
-								selectedKey = curRect.name;
-								selectedPlayer = curRect.val;
-							}
+							
 						}
 					}
 				}
@@ -407,19 +408,11 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	public void paintControlSelect(Graphics g){
 		g.setColor(Color.GRAY);
 		g.fillRect(0,0, WIDTH, HEIGHT);
-		g.setColor(Color.BLACK);
-		g.drawString("control select", WIDTH/2, HEIGHT/2);
-		g.setColor(Color.RED);
-		Util.drawFilledRect(nextScreenRect, g);
-
-		g.setColor(Color.BLUE);
-		for (Rectangle r : keyRects.keySet()){
-			Util.drawFilledRect(r, g);
-			g.drawString(keyRects.get(r), (int)r.getX(), (int)(r.getY()+2*r.getHeight()));
-
-			g.drawString(""+(char)(int)(playerKeys.get(0).get(keyRects.get(r))), (int)r.getX(), 180);
-			g.drawString(""+(char)(int)(playerKeys.get(1).get(keyRects.get(r))), (int)r.getX(), 550);
+		for (SelectRect curRect : keySelectRects){
+			curRect.draw(g);
+			if (!curRect.name.equals("START")) g.drawString(""+(char)(int)playerKeys.get(curRect.val).get(curRect.name), (int)curRect.rect.getX()+(int)curRect.rect.getWidth()/2, (int)curRect.rect.getY()+(int)curRect.rect.getHeight()/2);
 		}
+
 	}
 	public void paintCharacterSelect(Graphics g){
 		g.setColor(Color.GRAY);
