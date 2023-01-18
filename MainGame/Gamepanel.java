@@ -55,7 +55,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 	private String player1, player2;
 
-	private Rectangle defaultRect, controlScreenRect, pauseRect;
+	private Rectangle controlScreenRect, pauseRect;
 
     Timer timer;
     // Player p2; 
@@ -63,8 +63,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	Player p2;
 
 	private Font fontLocal; //Font used for text to be drawn on screen
-
-	private Rectangle nextScreenRect;
 
 	public Gamepanel(){
 		keysPressed = new boolean[KeyEvent.KEY_LAST+1];
@@ -82,7 +80,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		curStage = Util.loadStage("stages/verticalPlat.txt");
 
-		nextScreenRect = new Rectangle(500, 400, 50, 50);
 		controlScreenRect = new Rectangle(0, 0, 100, 100);
 		pauseRect = new Rectangle(WIDTH/2, HEIGHT-100, 100, 100);
 
@@ -90,7 +87,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		//PRECOMPUTE STAGES
 		allStages = new ArrayList<Stage>();
-		String [] stageNames = {"noPlats", "verticalPlat", "triPlat", "twoMoving","noPlats", "verticalPlat", "triPlat"};
+		String [] stageNames = {"noPlats", "verticalPlat", "triPlat", "twoMoving","ground", "mainMoving", "twoPillars"};
 		for (int i=0; i<stageNames.length; i++){
 			allStages.add(Util.loadStage("stages/"+stageNames[i]+".txt"));
 		} 
@@ -104,12 +101,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		playerKeys = new ArrayList<HashMap<String, Integer>>();
 		playerKeys.add(new HashMap<String, Integer>());
 		playerKeys.add(new HashMap<String, Integer>());
-
-		keyRects = new HashMap<Rectangle, String>();
-		for (int i=100; i<700; i+=100){
-			keyRects.put(new Rectangle(i, 10, 50, 50), keyNames[i/100-1]);
-			keyRects.put(new Rectangle(i, 400, 50, 50), keyNames[i/100-1]);
-		}
 
 		//PRECOMPUTE DEFAULT KEYS
 		int [] default1 = {KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z},
@@ -213,7 +204,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 								p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
 								p1.loadKeyLayout(playerKeys.get(0));
-								p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), false);
+								p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), true);
 								p2.loadKeyLayout(playerKeys.get(1));
 							}
 							else{
@@ -267,6 +258,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 								if (curRect.name.equals("START")){
 									curScreen = BATTLE;
 									mousePressed = false;
+								}
+								else if (curRect.name.equals("DEFAULT")){
+									
 								}
 								else{
 									selectedKey = curRect.name;

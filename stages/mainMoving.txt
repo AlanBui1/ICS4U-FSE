@@ -1,0 +1,12 @@
+1	
+x	0.2
+y	0.5
+width	0.5
+height	0.1
+vx	0.005
+vy	0
+minX	-0.1
+minY	0
+maxX	0.6
+maxY	0
+invisible	0
