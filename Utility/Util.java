@@ -154,4 +154,28 @@ public class Util {
 		catch (IOException e){}
 		return new Stage(plats);
 	}
+
+	public static ArrayList<SelectRect> loadSelectRects(String fileName){
+		ArrayList <SelectRect> ret = new ArrayList<SelectRect>();
+		try{
+			Scanner inFile = new Scanner(new BufferedReader(new FileReader(fileName)));
+
+			int numRects = inFile.nextInt(); //number of SelectRects
+
+			for (int i=0; i<numRects; i++){
+				ret.add(new SelectRect(
+					new Rectangle((int)(inFile.nextDouble() * Gamepanel.WIDTH), 
+								  (int)(inFile.nextDouble() * Gamepanel.HEIGHT), 
+								  (int)(inFile.nextDouble() * Gamepanel.WIDTH), 
+								  (int)(inFile.nextDouble() * Gamepanel.HEIGHT)),
+					inFile.nextInt(),
+					inFile.next(),
+					"assets/"+inFile.next()
+				));
+			}
+		}
+		catch(IOException e){}
+
+		return ret;
+	}
 }

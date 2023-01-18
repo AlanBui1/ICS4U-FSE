@@ -13,7 +13,7 @@ import GameObjects.ThingsThatMove.Platform;
 import GameObjects.ThingsThatMove.AttackStuff.*;
 import GameObjects.ThingsThatMove.AttackStuff.Hitbox;
 import GameObjects.Stage;
-import Utility.Util;
+import Utility.*;
 
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
 	public static final int WIDTH = 800, HEIGHT = 600;
@@ -43,11 +43,15 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	private int curScreen;
 	private Stage curStage;
 
-	private ArrayList <Rectangle> stageSelectRects;
+	private String [] characterNames = {"shooter", "shooter", "shooter"};
+
+	private ArrayList <SelectRect> stageSelectRects,
+								   charSelectRects,
+								   keySelectRects;
+
 	private ArrayList <Stage> allStages;
 
-	private ArrayList <Rectangle> charSelectRects;
-	private ArrayList <String> allCharacters;
+	// private ArrayList <String> allCharacters;
 
 	private String player1, player2;
 
@@ -86,24 +90,15 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		//PRECOMPUTE STAGES
 		allStages = new ArrayList<Stage>();
-		String [] stageNames = {"noPlats", "verticalPlat", "triPlat", "twoMoving"};
+		String [] stageNames = {"noPlats", "verticalPlat", "triPlat", "twoMoving","noPlats", "verticalPlat", "triPlat"};
 		for (int i=0; i<stageNames.length; i++){
 			allStages.add(Util.loadStage("stages/"+stageNames[i]+".txt"));
 		} 
-		stageSelectRects = new ArrayList<Rectangle>();
-		stageSelectRects.add(new Rectangle(100, 100, 100, 100));
-		stageSelectRects.add(new Rectangle(300, 300, 100, 100));
-		stageSelectRects.add(new Rectangle(100, 300, 100, 100));
-		stageSelectRects.add(new Rectangle(300, 100, 100, 100));
 
-		//PRECOMPUTE PLAYERS
-		allCharacters = new ArrayList<String>();
-		String [] characterNames = {"shooter"};
-		for (int i=0; i<characterNames.length; i++){
-			allCharacters.add(characterNames[i]);
-		}
-		charSelectRects = new ArrayList<Rectangle>();
-		charSelectRects.add(new Rectangle(50, 50, 200, 200));
+		//INITIALIZE SelectRects
+		stageSelectRects = Util.loadSelectRects("selectRects/stageSelect.txt");
+		charSelectRects = Util.loadSelectRects("selectRects/charSelect.txt");
+		keySelectRects = Util.loadSelectRects("selectRects/keySelect.txt");
 
 		//INITIALIZE KEY SELECT
 		playerKeys = new ArrayList<HashMap<String, Integer>>();
@@ -210,52 +205,74 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			}
 			else if (curScreen == CHARACTERSELECT){
 				if (mousePressed){
-					for (int i=0; i<charSelectRects.size(); i++){
-						if (charSelectRects.get(i).contains(mouseX, mouseY)){
-							if (mouseButton == LEFTCLICK){
-								player1 = allCharacters.get(i);
+					for (SelectRect curRect : charSelectRects){
+						if (curRect.contains(mouseX, mouseY)){
+							if (curRect.name.equals("START")){
+								curScreen = STAGESELECT;
+								mousePressed = false;
+
+								p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
+								p1.loadKeyLayout(playerKeys.get(0));
+								p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), false);
+								p2.loadKeyLayout(playerKeys.get(1));
 							}
-							else if (mouseButton == RIGHTCLICK){
-								player2 = allCharacters.get(i);
+							else{
+								if (curRect.name.equals("RANDOM")){
+									if (mouseButton == LEFTCLICK){
+										player1 = characterNames[Util.randint(0, characterNames.length-1)];
+									}
+									else if (mouseButton == RIGHTCLICK){
+										player2 = characterNames[Util.randint(0, characterNames.length-1)];
+									}
+									
+								}
+								else{
+									if (mouseButton == LEFTCLICK){
+										player1 = characterNames[curRect.val];
+									}
+									else if (mouseButton == RIGHTCLICK){
+										player2 = characterNames[curRect.val];
+									}
+								}
 							}
 						}
-					}
-					if (nextScreenRect.contains(mouseX, mouseY)){
-						curScreen = STAGESELECT;
-						mousePressed = false;
-
-						p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
-						p1.loadKeyLayout(playerKeys.get(0));
-						p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), false);
-						p2.loadKeyLayout(playerKeys.get(1));
 					}
 				}
 			}
+
 			else if (curScreen == STAGESELECT){
 				if (mousePressed){
-					for (int i=0; i<stageSelectRects.size(); i++){
-						if (stageSelectRects.get(i).contains(mouseX, mouseY)){
-							curStage = allStages.get(i);
+					for (SelectRect curRect : stageSelectRects){
+						if (curRect.contains(mouseX, mouseY)){
+							if (curRect.name.equals("START")){
+								curScreen = CONTROLSELECT;
+							}
+							else{
+								if (curRect.name.equals("RANDOM")){
+									curStage = allStages.get(Util.randint(0, allStages.size()-1));
+								}
+								else{
+									curStage = allStages.get(curRect.val);
+								}
+							}
 						}
-					}
-					if (nextScreenRect.contains(mouseX, mouseY)){
-						curScreen = CONTROLSELECT;
-						mousePressed = false;
 					}
 				}
 			}
 			else if (curScreen == CONTROLSELECT){
 				if (mousePressed){
-					if (nextScreenRect.contains(mouseX, mouseY)){
-						curScreen = BATTLE;
-						mousePressed = false;
-					}
-
-					for (Rectangle r : keyRects.keySet()){
-						if (r.contains(mouseX, mouseY)){
-							selectedKey = keyRects.get(r);
-							selectedPlayer = mouseButton == 1 ? 0 : 1;
-							break;
+					for (SelectRect curRect : keySelectRects){
+						if (mousePressed){
+							if (curRect.contains(mouseX, mouseY)){
+								if (curRect.name.equals("START")){
+									curScreen = BATTLE;
+									mousePressed = false;
+								}
+							}
+							else{
+								selectedKey = curRect.name;
+								selectedPlayer = curRect.val;
+							}
 						}
 					}
 				}
@@ -407,25 +424,15 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	public void paintCharacterSelect(Graphics g){
 		g.setColor(Color.GRAY);
 		g.fillRect(0,0, WIDTH, HEIGHT);
-		g.setColor(Color.BLACK);
-		g.drawString("char select SCREEN", WIDTH/2, HEIGHT/2);
-		g.setColor(Color.RED);
-		Util.drawFilledRect(nextScreenRect, g);
-
 		for (int i=0; i<charSelectRects.size(); i++){
-			Util.drawFilledRect(charSelectRects.get(i), g);
+			charSelectRects.get(i).draw(g);
 		}
 	}
 	public void paintStageSelect(Graphics g){
 		g.setColor(Color.GRAY);
 		g.fillRect(0,0, WIDTH, HEIGHT);
-		g.setColor(Color.BLACK);
-		g.drawString("Stage Select SCREEN", WIDTH/2, HEIGHT/2);
-		g.setColor(Color.RED);
-		Util.drawFilledRect(nextScreenRect, g);
-
 		for (int i=0; i<stageSelectRects.size(); i++){
-			Util.drawFilledRect(stageSelectRects.get(i), g);
+			stageSelectRects.get(i).draw(g);
 		}
 	}
 	public void paintEnd(Graphics g){
