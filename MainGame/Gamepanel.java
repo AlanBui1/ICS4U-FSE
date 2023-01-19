@@ -16,9 +16,13 @@ import GameObjects.Stage;
 import Utility.*;
 
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
-	public static final int WIDTH = 800, HEIGHT = 600;
-	public static final int LEFTCLICK = 1, RIGHTCLICK = 3;
-	public static final int START = 0, 
+	public static final int WIDTH = 800, //width of the screen
+							HEIGHT = 600, // height of the screen
+							LEFTCLICK = 1, //the mouse button that corresponds to left click
+							RIGHTCLICK = 3; //the mouse button that corresponds to right click
+							
+	//numbers assigned to each screen
+	public static final int	START = 0, 
 							CONTROLSELECT = 1, 
 							CHARACTERSELECT = 2,
 							STAGESELECT = 3,
@@ -26,41 +30,45 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 							PAUSESCREEN = 5,
 							ENDSCREEN = 6;
 	
-	public static final String [] keyNames = {"UKey", "DKey", "LKey", "RKey", "fastKey", "chargeKey", "shieldKey"};
-	public static final HashMap<String, Integer> defaultKeys1 = new HashMap<String, Integer>();
-	public static final HashMap<String, Integer> defaultKeys2 = new HashMap<String, Integer>();
+	private ArrayList<HashMap <String, Integer>> playerKeys; //keys that the Players use
+	//playerKeys.get(0) are the keys that p1 uses
+	//playerKeys.get(1) are the keys that p2 uses
 
-	private ArrayList<HashMap <String, Integer>> playerKeys;
-	private HashMap<Rectangle, String> keyRects;
-
-    private boolean [] keysPressed;
-	private int [] keysHeldTime, keysReleasedTime;
-	private boolean mousePressed;
-	private int mouseX, mouseY, mouseButton;
-	private String selectedKey;
-	private int selectedPlayer;
+    private boolean [] keysPressed; //keysPressed[i] is true if the ith key is pressed
+	private int []  keysHeldTime, //how long the keys are held for
+					keysReleasedTime; //how quickly the keys are released
 	
-	private int curScreen;
-	private Stage curStage;
+	//DEFAULT KEYS
+	int [][] defaultKeys ={
+			{KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z},
+			{KeyEvent.VK_I, KeyEvent.VK_K, KeyEvent.VK_J, KeyEvent.VK_L, KeyEvent.VK_U, KeyEvent.VK_O, KeyEvent.VK_SLASH}}; //stores default keyss
 
-	private String [] characterNames = {"shooter", "shooter", "shooter"};
+	private boolean mousePressed; //true if the mouse is pressed, false otherwise
+	private int mouseX, //x coordinate of the mouse
+				mouseY, //y coordinate of the mouse
+				mouseButton; //which mouse button is pressed
 
-	private ArrayList <SelectRect> stageSelectRects,
-								   charSelectRects,
-								   keySelectRects;
+	private String selectedKey; //which key is selected to change in the key select screen
+	private int selectedPlayer; //which character is selected to change in the key select screen
+	
+	private int curScreen; //which screen the game is on
+	private Stage curStage; //which stage the battle is on
 
-	private ArrayList <Stage> allStages;
+	private String [] characterNames = {"shooter", "shooter", "shooter"}; //all character names
 
-	// private ArrayList <String> allCharacters;
+	private ArrayList <SelectRect> stageSelectRects, //SelectRects in the stage select screen
+								   charSelectRects, //SelectRects in the character select screen
+								   keySelectRects; //SelectRects in the key select screen
 
-	private String player1, player2;
+	private ArrayList <Stage> allStages; //all stages
+	private String player1, player2; //String of the character name the Player 1 and Player 2 have selected
 
-	private Rectangle controlScreenRect, pauseRect;
+	private SelectRect controlScreenRect, //SelectRect to go to the control select screen
+					   pauseRect; //SelectRect to pause/unpause the game
 
-    Timer timer;
-    // Player p2; 
-	Player p1;
-	Player p2;
+    Timer timer; //Timer to count frames in the game
+
+	Player p1, p2; //Player 1 and Player 2 used to battle in the BATTLE screen
 
 	private Font fontLocal; //Font used for text to be drawn on screen
 
@@ -70,7 +78,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		keysReleasedTime = new int[KeyEvent.KEY_LAST+1];
 
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
-
 		setFocusable(true);
 		requestFocus();
 		addKeyListener(this);
@@ -78,11 +85,12 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		timer = new Timer(20, this);
 		timer.start();
 
-		curStage = Util.loadStage("stages/verticalPlat.txt");
+		curStage = Util.loadStage("stages/verticalPlat.txt"); //sets the stage to a default stage
 
-		controlScreenRect = new Rectangle(0, 0, 100, 100);
-		pauseRect = new Rectangle(WIDTH/2, HEIGHT-100, 100, 100);
+		controlScreenRect = new SelectRect(new Rectangle(0, 0, 100, 100), 0, "", "assets/stage1.png"); 
+		pauseRect = new SelectRect(new Rectangle(WIDTH/2, HEIGHT-100, 100, 100), 0, "", "assets/stage1.png");
 
+		//sets current screen to the start by default
 		curScreen = START;
 
 		//PRECOMPUTE STAGES
@@ -102,17 +110,13 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		playerKeys.add(new HashMap<String, Integer>());
 		playerKeys.add(new HashMap<String, Integer>());
 
-		//PRECOMPUTE DEFAULT KEYS
-		int [] default1 = {KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z},
-			   default2 = {KeyEvent.VK_I, KeyEvent.VK_K, KeyEvent.VK_J, KeyEvent.VK_L, KeyEvent.VK_U, KeyEvent.VK_O, KeyEvent.VK_SLASH};			
-
-		for (int i=0; i<default1.length; i++){
-			defaultKeys1.put(keyNames[i], default1[i]);
-			defaultKeys2.put(keyNames[i], default2[i]);
-			playerKeys.get(0).put(keyNames[i], default1[i]);
-			playerKeys.get(1).put(keyNames[i], default2[i]);
+		//sets default keys for Players
+		for (int i=0; i<defaultKeys[0].length; i++){
+			playerKeys.get(0).put(Player.keyNames[i], defaultKeys[0][i]);
+			playerKeys.get(1).put(Player.keyNames[i], defaultKeys[1][i]);
 		}
 		
+		//sets default player type for Players
 		player1 = "shooter";
 		player2 = "shooter";
 
@@ -143,40 +147,43 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 				p.move();
 			}
 			
-			
+			//Players attack and move
 			p1.attack(keysPressed, keysReleasedTime);
 			p1.move(keysPressed, keysReleasedTime, curStage);
-			
 			p2.move(keysPressed, keysReleasedTime, curStage);
 			p2.attack(keysPressed, keysReleasedTime);
 
+			//check if Players collide with Hitboxes
 			checkCollisions(p1, p2);
 			checkCollisions(p2, p1);
 		}
 		catch(Exception e){}
 	}
 
-	public void checkCollisions(Player curPlayer, Player oppoPlayer){ //curPlayer attacking oppoPlayer
-		ArrayList<Hitbox> toDelH = new ArrayList<Hitbox>();
-		for (Hitbox h : curPlayer.getHitBoxes()){
-			if (oppoPlayer.getRect().intersects(h.getRect())){
+	public void checkCollisions(Player curPlayer, Player oppoPlayer){ //method to check collisions with curPlayer's Hitboxes and opposing Player
+		ArrayList<Hitbox> toDelH = new ArrayList<Hitbox>(); //Hitboxes to delete
+
+		for (Hitbox h : curPlayer.getHitBoxes()){ 
+			if (oppoPlayer.getRect().intersects(h.getRect())){ //checks if Hitbox and Player collide
 				toDelH.add(h);
 			}
 		}
 
 		for (Hitbox h : toDelH){
-			curPlayer.getHitBoxes().remove(h);
-			if (oppoPlayer.getShieldTime() > 0){
-				oppoPlayer.setShieldTime(0);
-				continue;
+			curPlayer.getHitBoxes().remove(h); //removes Hitbox from curPlayer's ArrayList
+			if (oppoPlayer.getShieldTime() > 0){ //if the Player's shield is active
+				oppoPlayer.setShieldTime(0); //deactivates the shield
+				continue; //continues so the effects of the Hitbox are negated
 			}
+
 			oppoPlayer.addForce(new Force(Force.knockBack(h.getKnockBackX(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
 									  Force.knockBack(h.getKnockBackY(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
-									  h.getStun()));
-			oppoPlayer.setStun(Math.max(h.getStun(), oppoPlayer.getStun()));
-			oppoPlayer.addDamage(h.getDamage());
+									  h.getStun())); //adds a Force acting on the opposing Player
+			oppoPlayer.setStun(Math.max(h.getStun(), oppoPlayer.getStun())); //stuns the opposing Player
+			oppoPlayer.addDamage(h.getDamage()); //adds damage to the opposing Player
 		}
 	}
+
 //###########################################################################################################################
 
 
@@ -184,126 +191,39 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	public void actionPerformed(ActionEvent e){
 		for (int i=0; i<KeyEvent.KEY_LAST; i++){
 			if (keysPressed[i]){
-				keysHeldTime[i]++;
+				keysHeldTime[i]++; //if key i is pressed, increases the time it is held for
 			}
 		}
 
 		try{
+			//does actions based on which screen is active
 			if (curScreen == START){
 				if (mousePressed){
 					curScreen = CHARACTERSELECT;
 				}
 			}
 			else if (curScreen == CHARACTERSELECT){
-				if (mousePressed){
-					for (SelectRect curRect : charSelectRects){
-						if (curRect.contains(mouseX, mouseY)){
-							if (curRect.name.equals("START")){
-								curScreen = STAGESELECT;
-								mousePressed = false;
-
-								p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
-								p1.loadKeyLayout(playerKeys.get(0));
-								p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), true);
-								p2.loadKeyLayout(playerKeys.get(1));
-							}
-							else{
-								if (curRect.name.equals("RANDOM")){
-									if (mouseButton == LEFTCLICK){
-										player1 = characterNames[Util.randint(0, characterNames.length-1)];
-									}
-									else if (mouseButton == RIGHTCLICK){
-										player2 = characterNames[Util.randint(0, characterNames.length-1)];
-									}
-									
-								}
-								else{
-									if (mouseButton == LEFTCLICK){
-										player1 = characterNames[curRect.val];
-									}
-									else if (mouseButton == RIGHTCLICK){
-										player2 = characterNames[curRect.val];
-									}
-								}
-							}
-						}
-					}
-				}
+				charAction();
 			}
 
 			else if (curScreen == STAGESELECT){
-				if (mousePressed){
-					for (SelectRect curRect : stageSelectRects){
-						if (curRect.contains(mouseX, mouseY)){
-							if (curRect.name.equals("START")){
-								curScreen = CONTROLSELECT;
-							}
-							else{
-								if (curRect.name.equals("RANDOM")){
-									curStage = allStages.get(Util.randint(0, allStages.size()-1));
-								}
-								else{
-									curStage = allStages.get(curRect.val);
-								}
-							}
-						}
-					}
-				}
+				stageAction();
 			}
+
 			else if (curScreen == CONTROLSELECT){
-				if (mousePressed){
-					for (SelectRect curRect : keySelectRects){
-						if (mousePressed){
-							if (curRect.contains(mouseX, mouseY)){
-								if (curRect.name.equals("START")){
-									curScreen = BATTLE;
-									mousePressed = false;
-								}
-								else if (curRect.name.equals("DEFAULT")){
-									
-								}
-								else{
-									selectedKey = curRect.name;
-									selectedPlayer = curRect.val;
-								}
-							}
-							
-						}
-					}
-				}
+				controlAction();
 			}
 			
 			else if (curScreen == BATTLE){
-				if (mousePressed && pauseRect.contains(mouseX, mouseY)){
-					curScreen = PAUSESCREEN;
-					mousePressed = false;
-					return;
-				}
-
-				move(); 	// never draw in move
-				if (p1.getLives() <= 0 || p2.getLives() <= 0){
-					curScreen = ENDSCREEN;
-				}
+				battleAction();
 			}
 
 			else if (curScreen == PAUSESCREEN){
-				if (mousePressed){
-					if (pauseRect.contains(mouseX, mouseY)){
-						curScreen = BATTLE;
-						mousePressed = false;
-					}
-					if (controlScreenRect.contains(mouseX, mouseY)){
-						curScreen = CONTROLSELECT;
-						mousePressed = false;
-					}
-				}
+				pauseAction();
 			}
 
 			else if (curScreen == ENDSCREEN){
-				if (mousePressed){
-					mousePressed = false;
-					curScreen = START;
-				}
+				endAction();
 			}
 			
 			repaint(); 	// only draw
@@ -393,22 +313,29 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		}
     }
 
+//######################################################################################################################
+//Drawing different screens
 	public void paintStart(Graphics g){
+		//TO DO CHANGE TO A BACKGROUND IMAGE
 		g.setColor(Color.GRAY);
 		g.fillRect(0,0, WIDTH, HEIGHT);
 		g.setColor(Color.BLACK);
 		g.drawString("CLICK TO START", WIDTH/2, HEIGHT/2);
 	}
 	public void paintControlSelect(Graphics g){
+		//TO DO CHANGE TO A BACKGROUND IMAGE 
+		
 		g.setColor(Color.GRAY);
 		g.fillRect(0,0, WIDTH, HEIGHT);
 		for (SelectRect curRect : keySelectRects){
 			curRect.draw(g);
-			if (!curRect.name.equals("START")) g.drawString(""+(char)(int)playerKeys.get(curRect.val).get(curRect.name), (int)curRect.rect.getX()+(int)curRect.rect.getWidth()/2, (int)curRect.rect.getY()+(int)curRect.rect.getHeight()/2);
+			if (!curRect.name.equals("START") && !curRect.name.equals("DEFAULT")) g.drawString(""+(char)(int)playerKeys.get(curRect.val).get(curRect.name), (int)curRect.rect.getX()+(int)curRect.rect.getWidth()/2, (int)curRect.rect.getY()+(int)curRect.rect.getHeight()/2);
 		}
-
 	}
 	public void paintCharacterSelect(Graphics g){
+		//TO DO show which characters are selected / if they are cpu
+
+		//TO DO CHANGE TO A BACKGROUND IMAGE, the next couple of lines are temp
 		g.setColor(Color.GRAY);
 		g.fillRect(0,0, WIDTH, HEIGHT);
 		for (int i=0; i<charSelectRects.size(); i++){
@@ -416,6 +343,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		}
 	}
 	public void paintStageSelect(Graphics g){
+		//TO DO CHANGE TO A BACKGROUND IMAGE
 		g.setColor(Color.GRAY);
 		g.fillRect(0,0, WIDTH, HEIGHT);
 		for (int i=0; i<stageSelectRects.size(); i++){
@@ -423,10 +351,11 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		}
 	}
 	public void paintEnd(Graphics g){
+		//TO DO CHANGE TO A BACKGROUND IMAGE
 		g.setColor(Color.GRAY);
 		g.fillRect(0,0, WIDTH, HEIGHT);
-		g.setColor(Color.BLACK);
-		g.drawString("END SCREEN", WIDTH/2, HEIGHT/2);
+
+		//shows stats of the battle such as how much damage was done, taken, lives lost, etc.
 	}
 	public void paintBattle(Graphics g){
 		try{
@@ -436,20 +365,143 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			//draw Players and their Hitboxes
 			p1.draw(g, 30, 30);
 			p2.draw(g, 730, 30);
-			
-			Util.drawFilledRect(pauseRect, g);
+			pauseRect.draw(g);
 		}
 		catch(NullPointerException ex){
 			System.out.println(player1 + " " + player2);
 		}
 	}
 	public void paintPause(Graphics g){
+		//TO DO CHANGE TO A BACKGROUND IMAGE
 		g.setColor(Color.GRAY);
 		g.fillRect(0,0, WIDTH, HEIGHT);
 		g.setColor(Color.BLACK);
 		g.drawString("PAUSE SCREEN", WIDTH/2, HEIGHT/2);
 		g.setColor(Color.RED);
-		Util.drawFilledRect(pauseRect, g);
-		Util.drawFilledRect(controlScreenRect, g);
+		pauseRect.draw(g);
+		controlScreenRect.draw(g);
+	}
+
+//######################################################################################################################
+//Actions depending on screen
+
+	public void controlAction(){ //actions when on the control screen
+		if (mousePressed){
+			for (SelectRect curRect : keySelectRects){ //loops through SelectRects
+				if (curRect.contains(mouseX, mouseY)){ //checks if the mouse is inside the SelectRect
+					if (curRect.name.equals("START")){
+						curScreen = BATTLE; //moves to the next screen
+						mousePressed = false;
+					}
+				
+					else {
+						selectedKey = curRect.name; //get the Key that is to be changed
+						selectedPlayer = curRect.val; //gets with Player is being selected
+
+						if (curRect.name.equals("DEFAULT")){
+							for (int i=0; i<defaultKeys[0].length; i++){ //returns the keys to the default
+								playerKeys.get(selectedPlayer).put(Player.keyNames[i], defaultKeys[selectedPlayer][i]);
+							}
+						}
+					}
+					
+				}
+			}
+		}
+	}
+
+	public void charAction(){ //actions on the character select screen
+		if (mousePressed){
+			for (SelectRect curRect : charSelectRects){ //loops through SelectRects 
+				if (curRect.contains(mouseX, mouseY)){ // checks if the mouse is inside them
+					if (curRect.name.equals("START")){
+						curScreen = STAGESELECT; //moves to the next screen
+						mousePressed = false;
+
+						//initializes Players
+						p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), true);
+						p1.loadKeyLayout(playerKeys.get(0));
+						p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), true);
+						p2.loadKeyLayout(playerKeys.get(1));
+					}
+
+					else{
+						//LEFTCLICK affects player1
+						//RIGHTCLICK affects player2
+						if (curRect.name.equals("RANDOM")){ //changes the Player to a random one
+							if (mouseButton == LEFTCLICK){
+								player1 = characterNames[Util.randint(0, characterNames.length-1)];
+							}
+							else if (mouseButton == RIGHTCLICK){ 
+								player2 = characterNames[Util.randint(0, characterNames.length-1)];
+							}
+						}
+						else{
+							//changes the Player to the one that was clicked
+							if (mouseButton == LEFTCLICK){
+								player1 = characterNames[curRect.val];
+							}
+							else if (mouseButton == RIGHTCLICK){
+								player2 = characterNames[curRect.val];
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public void stageAction(){ //actions on the stage select screen
+		if (mousePressed){
+			for (SelectRect curRect : stageSelectRects){ //loops through SelectRects
+				if (curRect.contains(mouseX, mouseY)){ //checks if mouse is inside them
+					if (curRect.name.equals("START")){
+						curScreen = CONTROLSELECT; //moves to the next screen
+						mousePressed = false;
+					}
+					else{
+						if (curRect.name.equals("RANDOM")){
+							curStage = allStages.get(Util.randint(0, allStages.size()-1)); //sets curStage to a random Stage
+						}
+						else{
+							curStage = allStages.get(curRect.val); //sets curStage to the selected Stage
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public void battleAction(){ //actions on the battle screen
+		if (mousePressed && pauseRect.contains(mouseX, mouseY)){ //checks if mouse is pressed and is in the pause rect
+			curScreen = PAUSESCREEN; //moves screen
+			mousePressed = false;
+			return;
+		}
+
+		move(); 	// never draw in move
+		if (p1.getLives() <= 0 || p2.getLives() <= 0){
+			curScreen = ENDSCREEN;
+		}
+	}
+
+	public void pauseAction(){ //actions on the pause screen
+		if (mousePressed){
+			if (pauseRect.contains(mouseX, mouseY)){
+				curScreen = BATTLE; //moves to the battle screen
+				mousePressed = false;
+			}
+			if (controlScreenRect.contains(mouseX, mouseY)){
+				curScreen = CONTROLSELECT; //moves to the control select screen
+				mousePressed = false;
+			}
+		}
+	}
+
+	public void endAction(){ //actions on the end screen
+		if (mousePressed){
+			curScreen = START; //goes back to the start screen
+			mousePressed = false;
+		}
 	}
 }

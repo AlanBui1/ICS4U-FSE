@@ -11,8 +11,9 @@ import Utility.Util;
 
 public class Player extends Mover{
     public static final int LEFT = -1, RIGHT = 1;
+	public static final String [] keyNames = {"UKey", "DKey", "LKey", "RKey", "fastKey", "chargeKey", "shieldKey"}; //names of keys that Player used
 
-    private boolean isComputer;
+    private boolean isComputer; //true if the Player should be computer or not
 
     private int LKey, //key used to move left
                 RKey, //key used to move right
@@ -39,8 +40,9 @@ public class Player extends Mover{
                     width, //width (pixels) is the number of pixels wide the Player is
                     height; //height (pixels) is the number of pixels high the Player is
 
-    private double  chargedMoveSize, 
-                    damage;
+    private double  chargedMoveSize, //how long the charged move was charged for
+                    maxCharge, //the maximum amount a move can be charged for
+                    damage; //the damage taken by the Player
 
     private boolean jump1, //jump1 is true if the Player can use their first jump
                     jump2, //jump2 is true if the Player can use their second jump
@@ -73,6 +75,7 @@ public class Player extends Mover{
         shieldTime = 0;
         atkCooldown = 0;
         chargedMoveSize= 0;
+        maxCharge = 25;
         damage = 0;
         dir =1;
         onGround = false;
@@ -92,26 +95,23 @@ public class Player extends Mover{
     }
 
     public void move(boolean [] keysPressed, int [] keysReleasedTime, Stage stage){ //moves the Player
-        if (isComputer){
-            keysPressed[getRKey()] = false; keysPressed[getLKey()] = false;
+        if (isComputer){ //CPU movement
+            keysPressed[RKey] = false; keysPressed[LKey] = false; //doesnt move left or right
         
-            Platform curPlat = nearestPlat(stage);
-            int midX = ((int)curPlat.getX() + (curPlat.getWidth()/2));
+            Platform nearPlat = nearestPlat(stage); //nearest Platform to the Player
+            int midX = ((int)nearPlat.getX() + (nearPlat.getWidth()/2)); //x coordinate of the middle of the nearest Platform to the Player
             
-            if (Util.randint(1, 100) < 2) keysPressed[getUKey()] = Util.randBoolean(); //random jumps
-            if (getY() > curPlat.getY()) keysPressed[getUKey()] = true; //jumps if below nearest platform
+            if (Util.randint(1, 100) < 2) keysPressed[UKey] = Util.randBoolean(); //random jumps
+            if (getY() > nearPlat.getY()) keysPressed[UKey] = true; //jumps if below nearest platform
 
-            if (!(midX - 50 <= getX() && getX() <= midX+1)){ //moves towards the middle of the nearest platform
+            if (!(midX - 50 <= getX() && getX() <= midX+1)){ //presses keys to get the Player closer to the middle of the nearest platform
                 if (getX() < midX){
-                    keysPressed[getRKey()] = true;
+                    keysPressed[RKey] = true;
                 }
                 else if (getX() > midX){
-                    keysPressed[getLKey()] = true;
+                    keysPressed[LKey] = true;
                 }
             }
-        }
-        if (keysPressed[32]){
-            loseLife();
         }
 
         // this depends on if we want the players to die immediately after hitting the edge or not
@@ -119,30 +119,25 @@ public class Player extends Mover{
         // maybe add an invincibility period ?
 
         //player dies by going off-screen
-        if (getX() <= 0 || getX()+width >= Gamepanel.WIDTH){
+        if (getX() <= 0 || getX()+width >= Gamepanel.WIDTH || getY() <= 0 || getY()+height >= Gamepanel.HEIGHT){
             loseLife();
-            // System.out.println(lives);
-        }
-        if (getY() <= 0 || getY()+height >= Gamepanel.HEIGHT){
-            loseLife();
-            // System.out.println(lives);
         }
 
         keyBoardMovement(keysPressed, keysReleasedTime); //applies the keyboard movement
-
-        applyForces(); 
-        move();
+        applyForces(); //applies forces acting on the Player
+        move(); //moves according to acceleration and velocity
 
         checkPlats(stage.getPlats()); //checks if on a platform and adjusts position 
 
-        ArrayList <Hitbox> toDel = new ArrayList<Hitbox>();
-        for (Hitbox h : hitboxes){
-            h.move();
-            if (h.getTime() <= 0){
-                toDel.add(h);
+        ArrayList <Hitbox> toDel = new ArrayList<Hitbox>(); //Hitboxes to remove if they're time active is done
+
+        for (Hitbox h : hitboxes){ //loops through Player's Hitboxes
+            h.move();  //moves Hitbox
+            if (h.getTime() <= 0){ //if time active is done
+                toDel.add(h); //adds to toDel to be deleted
             }
         }
-        for (Hitbox h : toDel){
+        for (Hitbox h : toDel){ //removes all Hitboxes that should be deleted
             hitboxes.remove(h);
         }
     }
@@ -287,19 +282,19 @@ public class Player extends Mover{
             return;
         }
 
-        if (keysPressed[shieldKey]){
+        if (keysPressed[shieldKey]){ //activates shield
             stunTime = 25;
             atkCooldown = 25;
             shieldTime = 20;
         }
             
-        else if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){
+        else if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){ //TO DO DEPENDING ON WHAT THE SPRITES ALLOW FOR WE MAY OR MAY NOT HAVE THE BONUS ATTACK
             if (keysReleasedTime[fastKey] <= 5) attack("BonusAtk", 1);
             
             if (keysPressed[UKey]){
                 attack("FastUpAtk", 1);
             }
-            else if (keysPressed[getDKey()]){
+            else if (keysPressed[DKey]){
                 attack("FastDownAtk", 1);
             }
             else{
@@ -329,34 +324,37 @@ public class Player extends Mover{
         }
     }
 
-    public void attack(String atkName){
-        double scale = 1;
+    public void attack(String atkName){ //attacks given an attack name
+        double scale = 1; //how much values should be scaled by, depending on if it's a charged attack and if so, how long it was charged for
         if (atkName.contains("Charge")){
-            scale = chargedMoveSize/50;
+            scale = chargedMoveSize/maxCharge;
             chargedMoveSize = 0;
         }
-        attack(atkName, scale);
+        attack(atkName, scale); //attacks using other method
     }
 
-    public void attack(String name, double factor){
-        Attack a = attacks.get(name);
-        for (Hitbox h : a.getHitboxes()){
-            Hitbox toAdd = h.cloneHitbox();
-            if (name.contains("Side")) toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*factor*(dir > 0 ? 0 : 1));
-            else toAdd.setX(getX() + toAdd.getOffsetX() - (toAdd.getWidth()/2)*factor);
+    public void attack(String name, double scale){
+        Attack a = attacks.get(name); //the Attack to be used
+        //when a Player attacks with Attack a, all Hitboxes in a are added to Player's ArrayList of hitboxes
+
+        for (Hitbox h : a.getHitboxes()){ //TO DO EXPLAIN THIS IDK HOW
+            Hitbox toAdd = h.cloneHitbox(); 
+            if (name.contains("Side")) toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*scale*(dir > 0 ? 0 : 1));
+            else toAdd.setX(getX() + toAdd.getOffsetX() - (toAdd.getWidth()/2)*scale);
             
-            toAdd.setY(getY() + toAdd.getOffsetY() - (toAdd.getHeight()/2)*factor);
+            toAdd.setY(getY() + toAdd.getOffsetY() - (toAdd.getHeight()/2)*scale);
             toAdd.setVX(toAdd.getVX()*dir);
             toAdd.setAX(toAdd.getAX()*dir);
-            toAdd.setKnockBackX(toAdd.getKnockBackX()*dir*factor);
+            toAdd.setKnockBackX(toAdd.getKnockBackX()*dir*scale);
+
             //for charged attacks
-            toAdd.setWidth(toAdd.getWidth() * factor);
-            toAdd.setHeight(toAdd.getHeight() * factor);
-            toAdd.setDamage(toAdd.getDamage() * factor);
+            toAdd.setWidth(toAdd.getWidth() * scale);
+            toAdd.setHeight(toAdd.getHeight() * scale);
+            toAdd.setDamage(toAdd.getDamage() * scale);
             
             addHitBox(toAdd);
         }
-        setCoolDown(a.getCoolDown());
+        setCoolDown(a.getCoolDown()); //sets the attack cooldown
     }
 
     public Platform nearestPlat(Stage curStage){ //returns the nearest Platform to the Player in the stage 
@@ -389,6 +387,7 @@ public class Player extends Mover{
 		}
 
 		g.drawString(""+Util.fDouble(damage, 1), xx, yy); //draws Player percent
+        g.drawString(""+Util.fDouble(chargedMoveSize, 1), xx, yy+400); //TO DO DRAW A METER FOR HOW LONG IT WAS CHARGED FOR
     }
 
     //adder methods????
@@ -397,19 +396,11 @@ public class Player extends Mover{
     public void addForce(Force f){forces.add(f);}
     public void addStun(int time){stunTime += time;}
     public void addDamage(double d){damage += d;}
-
-    public void chargeMove(){chargedMoveSize = Math.min(chargedMoveSize+1, 50);}
+    public void chargeMove(){chargedMoveSize = Math.min(chargedMoveSize+1, maxCharge);}
     
     //getter methods
     public double getCharge(){return chargedMoveSize;}
     public Rectangle getRect(){return new Rectangle((int)getX(), (int)getY(), (int)width+1, (int)height+1);}
-    public int getFastKey(){return fastKey;}
-    public int getChargeKey(){return chargeKey;}
-    public int getUKey(){return UKey;}
-    public int getDKey(){return DKey;}
-    public int getLKey(){return LKey;}
-    public int getRKey(){return RKey;}
-    public int getDir(){return dir;}
     public int getCoolDown(){return atkCooldown;}
     public int getStun(){return stunTime;}
     public int getShieldTime(){return shieldTime;}
@@ -417,6 +408,7 @@ public class Player extends Mover{
     public double getWeight(){return weight;}
     public double getDamage(){return damage;}
     public boolean getOnGround(){return onGround;}
+    public boolean getCPU(){return isComputer;}
     public Point getCenterPoint(){return new Point((int)(getX() + width/2), (int)(getY() + height/2));}
     public ArrayList <Hitbox> getHitBoxes(){return hitboxes;} 
     
@@ -431,4 +423,5 @@ public class Player extends Mover{
     public void setKeyPressed(int k, boolean [] keysPressed, boolean b){keysPressed[k] = b;}
     public void setStun(int time){stunTime = time;}
     public void setShieldTime(int time){shieldTime = time;}
+    public void setCPU(boolean b){isComputer = b;}
 }
