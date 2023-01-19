@@ -2,7 +2,6 @@ package GameObjects.ThingsThatMove;
 
 import java.util.*;
 import java.awt.*;
-import java.awt.event.*;
 
 import GameObjects.ThingsThatMove.AttackStuff.*;
 import GameObjects.Stage;
@@ -42,7 +41,9 @@ public class Player extends Mover{
 
     private double  chargedMoveSize, //how long the charged move was charged for
                     maxCharge, //the maximum amount a move can be charged for
-                    damage; //the damage taken by the Player
+                    damage, //the damage taken by the Player
+                    damageDealt, //how much damage the Player dealt
+                    damageTaken; //how much damage the Player took
 
     private boolean jump1, //jump1 is true if the Player can use their first jump
                     jump2, //jump2 is true if the Player can use their second jump
@@ -57,17 +58,17 @@ public class Player extends Mover{
     public Player(double x, double y, HashMap<String, Double> stats, HashMap<String, Attack> atks, boolean cpu){
         super(x, y);
 
-        this.height = stats.get("height");
-        this.width = stats.get("width");
-        this.weight = stats.get("weight");
-        this.airaccel = stats.get("airaccel");
-        this.airfriction = stats.get("airfriction");
-        this.groundfriction = stats.get("groundfriction");
-        this.airspd = stats.get("airspd");
-        this.fallspd = stats.get("fallspd");
-        this.gravity = stats.get("gravity");
-        this.runspd = stats.get("runspd");
-        this.jumpforce = stats.get("jumpforce");
+        height = stats.get("height");
+        width = stats.get("width");
+        weight = stats.get("weight");
+        airaccel = stats.get("airaccel");
+        airfriction = stats.get("airfriction");
+        groundfriction = stats.get("groundfriction");
+        airspd = stats.get("airspd");
+        fallspd = stats.get("fallspd");
+        gravity = stats.get("gravity");
+        runspd = stats.get("runspd");
+        jumpforce = stats.get("jumpforce");
         isComputer = cpu;
 
         attacks = atks;
@@ -77,6 +78,8 @@ public class Player extends Mover{
         chargedMoveSize= 0;
         maxCharge = 25;
         damage = 0;
+        damageDealt = 0;
+        damageTaken = 0;
         dir =1;
         onGround = false;
         hitboxes = new ArrayList<Hitbox>();
@@ -396,6 +399,8 @@ public class Player extends Mover{
     public void addForce(Force f){forces.add(f);}
     public void addStun(int time){stunTime += time;}
     public void addDamage(double d){damage += d;}
+    public void addTakenDamage(double d){damageTaken += d;}
+    public void addDealtDamage(double d){damageDealt += d;}
     public void chargeMove(){chargedMoveSize = Math.min(chargedMoveSize+1, maxCharge);}
     
     //getter methods

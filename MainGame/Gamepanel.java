@@ -96,9 +96,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		//PRECOMPUTE STAGES
 		allStages = new ArrayList<Stage>();
 		String [] stageNames = {"noPlats", "verticalPlat", "triPlat", "twoMoving","ground", "mainMoving", "twoPillars"};
-		for (int i=0; i<stageNames.length; i++){
-			allStages.add(Util.loadStage("stages/"+stageNames[i]+".txt"));
-		} 
+		for (int i=0; i<stageNames.length; i++){allStages.add(Util.loadStage("stages/"+stageNames[i]+".txt"));} 
 
 		//INITIALIZE SelectRects
 		stageSelectRects = Util.loadSelectRects("selectRects/stageSelect.txt");
@@ -181,6 +179,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 									  h.getStun())); //adds a Force acting on the opposing Player
 			oppoPlayer.setStun(Math.max(h.getStun(), oppoPlayer.getStun())); //stuns the opposing Player
 			oppoPlayer.addDamage(h.getDamage()); //adds damage to the opposing Player
+
+			curPlayer.addDealtDamage(h.getDamage());
+			oppoPlayer.addTakenDamage(h.getDamage());
 		}
 	}
 
