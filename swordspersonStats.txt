@@ -9,5 +9,5 @@ jumpforce	0.025
 groundfriction	0.0010625
 airfriction	0.0008125
 weight	100
-offsetX -0.16375
-offsetY -0.145
+offsetX -0.19125
+offsetY -0.18

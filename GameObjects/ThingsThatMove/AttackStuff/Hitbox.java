@@ -3,6 +3,8 @@ import java.awt.*;
 import java.util.HashMap;
 
 import GameObjects.ThingsThatMove.Mover;
+import GameObjects.ThingsThatMove.Player;
+import MainGame.Game;
 import MainGame.Gamepanel;
 
 public class Hitbox extends Mover{
@@ -17,6 +19,8 @@ public class Hitbox extends Mover{
 
     private HashMap<String, Double> data; //HashMap of all the information needed to clone the Hitbox
     private int stunTime; //how long the Hitbox will stun the opponent for
+    private String name;
+    private Player player;
 
     public Hitbox(HashMap <String, Double> stats){ //constructor that initializes fields using a HashMap with all the necessary information
         super(stats);
@@ -57,6 +61,8 @@ public class Hitbox extends Mover{
     public void setKnockBackX(double kb){baseKnockbackX = kb;}
     public void setKnockBackY(double kb){baseKnockbackY = kb;}
     public void setDamage(double d){damage = d;}
+    public void setName(String n){name = n;}
+    public void setPlayer(Player p){player = p;}
     public void addTime(double t){time += t;}
 
     @Override
@@ -70,6 +76,31 @@ public class Hitbox extends Mover{
 
     public void draw(Graphics g){ //draws the Hitbox
         g.setColor(Color.GREEN);
-        g.fillRect((int)(this.getX()), (int)(this.getY()), (int)width, (int)height);
+
+        int dir = player.getDir();
+        if (player.getType().equals("shooter") && name.equals("FastSideAtk")){
+            Image projectileImg = player.getFrames().get(name + "Projectile")[0];
+            if (dir == Player.LEFT){
+                g.drawImage(projectileImg, (int)this.getX()-projectileImg.getWidth(null), (int)(this.getY()), 64, 6, null);
+            }
+            else{
+                g.drawImage(projectileImg, (int)this.getX(), (int)(this.getY()), 64, 6, null);
+            }
+        }
+        else if (name.contains("Fixed")){
+            
+            if (dir == Player.LEFT){
+                // width *= Gamepanel.WIDTH;
+                
+                g.fillRect((int)(player.getX() + startOffsetX*dir - width  + player.getWidth()), (int)((player.getY() + startOffsetY)), (int)width, (int)height);
+            }
+            else{
+                g.fillRect((int)(player.getX() + startOffsetX*dir), (int)(player.getY() + startOffsetY), (int)width, (int)height);
+            }
+            // g.fillRect((int)(getX()), (int)(this.getY()), (int)w, (int)h);
+        }
+        else{
+            g.fillRect((int)(this.getX()), (int)(this.getY()), (int)width, (int)height);
+        }
     }
 }
