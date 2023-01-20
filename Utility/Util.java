@@ -3,6 +3,7 @@ import java.util.*;
 import java.awt.*;
 import javax.swing.*;
 
+import GameObjects.ThingsThatMove.Player;
 import GameObjects.ThingsThatMove.AttackStuff.*;
 import MainGame.Game;
 import MainGame.Gamepanel;
@@ -53,7 +54,7 @@ public class Util {
 		HashMap <String, Double> stats = new HashMap<String, Double>();
 		try{
 			Scanner inFile = new Scanner(new BufferedReader(new FileReader(fileName))); 
-			int NUMSTATS = 11;
+			int NUMSTATS = 13;
 			for (int i=1; i<=NUMSTATS; i++){
 				String name = inFile.next();
 				Double val = inFile.nextDouble();
@@ -62,8 +63,8 @@ public class Util {
 			}
 			inFile.close();
 
-			String [] statsX = {"width", "runspd", "airspd", "airaccel", "groundfriction", "airfriction"}, //stats that scale with the width of the screen
-					  statsY = {"height", "gravity", "fallspd", "jumpforce"}; //stats that scale with the height of the screen
+			String [] statsX = {"width", "runspd", "airspd", "airaccel", "groundfriction", "airfriction", "offsetX"}, //stats that scale with the width of the screen
+					  statsY = {"height", "gravity", "fallspd", "jumpforce", "offsetY"}; //stats that scale with the height of the screen
 
 			for (int i=0; i<statsX.length; i++){
 				//scales stats with the width
@@ -78,6 +79,56 @@ public class Util {
 		catch(IOException e){}
 
 		return stats;
+	}
+
+	public static HashMap <String, Image[]> loadFrames(Player player, HashMap<String, Attack> atks){
+		HashMap <String, Integer> actions = new HashMap <String, Integer>();
+		HashMap <String, Image[]> frames = new HashMap <String, Image[]>();
+		for (String atkName : atks.keySet()){
+			// TEMP
+			if (atkName.equals("ChargeSideAtk") || atkName.equals("Shield") || atkName.equals("FastUpAtk") || atkName.equals("ChargeDownAtk") || atkName.equals("ChargeSideAtkFixed") || atkName.equals("FastSideAtk") || atkName.equals("FastSideAtkFixed")){
+				Image[] atkFrames = new Image[atks.get(atkName).getnumFrames()];
+				actions.put(atkName, atks.get(atkName).getnumFrames());
+				for (int k = 0; k < atks.get(atkName).getnumFrames(); k++){
+					if (player.getType().equals("swordsperson")){
+						atkFrames[k] = loadScaledImg("images/" + player.getType() + "/" + atkName + k + ".png", 337, 149);
+						// this is only because the scaling of the characters look slightly different, but this causes a thing where when
+						// frames are first loaded/used, they start flashing 
+						// if this problem can't be resolved, we can revert to w/o rescaling (not that big of a difference)
+					}
+					else{
+						atkFrames[k] = loadImg("images/" + player.getType() + "/" + atkName + k + ".png");
+					}
+				}
+				frames.put(atkName, atkFrames);
+			}
+		}
+
+		HashMap <String, Integer> moves = new HashMap <String, Integer>();
+		moves.put("Run", 10);
+		moves.put("Idle", 10);
+		moves.put("Jump", 3);
+		moves.put("Fall", 3);
+		for (String moveName : moves.keySet()){
+			Image[] moveFrames = new Image[moves.get(moveName)];
+			for (int k = 0; k < moves.get(moveName); k++){
+				if (player.getType().equals("swordsperson")){
+					moveFrames[k] = loadScaledImg("images/" + player.getType() + "/" + moveName + k + ".png", 337, 149);
+				}
+				else{
+					moveFrames[k] = loadImg("images/" + player.getType() + "/" + moveName + k + ".png");
+				}
+				frames.put(moveName, moveFrames);
+				actions.put(moveName, moves.get(moveName));
+			}
+		}
+		if (player.getType().equals("shooter")){
+			Image[] FastSideAtkProjectile = {loadImg("images/shooter/FastSideAtkProjectile.png")};
+			frames.put("FastSideAtkProjectile", FastSideAtkProjectile);
+		}
+
+		player.setActions(actions);
+		return frames;
 	}
 
 	public static HashMap <String, Attack> loadAtks(String fileName){
@@ -96,7 +147,7 @@ public class Util {
 				inFile.nextLine();
 
 				atks.put(curName, new Attack());
-				int NUMSTATS = 15; //number of stats each Hitbox has
+				int NUMSTATS = 16; //number of stats each Hitbox has
 
 				for (int i=0; i<numHitboxes; i++){
 					HashMap <String, Double> hitStats = new HashMap<String, Double>();
@@ -121,8 +172,12 @@ public class Util {
 
 				inFile.next();
 				int cdown = inFile.nextInt();
-				inFile.nextLine();
 				atks.get(curName).setCoolDown(cdown);
+				inFile.next();
+				int numFrames = inFile.nextInt();
+				inFile.nextLine();
+				atks.get(curName).setNumFrames(numFrames);
+					
 			}
 
 			inFile.close();

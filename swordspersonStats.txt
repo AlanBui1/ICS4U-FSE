@@ -1,0 +1,13 @@
+height	0.06666
+width	0.02875
+gravity	0.0025
+runspd	0.0125
+airspd	0.010625
+airaccel	0.0021875
+fallspd	0.0125
+jumpforce	0.025
+groundfriction	0.0010625
+airfriction	0.0008125
+weight	100
+offsetX -0.19125
+offsetY -0.18
