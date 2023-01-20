@@ -188,6 +188,7 @@ public class Util {
 
 	public static Stage loadStage(String fileName){ //returns a Stage with the stats from the given filename
 		ArrayList <Platform> plats = new ArrayList<Platform>();
+		Stage newStage = new Stage();
 		try{
 			Scanner inFile = new Scanner(new BufferedReader(new FileReader(fileName))); 
 			int numPlats = inFile.nextInt();
@@ -203,11 +204,16 @@ public class Util {
 
 				plats.add(new Platform(platStats));
 			}
+			newStage = new Stage(plats);
+			inFile.next();
+			String name = inFile.next();
+			inFile.nextLine();
+			newStage.setBg(name);
 
 			inFile.close();
 		}
 		catch (IOException e){}
-		return new Stage(plats);
+		return newStage;
 	}
 
 	public static ArrayList<SelectRect> loadSelectRects(String fileName){

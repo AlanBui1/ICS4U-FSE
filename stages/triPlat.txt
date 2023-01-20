@@ -54,4 +54,5 @@ minY	0
 maxX	0
 maxY	0
 invisible	1
+bg MLPBG.png
 	
