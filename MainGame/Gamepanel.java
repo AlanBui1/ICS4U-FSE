@@ -89,7 +89,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		requestFocus();
 		addKeyListener(this);
 		addMouseListener(this);
-		timer = new Timer(25, this);
+		timer = new Timer(30, this);
 		// timer.setActionCommand("maingame");
 		timer.start();
 
@@ -207,16 +207,13 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 	@Override
 	public void actionPerformed(ActionEvent e){
-<<<<<<< HEAD
-		// System.out.println(timer.getActionCommand());
-=======
 		if (p1 != null){
 			p1.frameIncrease();
 		}
 		if (p2 != null){
 			p2.frameIncrease();
 		}
->>>>>>> b684461c8af2b6135f99077e8df338682aa5cc06
+		// System.out.println(timer.getActionCommand());
 		for (int i=0; i<KeyEvent.KEY_LAST; i++){
 			if (keysPressed[i]){
 				keysHeldTime[i]++; //if key i is pressed, increases the time it is held for
@@ -449,17 +446,11 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 						curScreen = STAGESELECT; //moves to the next screen
 						mousePressed = false;
 						//initializes Players
-<<<<<<< HEAD
-						p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
-						p1.loadKeyLayout(playerKeys.get(0));
-						p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), false);
-=======
 						p1 = new Player(0,0, bladeStats, bladeAtks, false, "bladekeeper", "Idle", 0); // maybe change string to constant (or completely remove)
-						// p1 = new Player(0,0, Util.loadStats(p1.getType()+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), true);
+						// p1 = new Player(0,0, Util.loadStats(p1.getType()+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
 						p1.loadKeyLayout(playerKeys.get(0));
-						// p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), true);
+						// p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), false);
 						p2 = new Player(0,0, shooterStats, shooterAtks, false, "shooter", "Idle", 0);
->>>>>>> b684461c8af2b6135f99077e8df338682aa5cc06
 						p2.loadKeyLayout(playerKeys.get(1));
 
 					}
