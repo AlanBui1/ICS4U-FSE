@@ -22,6 +22,6 @@ public class Game extends JFrame{
     }
 
     public static void main(String [] args){
-        frame = new Game(); //creates a new Arkanoid object
+        frame = new Game();
     }
 }

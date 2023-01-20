@@ -37,7 +37,10 @@ public class Player extends Mover{
                     runspd, //runspd (pixels / frame) is the speed a Player moves on the ground horizontally (running)
                     jumpforce, //jumpforce (pixels / frame) is the force exerted on the Player when it jumps 
                     width, //width (pixels) is the number of pixels wide the Player is
-                    height; //height (pixels) is the number of pixels high the Player is
+                    height, //height (pixels) is the number of pixels high the Player is
+                    frameNum,
+                    offsetX,
+                    offsetY;
 
     private double  chargedMoveSize, //how long the charged move was charged for
                     maxCharge, //the maximum amount a move can be charged for
@@ -50,12 +53,17 @@ public class Player extends Mover{
                     jump3, //jump3 is true if the Player can use their ChargeUpAtk 
                     onGround; //onGround is true if the Player is on a platform
 
+    private String type, state;
+
     ArrayList <Hitbox> hitboxes; //hitboxes the Player sends out e.g. bullets
     private ArrayList<Force> forces; //Forces that act on Player
 
     private HashMap <String, Attack> attacks; //attacks in the form {name, Attack}
+    private HashMap <String, Image[]> frames;
+    private HashMap <String, Integer> actions;
 
-    public Player(double x, double y, HashMap<String, Double> stats, HashMap<String, Attack> atks, boolean cpu){
+
+    public Player(double x, double y, HashMap<String, Double> stats, HashMap<String, Attack> atks, boolean cpu, String charType, String playerState, int playerFrameNum){
         super(x, y);
 
         height = stats.get("height");
@@ -69,6 +77,8 @@ public class Player extends Mover{
         gravity = stats.get("gravity");
         runspd = stats.get("runspd");
         jumpforce = stats.get("jumpforce");
+        offsetX = stats.get("offsetX");
+        offsetY = stats.get("offsetY");
         isComputer = cpu;
 
         attacks = atks;
@@ -85,6 +95,10 @@ public class Player extends Mover{
         hitboxes = new ArrayList<Hitbox>();
         forces = new ArrayList<Force>();
         lives = 4;
+        type = charType;
+        state = playerState;
+        frameNum = playerFrameNum;
+        frames = Util.loadFrames(this, atks);
     }
 
     public void loadKeyLayout(HashMap<String, Integer> keyVals){
@@ -121,7 +135,7 @@ public class Player extends Mover{
         // rn it just resets player to starting pos... idk if that's what we want it to do
         // maybe add an invincibility period ?
 
-        //player dies by going off-screen
+        // player dies by going off-screen
         if (getX() <= 0 || getX()+width >= Gamepanel.WIDTH || getY() <= 0 || getY()+height >= Gamepanel.HEIGHT){
             loseLife();
         }
@@ -286,32 +300,59 @@ public class Player extends Mover{
         }
 
         if (keysPressed[shieldKey]){ //activates shield
+            state = "Shield";
             stunTime = 25;
             atkCooldown = 25;
             shieldTime = 20;
         }
             
         else if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){ //TO DO DEPENDING ON WHAT THE SPRITES ALLOW FOR WE MAY OR MAY NOT HAVE THE BONUS ATTACK
-            if (keysReleasedTime[fastKey] <= 5) attack("BonusAtk", 1);
+            // if (keysReleasedTime[fastKey] <= 5) attack("BonusAtk", attacks.get("BonusAtk"), 1); NEW
             
             if (keysPressed[UKey]){
-                attack("FastUpAtk", 1);
+                attack("FastUpAttack", attacks.get("FastUpAtk"), 1);
+                state = "FastUpAtk";
             }
             else if (keysPressed[DKey]){
-                attack("FastDownAtk", 1);
+                attack("FastDownAtk", attacks.get("FastDownAtk"), 1);
             }
             else{
-                attack("FastSideAtk", 1);
+                if (type == "swordsperson"){
+                    attack("FastSideAtkFixed");
+                    // attack("FastSideAtkFixed", attacks.get("FastSideAtkFixed"), 1);
+                    state = "FastSideAtkFixed";
+                    frameNum = 0;
+                }
+                else{
+                    attack("FastSideAtk", attacks.get("FastSideAtk"), 1);
+                    state = "FastSideAtk";
+                    frameNum = 0;
+                }
             }
 
             keysReleasedTime[fastKey] = 0;
         }
 
         else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
+            if (!onGround){
+                return;
+            } 
             if (keysPressed[DKey]){
                 attack("ChargeDownAtk");
+                state = "ChargeDownAtk";
             }
-            else attack("ChargeSideAtk");
+            else{
+                
+                if (type == "swordsperson"){
+                    attack("ChargeSideAtkFixed");
+                    state = "ChargeSideAtkFixed";
+
+                }
+                else{
+                    attack("ChargeSideAtk");
+                    state = "ChargeSideAtk";
+                }
+            }
             keysReleasedTime[chargeKey] = 0;
         }
 
@@ -333,15 +374,18 @@ public class Player extends Mover{
             scale = chargedMoveSize/maxCharge;
             chargedMoveSize = 0;
         }
-        attack(atkName, scale); //attacks using other method
+        attack(atkName, attacks.get(atkName), scale); //attacks using other method
     }
 
-    public void attack(String name, double scale){
-        Attack a = attacks.get(name); //the Attack to be used
+    public void attack(String name, Attack atk, double scale){
+        // Attack a = attacks.get(name); //the Attack to be used
+        stunTime += atk.getnumFrames()*2;
         //when a Player attacks with Attack a, all Hitboxes in a are added to Player's ArrayList of hitboxes
 
-        for (Hitbox h : a.getHitboxes()){ //TO DO EXPLAIN THIS IDK HOW
+        for (Hitbox h : atk.getHitboxes()){ //TO DO EXPLAIN THIS IDK HOW
             Hitbox toAdd = h.cloneHitbox(); 
+            toAdd.setName(name);
+            toAdd.setPlayer(this);
             if (name.contains("Side")) toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*scale*(dir > 0 ? 0 : 1));
             else toAdd.setX(getX() + toAdd.getOffsetX() - (toAdd.getWidth()/2)*scale);
             
@@ -350,14 +394,16 @@ public class Player extends Mover{
             toAdd.setAX(toAdd.getAX()*dir);
             toAdd.setKnockBackX(toAdd.getKnockBackX()*dir*scale);
 
-            //for charged attacks
-            toAdd.setWidth(toAdd.getWidth() * scale);
-            toAdd.setHeight(toAdd.getHeight() * scale);
+            if (!name.contains("Fixed")){
+                //for charged attacks
+                toAdd.setWidth(toAdd.getWidth() * scale);
+                toAdd.setHeight(toAdd.getHeight() * scale);
+            }
             toAdd.setDamage(toAdd.getDamage() * scale);
             
             addHitBox(toAdd);
         }
-        setCoolDown(a.getCoolDown()); //sets the attack cooldown
+        setCoolDown(atk.getCoolDown()); //sets the attack cooldown
     }
 
     public Platform nearestPlat(Stage curStage){ //returns the nearest Platform to the Player in the stage 
@@ -381,9 +427,42 @@ public class Player extends Mover{
     public void draw(Graphics g, int xx, int yy){ //draws the Player
         g.setColor(Color.BLUE);
         if (chargedMoveSize == 50) g.setColor(Color.CYAN);
+        // change this so attack colour is different when fully charged !!
+
         if (stunTime > 0) g.setColor(Color.RED);
         if (shieldTime > 0) g.setColor(Color.GREEN);
         g.fillRect((int)getX(), (int)getY(), (int)width, (int)height);
+        
+        if (state.equals("Run") || state.equals("Jump") || state.equals("Fall") || state.equals("Idle")){
+            if (getVX() != 0 && getVY() == 0 && state.equals("Idle")){
+                state = "Run";
+                frameNum = 0;
+            }
+            else if (getVY() < 0){
+                state = "Jump";
+                frameNum = 0;
+            }
+            else if (getVY() > 0){
+                state = "Fall";
+                frameNum = 0;
+            }
+            else if (getVX() == 0 && getVY() == 0){
+                state = "Idle";
+                frameNum = 0;
+            }
+        }
+
+        if (dir == RIGHT){
+            // divide by 2 is just to "slow down" frame rate of character
+            g.drawImage(frames.get(state)[(int)frameNum], (int)(getX()+offsetX), (int)(getY()+offsetY), null);
+        }
+        else{
+            int imgWidth = (frames.get(state)[(int)frameNum/2]).getWidth(null);
+            int imgHeight = (frames.get(state)[(int)frameNum/2]).getHeight(null);
+            // still getting an index out of bounds error sometimes (pretty rare unless spamming bttns ?) :/
+            // i think it happens when frameIncrease() called then state is changed before draw is called, so max frames isn't updated yet
+            g.drawImage(frames.get(state)[(int)frameNum], (int)(getX()+imgWidth+offsetX), (int)(getY()+offsetY), -(int)(imgWidth), (int)(imgHeight), null);
+        } 
 
         for (Hitbox h : hitboxes){ //draws Hitboxes
 			h.draw(g);
@@ -391,6 +470,21 @@ public class Player extends Mover{
 
 		g.drawString(""+Util.fDouble(damage, 1), xx, yy); //draws Player percent
         g.drawString(""+Util.fDouble(chargedMoveSize, 1), xx, yy+400); //TO DO DRAW A METER FOR HOW LONG IT WAS CHARGED FOR
+    }
+
+    public void frameIncrease(){
+        if (frameNum >= (actions.get(state)-1)){
+            if (state.equals("Run") || state.equals("Idle")){
+                frameNum = 0;
+            }
+            else{
+                state = "Idle";
+                frameNum = 0;
+            }
+        }
+        else{
+            frameNum += 0.5;
+        }
     }
 
     //adder methods????
@@ -415,7 +509,12 @@ public class Player extends Mover{
     public boolean getOnGround(){return onGround;}
     public boolean getCPU(){return isComputer;}
     public Point getCenterPoint(){return new Point((int)(getX() + width/2), (int)(getY() + height/2));}
+    public String getType(){return type;}
+    public double getWidth(){return width;}
+    public int getDir(){return dir;}
     public ArrayList <Hitbox> getHitBoxes(){return hitboxes;} 
+    public HashMap <String, Image[]> getFrames(){return frames;} 
+    
     
     //setter methods
     public void setLKey(int k){LKey = k;}
@@ -429,4 +528,6 @@ public class Player extends Mover{
     public void setStun(int time){stunTime = time;}
     public void setShieldTime(int time){shieldTime = time;}
     public void setCPU(boolean b){isComputer = b;}
+    public void setActions(HashMap <String, Integer> allActions){actions = allActions;}
+    public void setType(String t){type = t;}
 }
