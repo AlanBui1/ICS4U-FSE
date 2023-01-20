@@ -7,8 +7,8 @@ c=0
 count =0
 for i in imgs:
 
-    if "Shield" in pics[c]:
-        image.save(i, "Shield"+str(count)+".png")
+    if "_" in pics[c]:
+        image.save(i, "ChargeDownAtk"+str(count)+".png")
         count += 1
 ##    image.save(i, pics[c].replace(".png",".jpg"))
         print(pics[c])

@@ -379,26 +379,41 @@ public class Player extends Mover{
 
     public void attack(String name, Attack atk, double scale){
         // Attack a = attacks.get(name); //the Attack to be used
-        stunTime += atk.getnumFrames()*2;
+        stunTime += atk.getnumFrames()*2; //stuns the attacker to prevent the Player from moving while attacking
         //when a Player attacks with Attack a, all Hitboxes in a are added to Player's ArrayList of hitboxes
 
         for (Hitbox h : atk.getHitboxes()){ //TO DO EXPLAIN THIS IDK HOW
             Hitbox toAdd = h.cloneHitbox(); 
             toAdd.setName(name);
             toAdd.setPlayer(this);
-            if (name.contains("Side")) toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*scale*(dir > 0 ? 0 : 1));
-            else toAdd.setX(getX() + toAdd.getOffsetX() - (toAdd.getWidth()/2)*scale);
+            if (name.contains("Side") || type.equals("bladekeeper")){
+                if (type.equals("bladekeeper")){
+                    if (dir > 0){
+                        toAdd.setX(getX() + (toAdd.getOffsetX()*dir));
+                    }
+                    else{
+                        if (name.contains("Down")){
+                            toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*(dir > 0 ? 0 : 1));
+                        }
+                        else toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
+                    }
+                }
+                else{
+                    toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
+                } 
+            } 
+            else toAdd.setX(getX() + toAdd.getOffsetX());
             
-            toAdd.setY(getY() + toAdd.getOffsetY() - (toAdd.getHeight()/2)*scale);
+            toAdd.setY(getY() + toAdd.getOffsetY());
             toAdd.setVX(toAdd.getVX()*dir);
             toAdd.setAX(toAdd.getAX()*dir);
             toAdd.setKnockBackX(toAdd.getKnockBackX()*dir*scale);
 
-            if (!name.contains("Fixed")){
-                //for charged attacks
-                toAdd.setWidth(toAdd.getWidth() * scale);
-                toAdd.setHeight(toAdd.getHeight() * scale);
-            }
+            // if (!name.contains("Fixed")){ NEW DO NOT CHANGE SIZES OF HITBOXES, just the damage/knockback
+            //     //for charged attacks
+            //     toAdd.setWidth(toAdd.getWidth() * scale);
+            //     toAdd.setHeight(toAdd.getHeight() * scale);
+            // }
             toAdd.setDamage(toAdd.getDamage() * scale);
             
             addHitBox(toAdd);

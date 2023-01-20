@@ -178,7 +178,11 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		for (Hitbox h : curPlayer.getHitBoxes()){ 
 			h.lowerInvis(); //NEW
-			if (h.getInvis() > 0) continue;
+			if (h.getInvis() > 0){
+				h.setY(curPlayer.getY());
+				continue;
+			} 
+
 			if (oppoPlayer.getRect().intersects(h.getRect())){ //checks if Hitbox and Player collide
 				toDelH.add(h);
 			}
@@ -450,7 +454,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 						// p1 = new Player(0,0, Util.loadStats(p1.getType()+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
 						p1.loadKeyLayout(playerKeys.get(0));
 						// p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), false);
-						p2 = new Player(0,0, shooterStats, shooterAtks, false, "shooter", "Idle", 0);
+						p2 = new Player(0,0, swordspersonStats, swordspersonAtks, false, "swordsperson", "Idle", 0);
 						p2.loadKeyLayout(playerKeys.get(1));
 
 					}
