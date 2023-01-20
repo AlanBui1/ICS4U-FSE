@@ -16,7 +16,8 @@ public class Hitbox extends Mover{
                     damage; //how much damage this Hitbox does if the opponent gets hit by it
 
     private HashMap<String, Double> data; //HashMap of all the information needed to clone the Hitbox
-    private int stunTime; //how long the Hitbox will stun the opponent for
+    private int stunTime, //how long the Hitbox will stun the opponent for
+                invisTime; //how long the Hitbox is inactive for
 
     public Hitbox(HashMap <String, Double> stats){ //constructor that initializes fields using a HashMap with all the necessary information
         super(stats);
@@ -30,6 +31,7 @@ public class Hitbox extends Mover{
         baseKnockbackY = (double)stats.get("basekby");
         stunTime = (int)(double)stats.get("stuntime");
         damage = stats.get("damage");
+        invisTime = stats.get("invisTime") == null ? -1 : (int)(double)stats.get("invisTime");
 
         data = stats;
     }

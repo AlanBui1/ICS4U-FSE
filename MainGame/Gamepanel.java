@@ -73,6 +73,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	private Font fontLocal; //Font used for text to be drawn on screen
 
 	public Gamepanel(){
+		GameMusic.startMidi("music/FireEmblem.mid");
 		keysPressed = new boolean[KeyEvent.KEY_LAST+1];
 		keysHeldTime = new int[KeyEvent.KEY_LAST+1];
 		keysReleasedTime = new int[KeyEvent.KEY_LAST+1];
@@ -82,7 +83,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		requestFocus();
 		addKeyListener(this);
 		addMouseListener(this);
-		timer = new Timer(20, this);
+		timer = new Timer(25, this);
+		// timer.setActionCommand("maingame");
 		timer.start();
 
 		curStage = Util.loadStage("stages/verticalPlat.txt"); //sets the stage to a default stage
@@ -190,6 +192,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 	@Override
 	public void actionPerformed(ActionEvent e){
+		// System.out.println(timer.getActionCommand());
 		for (int i=0; i<KeyEvent.KEY_LAST; i++){
 			if (keysPressed[i]){
 				keysHeldTime[i]++; //if key i is pressed, increases the time it is held for
@@ -420,9 +423,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 						mousePressed = false;
 
 						//initializes Players
-						p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), true);
+						p1 = new Player(0,0, Util.loadStats(player1+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
 						p1.loadKeyLayout(playerKeys.get(0));
-						p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), true);
+						p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), false);
 						p2.loadKeyLayout(playerKeys.get(1));
 					}
 
@@ -463,9 +466,11 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 					else{
 						if (curRect.name.equals("RANDOM")){
 							curStage = allStages.get(Util.randint(0, allStages.size()-1)); //sets curStage to a random Stage
+							GameMusic.startMidi("music/BreakTheTargets.mid");
 						}
 						else{
 							curStage = allStages.get(curRect.val); //sets curStage to the selected Stage
+							GameMusic.startMidi("music/"+curRect.name+".mid");
 						}
 					}
 				}
@@ -483,6 +488,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		move(); 	// never draw in move
 		if (p1.getLives() <= 0 || p2.getLives() <= 0){
 			curScreen = ENDSCREEN;
+			GameMusic.startMidi("music/Gallery.mid");
 		}
 	}
 
