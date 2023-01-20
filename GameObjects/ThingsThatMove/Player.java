@@ -149,7 +149,7 @@ public class Player extends Mover{
         ArrayList <Hitbox> toDel = new ArrayList<Hitbox>(); //Hitboxes to remove if they're time active is done
 
         for (Hitbox h : hitboxes){ //loops through Player's Hitboxes
-            h.move();  //moves Hitbox
+            if (h.getInvis() <= 0) h.move();  //moves Hitbox
             if (h.getTime() <= 0){ //if time active is done
                 toDel.add(h); //adds to toDel to be deleted
             }
@@ -317,17 +317,17 @@ public class Player extends Mover{
                 attack("FastDownAtk", attacks.get("FastDownAtk"), 1);
             }
             else{
-                if (type == "swordsperson"){
-                    attack("FastSideAtkFixed");
-                    // attack("FastSideAtkFixed", attacks.get("FastSideAtkFixed"), 1);
-                    state = "FastSideAtkFixed";
-                    frameNum = 0;
-                }
-                else{
+                // if (type == "swordsperson"){
+                //     attack("FastSideAtk");
+                //     // attack("FastSideAtkFixed", attacks.get("FastSideAtkFixed"), 1);
+                //     state = "FastSideAtk";
+                //     frameNum = 0;
+                // }
+                // else{
                     attack("FastSideAtk", attacks.get("FastSideAtk"), 1);
                     state = "FastSideAtk";
                     frameNum = 0;
-                }
+                // }
             }
 
             keysReleasedTime[fastKey] = 0;
@@ -343,15 +343,15 @@ public class Player extends Mover{
             }
             else{
                 
-                if (type == "swordsperson"){
-                    attack("ChargeSideAtkFixed");
-                    state = "ChargeSideAtkFixed";
+                // if (type == "swordsperson"){
+                //     attack("ChargeSideAtk");
+                //     state = "ChargeSideAtk";
 
-                }
-                else{
+                // }
+                // else{
                     attack("ChargeSideAtk");
                     state = "ChargeSideAtk";
-                }
+                // }
             }
             keysReleasedTime[chargeKey] = 0;
         }
@@ -386,23 +386,30 @@ public class Player extends Mover{
             Hitbox toAdd = h.cloneHitbox(); 
             toAdd.setName(name);
             toAdd.setPlayer(this);
-            if (name.contains("Side") || type.equals("bladekeeper")){
-                if (type.equals("bladekeeper")){
-                    if (dir > 0){
-                        toAdd.setX(getX() + (toAdd.getOffsetX()*dir));
-                    }
-                    else{
-                        if (name.contains("Down")){
-                            toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*(dir > 0 ? 0 : 1));
-                        }
-                        else toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
-                    }
-                }
-                else{
-                    toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
-                } 
-            } 
-            else toAdd.setX(getX() + toAdd.getOffsetX());
+            if (type.equals("bladekeeper") && (name.contains("Down"))){
+                toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*(dir > 0 ? 0 : 1));
+            }
+            else toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
+            // if (name.contains("Side") || type.equals("bladekeeper") || type.equals("shooter")){
+                // if (type.equals("bladekeeper")){
+                //     if (dir > 0){
+                //         toAdd.setX(getX() + (toAdd.getOffsetX()*dir));
+                //     }
+                //     else{
+                //         if (name.contains("Down")){
+                //             toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*(dir > 0 ? 0 : 1));
+                //         }
+                //         else toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
+                //     }
+                // }
+                // else if (type.equals("swordsperson") && (name.equals("FastSideAtk") || name.equals("ChargeDownAtk"))){
+                //     toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
+                // }
+                // else{
+                //     toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*(dir > 0 ? 0 : 1));
+                // } 
+            // } 
+            // else toAdd.setX(getX() + toAdd.getOffsetX());
             
             toAdd.setY(getY() + toAdd.getOffsetY());
             toAdd.setVX(toAdd.getVX()*dir);
@@ -441,7 +448,7 @@ public class Player extends Mover{
 
     public void draw(Graphics g, int xx, int yy){ //draws the Player
         g.setColor(Color.BLUE);
-        if (chargedMoveSize == 50) g.setColor(Color.CYAN);
+        if (chargedMoveSize == maxCharge) g.setColor(Color.CYAN);
         // change this so attack colour is different when fully charged !!
 
         if (stunTime > 0) g.setColor(Color.RED);

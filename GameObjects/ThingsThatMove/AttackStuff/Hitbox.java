@@ -85,28 +85,15 @@ public class Hitbox extends Mover{
 
         int dir = player.getDir();
         if (player.getType().equals("shooter") && name.equals("FastSideAtk")){
-            Image projectileImg = player.getFrames().get(name + "Projectile")[0];
-            if (dir == Player.LEFT){
-                g.drawImage(projectileImg, (int)this.getX()-projectileImg.getWidth(null), (int)(this.getY()), 64, 6, null);
+            if (invisTime < 0){
+                Image projectileImg = player.getFrames().get(name + "Projectile")[0];
+                if (dir == Player.LEFT){
+                    g.drawImage(projectileImg, (int)this.getX()-projectileImg.getWidth(null), (int)(this.getY()), 64, 6, null);
+                }
+                else{
+                    g.drawImage(projectileImg, (int)this.getX(), (int)(this.getY()), 64, 6, null);
+                }
             }
-            else{
-                g.drawImage(projectileImg, (int)this.getX(), (int)(this.getY()), 64, 6, null);
-            }
-        }
-        else if (name.contains("Fixed")){
-            
-            if (dir == Player.LEFT){
-                // width *= Gamepanel.WIDTH;
-                
-                //g.fillRect((int)(player.getX() + startOffsetX*dir - width  + player.getWidth()), (int)((player.getY() + startOffsetY)), (int)width, (int)height);
-            }
-            else{
-                //g.fillRect((int)(player.getX() + startOffsetX*dir), (int)(player.getY() + startOffsetY), (int)width, (int)height);
-            }
-            // g.fillRect((int)(getX()), (int)(this.getY()), (int)w, (int)h);
-        }
-        else{
-            //g.fillRect((int)(this.getX()), (int)(this.getY()), (int)width, (int)height);
         }
 
         g.drawRect((int)getX(), (int)getY(), (int)width, (int)height);

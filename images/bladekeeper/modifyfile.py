@@ -6,8 +6,8 @@ imgs = [image.load(p) for p in pics]
 c=0
 for i in imgs:
 
-    if "_" in pics[c]:
-        image.save(i, "Shield"+str(c)+".png")
+    if "Fixed" in pics[c]:
+        image.save(i, pics[c].replace("Fixed", ""))
 ##    image.save(i, pics[c].replace(".png",".jpg"))
         print(pics[c])
     c+=1

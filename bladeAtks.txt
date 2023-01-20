@@ -263,7 +263,7 @@ width 0.07
 height 0.05
 startoffsetx 0.02875
 startoffsety 0
-timeactive 25
+timeactive 20
 stuntime 10
 damage 4
 invisTime 20
@@ -279,12 +279,12 @@ width 0.07
 height 0.05
 startoffsetx 0.02875
 startoffsety 0
-timeactive 30
+timeactive 20
 stuntime 10
 damage 4
 invisTime 25
-basekbx 0.00625
-basekby 0.00625
+basekbx 1
+basekby 1
 vx 0
 vy 0
 ax 0
@@ -295,10 +295,10 @@ width 0.07
 height 0.05
 startoffsetx 0.02875
 startoffsety 0
-timeactive 35
+timeactive 20
 stuntime 10
 damage 4
-invisTime 30
+invisTime 25
 cooldown 36
 frames 18
 ---END---
