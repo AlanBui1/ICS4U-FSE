@@ -135,10 +135,10 @@ public class Player extends Mover{
         // rn it just resets player to starting pos... idk if that's what we want it to do
         // maybe add an invincibility period ?
 
-        //player dies by going off-screen
-        // if (getX() <= 0 || getX()+width >= Gamepanel.WIDTH || getY() <= 0 || getY()+height >= Gamepanel.HEIGHT){
-        //     loseLife();
-        // }
+        // player dies by going off-screen
+        if (getX() <= 0 || getX()+width >= Gamepanel.WIDTH || getY() <= 0 || getY()+height >= Gamepanel.HEIGHT){
+            loseLife();
+        }
 
         keyBoardMovement(keysPressed, keysReleasedTime); //applies the keyboard movement
         applyForces(); //applies forces acting on the Player
@@ -149,7 +149,7 @@ public class Player extends Mover{
         ArrayList <Hitbox> toDel = new ArrayList<Hitbox>(); //Hitboxes to remove if they're time active is done
 
         for (Hitbox h : hitboxes){ //loops through Player's Hitboxes
-            h.move();  //moves Hitbox
+            if (h.getInvis() <= 0) h.move();  //moves Hitbox
             if (h.getTime() <= 0){ //if time active is done
                 toDel.add(h); //adds to toDel to be deleted
             }
@@ -300,50 +300,58 @@ public class Player extends Mover{
         }
 
         if (keysPressed[shieldKey]){ //activates shield
+            state = "Shield";
             stunTime = 25;
             atkCooldown = 25;
             shieldTime = 20;
         }
             
         else if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){ //TO DO DEPENDING ON WHAT THE SPRITES ALLOW FOR WE MAY OR MAY NOT HAVE THE BONUS ATTACK
-            if (keysReleasedTime[fastKey] <= 5) attack("BonusAtk", attacks.get("BonusAtk"), 1);
+            // if (keysReleasedTime[fastKey] <= 5) attack("BonusAtk", attacks.get("BonusAtk"), 1); NEW
             
             if (keysPressed[UKey]){
                 attack("FastUpAttack", attacks.get("FastUpAtk"), 1);
+                state = "FastUpAtk";
             }
             else if (keysPressed[DKey]){
                 attack("FastDownAtk", attacks.get("FastDownAtk"), 1);
             }
             else{
-                if (type == "swordsperson"){
-                    attack("FastSideAtkFixed");
-                    // attack("FastSideAtkFixed", attacks.get("FastSideAtkFixed"), 1);
-                    state = "FastSideAtkFixed";
-                    frameNum = 0;
-                }
-                else{
+                // if (type == "swordsperson"){
+                //     attack("FastSideAtk");
+                //     // attack("FastSideAtkFixed", attacks.get("FastSideAtkFixed"), 1);
+                //     state = "FastSideAtk";
+                //     frameNum = 0;
+                // }
+                // else{
                     attack("FastSideAtk", attacks.get("FastSideAtk"), 1);
                     state = "FastSideAtk";
                     frameNum = 0;
-                }
+                // }
             }
 
             keysReleasedTime[fastKey] = 0;
         }
 
         else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
+            if (!onGround){
+                return;
+            } 
             if (keysPressed[DKey]){
                 attack("ChargeDownAtk");
+                state = "ChargeDownAtk";
             }
             else{
-                if (type == "swordsperson"){
-                    attack("ChargeSideAtkFixed");
-                    state = "ChargeSideAtkFixed";
+                
+                // if (type == "swordsperson"){
+                //     attack("ChargeSideAtk");
+                //     state = "ChargeSideAtk";
 
-                }
-                else{
+                // }
+                // else{
                     attack("ChargeSideAtk");
-                }
+                    state = "ChargeSideAtk";
+                // }
             }
             keysReleasedTime[chargeKey] = 0;
         }
@@ -370,31 +378,54 @@ public class Player extends Mover{
     }
 
     public void attack(String name, Attack atk, double scale){
-        Attack a = attacks.get(name); //the Attack to be used
+        // Attack a = attacks.get(name); //the Attack to be used
+        stunTime += atk.getnumFrames()*2; //stuns the attacker to prevent the Player from moving while attacking
         //when a Player attacks with Attack a, all Hitboxes in a are added to Player's ArrayList of hitboxes
 
-        for (Hitbox h : a.getHitboxes()){ //TO DO EXPLAIN THIS IDK HOW
+        for (Hitbox h : atk.getHitboxes()){ //TO DO EXPLAIN THIS IDK HOW
             Hitbox toAdd = h.cloneHitbox(); 
             toAdd.setName(name);
             toAdd.setPlayer(this);
-            if (name.contains("Side")) toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*scale*(dir > 0 ? 0 : 1));
-            else toAdd.setX(getX() + toAdd.getOffsetX() - (toAdd.getWidth()/2)*scale);
+            if (type.equals("bladekeeper") && (name.contains("Down"))){
+                toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*(dir > 0 ? 0 : 1));
+            }
+            else toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
+            // if (name.contains("Side") || type.equals("bladekeeper") || type.equals("shooter")){
+                // if (type.equals("bladekeeper")){
+                //     if (dir > 0){
+                //         toAdd.setX(getX() + (toAdd.getOffsetX()*dir));
+                //     }
+                //     else{
+                //         if (name.contains("Down")){
+                //             toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*(dir > 0 ? 0 : 1));
+                //         }
+                //         else toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
+                //     }
+                // }
+                // else if (type.equals("swordsperson") && (name.equals("FastSideAtk") || name.equals("ChargeDownAtk"))){
+                //     toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
+                // }
+                // else{
+                //     toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*(dir > 0 ? 0 : 1));
+                // } 
+            // } 
+            // else toAdd.setX(getX() + toAdd.getOffsetX());
             
-            toAdd.setY(getY() + toAdd.getOffsetY() - (toAdd.getHeight()/2)*scale);
+            toAdd.setY(getY() + toAdd.getOffsetY());
             toAdd.setVX(toAdd.getVX()*dir);
             toAdd.setAX(toAdd.getAX()*dir);
             toAdd.setKnockBackX(toAdd.getKnockBackX()*dir*scale);
 
-            if (!name.contains("Fixed")){
-                //for charged attacks
-                toAdd.setWidth(toAdd.getWidth() * scale);
-                toAdd.setHeight(toAdd.getHeight() * scale);
-            }
+            // if (!name.contains("Fixed")){ NEW DO NOT CHANGE SIZES OF HITBOXES, just the damage/knockback
+            //     //for charged attacks
+            //     toAdd.setWidth(toAdd.getWidth() * scale);
+            //     toAdd.setHeight(toAdd.getHeight() * scale);
+            // }
             toAdd.setDamage(toAdd.getDamage() * scale);
             
             addHitBox(toAdd);
         }
-        setCoolDown(a.getCoolDown()); //sets the attack cooldown
+        setCoolDown(atk.getCoolDown()); //sets the attack cooldown
     }
 
     public Platform nearestPlat(Stage curStage){ //returns the nearest Platform to the Player in the stage 
@@ -417,7 +448,7 @@ public class Player extends Mover{
 
     public void draw(Graphics g, int xx, int yy){ //draws the Player
         g.setColor(Color.BLUE);
-        if (chargedMoveSize == 50) g.setColor(Color.CYAN);
+        if (chargedMoveSize == maxCharge) g.setColor(Color.CYAN);
         // change this so attack colour is different when fully charged !!
 
         if (stunTime > 0) g.setColor(Color.RED);

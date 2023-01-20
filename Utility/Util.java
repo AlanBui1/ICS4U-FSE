@@ -86,7 +86,7 @@ public class Util {
 		HashMap <String, Image[]> frames = new HashMap <String, Image[]>();
 		for (String atkName : atks.keySet()){
 			// TEMP
-			if (atkName.equals("ChargeSideAtkFixed") || atkName.equals("FastSideAtk") || atkName.equals("FastSideAtkFixed")){
+			if (atkName.equals("ChargeSideAtk") || atkName.equals("Shield") || atkName.equals("FastUpAtk") || atkName.equals("ChargeDownAtk") || atkName.equals("ChargeSideAtkFixed") || atkName.equals("FastSideAtk") || atkName.equals("FastSideAtkFixed")){
 				Image[] atkFrames = new Image[atks.get(atkName).getnumFrames()];
 				actions.put(atkName, atks.get(atkName).getnumFrames());
 				for (int k = 0; k < atks.get(atkName).getnumFrames(); k++){
@@ -147,7 +147,7 @@ public class Util {
 				inFile.nextLine();
 
 				atks.put(curName, new Attack());
-				int NUMSTATS = 15; //number of stats each Hitbox has
+				int NUMSTATS = 16; //number of stats each Hitbox has
 
 				for (int i=0; i<numHitboxes; i++){
 					HashMap <String, Double> hitStats = new HashMap<String, Double>();

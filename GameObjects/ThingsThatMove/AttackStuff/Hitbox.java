@@ -15,9 +15,11 @@ public class Hitbox extends Mover{
                     startOffsetY, //how far away in the Y-direction from the top-left corner of the Player the Hitbox will be launched 
                     baseKnockbackX, //base knockback in the x direction
                     baseKnockbackY, //base knockback in the y direction
-                    damage; //how much damage this Hitbox does if the opponent gets hit by it
+                    damage, //how much damage this Hitbox does if the opponent gets hit by it
+                    invisTime; //how long the Hitbox is inactive for
 
     private HashMap<String, Double> data; //HashMap of all the information needed to clone the Hitbox
+
     private int stunTime; //how long the Hitbox will stun the opponent for
     private String name;
     private Player player;
@@ -34,6 +36,8 @@ public class Hitbox extends Mover{
         baseKnockbackY = (double)stats.get("basekby");
         stunTime = (int)(double)stats.get("stuntime");
         damage = stats.get("damage");
+        invisTime = stats.get("invisTime") == null ? -1 : (int)(double)stats.get("invisTime");
+        invisTime = stats.get("invisTime") == null ? -1 : stats.get("invisTime");
 
         data = stats;
     }
@@ -54,6 +58,7 @@ public class Hitbox extends Mover{
     public double getKnockBackY(){return baseKnockbackY;}
     public double getDamage(){return damage;}
     public int getStun(){return stunTime;}    
+    public double getInvis(){return invisTime;} //NEW
 
     //setter methods
     public void setWidth(double W){width= W;}
@@ -64,6 +69,7 @@ public class Hitbox extends Mover{
     public void setName(String n){name = n;}
     public void setPlayer(Player p){player = p;}
     public void addTime(double t){time += t;}
+    public void lowerInvis(){invisTime--;} //NEW
 
     @Override
     public void move(){
@@ -79,28 +85,17 @@ public class Hitbox extends Mover{
 
         int dir = player.getDir();
         if (player.getType().equals("shooter") && name.equals("FastSideAtk")){
-            Image projectileImg = player.getFrames().get(name + "Projectile")[0];
-            if (dir == Player.LEFT){
-                g.drawImage(projectileImg, (int)this.getX()-projectileImg.getWidth(null), (int)(this.getY()), 64, 6, null);
-            }
-            else{
-                g.drawImage(projectileImg, (int)this.getX(), (int)(this.getY()), 64, 6, null);
+            if (invisTime < 0){
+                Image projectileImg = player.getFrames().get(name + "Projectile")[0];
+                if (dir == Player.LEFT){
+                    g.drawImage(projectileImg, (int)this.getX()-projectileImg.getWidth(null), (int)(this.getY()), 64, 6, null);
+                }
+                else{
+                    g.drawImage(projectileImg, (int)this.getX(), (int)(this.getY()), 64, 6, null);
+                }
             }
         }
-        else if (name.contains("Fixed")){
-            
-            if (dir == Player.LEFT){
-                // width *= Gamepanel.WIDTH;
-                
-                g.fillRect((int)(player.getX() + startOffsetX*dir - width  + player.getWidth()), (int)((player.getY() + startOffsetY)), (int)width, (int)height);
-            }
-            else{
-                g.fillRect((int)(player.getX() + startOffsetX*dir), (int)(player.getY() + startOffsetY), (int)width, (int)height);
-            }
-            // g.fillRect((int)(getX()), (int)(this.getY()), (int)w, (int)h);
-        }
-        else{
-            g.fillRect((int)(this.getX()), (int)(this.getY()), (int)width, (int)height);
-        }
+
+        g.drawRect((int)getX(), (int)getY(), (int)width, (int)height);
     }
 }

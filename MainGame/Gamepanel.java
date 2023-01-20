@@ -37,6 +37,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	public static  HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
 	public static  HashMap <String, Double> swordspersonStats = new HashMap<String, Double>(); //statName -> value
 	public static  HashMap <String, Attack> swordspersonAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
+	public static  HashMap <String, Double> bladeStats = new HashMap<String, Double>(); //statName -> value NEW
+	public static  HashMap <String, Attack> bladeAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
 
     private boolean [] keysPressed; //keysPressed[i] is true if the ith key is pressed
 	private int []  keysHeldTime, //how long the keys are held for
@@ -77,6 +79,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	private Font fontLocal; //Font used for text to be drawn on screen
 
 	public Gamepanel(){
+		GameMusic.startMidi("music/FireEmblem.mid");
 		keysPressed = new boolean[KeyEvent.KEY_LAST+1];
 		keysHeldTime = new int[KeyEvent.KEY_LAST+1];
 		keysReleasedTime = new int[KeyEvent.KEY_LAST+1];
@@ -87,12 +90,15 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		addKeyListener(this);
 		addMouseListener(this);
 		timer = new Timer(20, this);
+		// timer.setActionCommand("maingame");
 		timer.start();
 
 		shooterStats = Util.loadStats("shooterStats.txt");
 		shooterAtks = Util.loadAtks("shooterAtks.txt");
 		swordspersonStats = Util.loadStats("swordspersonStats.txt");
 		swordspersonAtks = Util.loadAtks("swordspersonAtks.txt");
+		bladeStats = Util.loadStats("bladeStats.txt"); //NEW
+		bladeAtks = Util.loadAtks("bladeAtks.txt"); //NEW
 
 		curStage = Util.loadStage("stages/verticalPlat.txt"); //sets the stage to a default stage
 
@@ -171,6 +177,12 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		ArrayList<Hitbox> toDelH = new ArrayList<Hitbox>(); //Hitboxes to delete
 
 		for (Hitbox h : curPlayer.getHitBoxes()){ 
+			h.lowerInvis(); //NEW
+			if (h.getInvis() > 0){
+				h.setY(curPlayer.getY() + h.getOffsetY());
+				continue;
+			} 
+
 			if (oppoPlayer.getRect().intersects(h.getRect())){ //checks if Hitbox and Player collide
 				toDelH.add(h);
 			}
@@ -205,6 +217,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		if (p2 != null){
 			p2.frameIncrease();
 		}
+		// System.out.println(timer.getActionCommand());
 		for (int i=0; i<KeyEvent.KEY_LAST; i++){
 			if (keysPressed[i]){
 				keysHeldTime[i]++; //if key i is pressed, increases the time it is held for
@@ -438,10 +451,10 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 						mousePressed = false;
 						//initializes Players
 						p1 = new Player(0,0, swordspersonStats, swordspersonAtks, false, "swordsperson", "Idle", 0); // maybe change string to constant (or completely remove)
-						// p1 = new Player(0,0, Util.loadStats(p1.getType()+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), true);
+						// p1 = new Player(0,0, Util.loadStats(p1.getType()+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
 						p1.loadKeyLayout(playerKeys.get(0));
-						// p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), true);
-						p2 = new Player(0,0, shooterStats, shooterAtks, false, "shooter", "Idle", 0);
+						// p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), false);
+						p2 = new Player(0,0, bladeStats, bladeAtks, false, "bladekeeper", "Idle", 0);
 						p2.loadKeyLayout(playerKeys.get(1));
 
 					}
@@ -487,9 +500,11 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 					else{
 						if (curRect.name.equals("RANDOM")){
 							curStage = allStages.get(Util.randint(0, allStages.size()-1)); //sets curStage to a random Stage
+							GameMusic.startMidi("music/BreakTheTargets.mid");
 						}
 						else{
 							curStage = allStages.get(curRect.val); //sets curStage to the selected Stage
+							GameMusic.startMidi("music/"+curRect.name+".mid");
 						}
 					}
 				}
@@ -507,6 +522,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		move(); 	// never draw in move
 		if (p1.getLives() <= 0 || p2.getLives() <= 0){
 			curScreen = ENDSCREEN;
+			GameMusic.startMidi("music/Gallery.mid");
 		}
 	}
 
