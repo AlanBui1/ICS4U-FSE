@@ -143,8 +143,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		stageSelectRects = Util.loadSelectRects("selectRects/stageSelect.txt");
 		charSelectRects = Util.loadSelectRects("selectRects/charSelect.txt");
 		keySelectRects = Util.loadSelectRects("selectRects/keySelect.txt");
-		player1Rect = new SelectRect(new Rectangle(200, 400, 100, 100), 0, "", "assets/shooter/shooter.png");
-		player2Rect = new SelectRect(new Rectangle(400, 400, 100, 100), 1, "", "assets/shooter/shooter.png");
+		player1Rect = new SelectRect(new Rectangle(150, 400, 100, 100), 0, "", "assets/shooter/shooter.png");
+		player2Rect = new SelectRect(new Rectangle(430, 400, 100, 100), 1, "", "assets/shooter/shooter.png");
 
 
 		//INITIALIZE KEY SELECT
@@ -398,7 +398,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			charSelectRects.get(i).draw(g);
 		}
 
-		player1Rect.draw(g);
+		player1Rect.draw(g); 
 		player2Rect.draw(g);
 
 		

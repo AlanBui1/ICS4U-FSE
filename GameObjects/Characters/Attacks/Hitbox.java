@@ -59,7 +59,7 @@ public class Hitbox extends Mover{
     public double getKnockBackY(){return baseKnockbackY;}
     public double getDamage(){return damage;}
     public int getStun(){return stunTime;}    
-    public double getInvis(){return invisTime;} //NEW
+    public double getInvis(){return invisTime;} 
 
     //setter methods
     public void setWidth(double W){width= W;}
@@ -85,11 +85,13 @@ public class Hitbox extends Mover{
         g.setColor(Color.GREEN);
 
         int dir = player.getDir();
+        // drawing for projectiles of shooter
         if (player.getType().equals("shooter")){
             if (name.equals("FastSideAtk")){
                 if (invisTime < 0){
-                    Image projectileImg = player.getFrames().get(name + "Projectile")[0];
-                    if (dir == Player.LEFT){
+                    Image projectileImg = player.getFrames().get(name + "Projectile")[0]; // gets correct frame for projectile (projectile is constant, only one frame)
+                    if (dir == Player.LEFT){  // adjusts based on direction facing so arrow's starting position is correct offset
+                        // subtracts width and height from x and y coordinates respectively to "shift" starting position 
                         g.drawImage(projectileImg, (int)this.getX()-projectileImg.getWidth(null), (int)(this.getY()), 64, 6, null);
                     }
                     else{
@@ -98,7 +100,7 @@ public class Hitbox extends Mover{
                 }
             }
         }
-
+        // DELETE
         g.drawRect((int)getX(), (int)getY(), (int)width, (int)height);
     }
 }

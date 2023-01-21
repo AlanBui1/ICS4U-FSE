@@ -87,15 +87,13 @@ public class Util {
 	public static HashMap <String, Image[]> loadFrames(Player player, HashMap<String, Attack> atks){
 		HashMap <String, Integer> actions = new HashMap <String, Integer>();
 		HashMap <String, Image[]> frames = new HashMap <String, Image[]>();
-		for (String atkName : atks.keySet()){
-			Image[] atkFrames = new Image[atks.get(atkName).getnumFrames()];
+		for (String atkName : atks.keySet()){ // iterates through attack keys
+			Image[] atkFrames = new Image[atks.get(atkName).getnumFrames()];// array to store all frames of an attack
 			actions.put(atkName, atks.get(atkName).getnumFrames());
-			for (int k = 0; k < atks.get(atkName).getnumFrames(); k++){
-				if (player.getType().equals("swordsperson")){
+			for (int k = 0; k < atks.get(atkName).getnumFrames(); k++){// iterates through every frame image of attack and updates frame array
+				if (player.getType().equals("swordsperson")){ // swordsperson sprite is slightly smaller, scale to match size of other characters
 					atkFrames[k] = loadScaledImg("assets/" + player.getType() + "/" + atkName + k + ".png", 337, 149);
-					// this is only because the scaling of the characters look slightly different, but this causes a thing where when
-					// frames are first loaded/used, they start flashing 
-					// if this problem can't be resolved, we can revert to w/o rescaling (not that big of a difference)
+					
 				}
 				else{
 					atkFrames[k] = loadImg("assets/" + player.getType() + "/" + atkName + k + ".png");
@@ -105,30 +103,31 @@ public class Util {
 			
 		}
 
-		HashMap <String, Integer> moves = new HashMap <String, Integer>();
+		HashMap <String, Integer> moves = new HashMap <String, Integer>(); // new moves hashmap that stores non-attack moves and their corresponding number of frames
 		moves.put("Run", 10);
 		moves.put("Idle", 10);
 		moves.put("Jump", 3);
 		moves.put("Fall", 3);
+
 		for (String moveName : moves.keySet()){
-			Image[] moveFrames = new Image[moves.get(moveName)];
-			for (int k = 0; k < moves.get(moveName); k++){
-				if (player.getType().equals("swordsperson")){
-					moveFrames[k] = loadScaledImg("assets/" + player.getType() + "/" + moveName + k + ".png", 337, 149);
+			Image[] moveFrames = new Image[moves.get(moveName)]; // creates an array for frames of move
+			for (int k = 0; k < moves.get(moveName); k++){ // loads all frames for each move
+				if (player.getType().equals("swordsperson")){ // specialized scaling for swordsperson
+					moveFrames[k] = loadScaledImg("images/" + player.getType() + "/" + moveName + k + ".png", 337, 149);
 				}
 				else{
 					moveFrames[k] = loadImg("assets/" + player.getType() + "/" + moveName + k + ".png");
 				}
-				frames.put(moveName, moveFrames);
-				actions.put(moveName, moves.get(moveName));
+				frames.put(moveName, moveFrames); // adds all frames
+				actions.put(moveName, moves.get(moveName)); // adds moves ot all actions
 			}
 		}
-		if (player.getType().equals("shooter")){
+		if (player.getType().equals("shooter")){ // sepcial case, loads projectile frame
 			Image[] FastSideAtkProjectile = {loadImg("assets/shooter/FastSideAtkProjectile.png")};
 			frames.put("FastSideAtkProjectile", FastSideAtkProjectile);
 		}
 
-		player.setActions(actions);
+		player.setActions(actions); 
 		return frames;
 	}
 

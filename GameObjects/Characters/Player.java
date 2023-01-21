@@ -46,9 +46,9 @@ public class Player extends Mover{
                     jumpforce, //jumpforce (pixels / frame) is the force exerted on the Player when it jumps 
                     width, //width (pixels) is the number of pixels wide the Player is
                     height, //height (pixels) is the number of pixels high the Player is
-                    frameNum,
-                    offsetX,
-                    offsetY;
+                    frameNum, // frameNum is current frame that the player should be showing
+                    offsetX, // offsetX is the offset in the x direction of the player's images
+                    offsetY; // offsetY is the offset in the y direction of the player's images
 
     private double  chargedMoveSize, //how long the charged move was charged for
                     damage, //the damage taken by the Player
@@ -66,8 +66,8 @@ public class Player extends Mover{
     private ArrayList<Force> forces; //Forces that act on Player
 
     private HashMap <String, Attack> attacks; //attacks in the form {name, Attack}
-    private HashMap <String, Image[]> frames;
-    private HashMap <String, Integer> actions;
+    private HashMap <String, Image[]> frames; // hashmap that stores all frames {name of action, Image array of all frames}
+    private HashMap <String, Integer> actions; // holds all possible
 
 
     public Player(double x, 
