@@ -38,8 +38,6 @@ public class Platform extends Mover{
     }
 
     public void draw(Graphics g, Image platform){ //draws the Platform
-        // g.setColor(c);
-        // g.fillRect((int)getX(), (int)getY(), width, height);
         g.drawImage(platform, (int)getX(), (int)getY(), width, height, null);
     }
 
