@@ -11,7 +11,7 @@ import java.awt.*;
 public class Stage {
     private ArrayList <Platform> platforms; //platforms that make up the stage
     private Platform mainPlatform; //the main platform that the AI will follow
-    private Image bg; 
+    private Image bg, smallPlat, mainPlat;
     
     public Stage(){
         platforms = new ArrayList<Platform>();
@@ -32,12 +32,20 @@ public class Stage {
         g.drawImage(bg,0,0, Gamepanel.WIDTH, Gamepanel.HEIGHT, null);
 
         for (Platform p : platforms){
-            p.draw(g, Color.GRAY);
+            if (!p.equals(mainPlatform)){
+                p.draw(g, smallPlat);
+            }
+            else{
+                 p.draw(g, mainPlat);
+            }
         }
+        mainPlatform.draw(g, mainPlat);
     }
 
-    public void setBg(String fileName){
+    public void setElements(String fileName){
         bg = Util.loadImg("assets/" + fileName);
+        smallPlat = Util.loadImg("assets/smallPlatform.png");
+        mainPlat = Util.loadImg("assets/mainPlatform.png");
     }
 }
 

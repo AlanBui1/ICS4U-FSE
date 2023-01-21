@@ -73,7 +73,12 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	private ArrayList <Stage> allStages; //all stages
 
 	private SelectRect controlScreenRect, //SelectRect to go to the control select screen
-					   pauseRect; //SelectRect to pause/unpause the game
+					   pauseRect,
+					   playRect; //SelectRect to pause/unpause the game
+
+	private Image pauseImage;
+	private Image startImage;
+	private Image charSelectImage;
 
     Timer timer; //Timer to count frames in the game
 
@@ -112,8 +117,13 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		curStage = Util.loadStage("stages/verticalPlat.txt"); //sets the stage to a default stage
 
-		controlScreenRect = new SelectRect(new Rectangle(0, 0, 100, 100), 0, "", "assets/stage1.png"); 
-		pauseRect = new SelectRect(new Rectangle(WIDTH/2, HEIGHT-100, 100, 100), 0, "", "assets/stage1.png");
+		controlScreenRect = new SelectRect(new Rectangle(100, 20, 70, 70), 0, "", "assets/stage1.png"); 
+		
+		playRect = new SelectRect(new Rectangle(20, 20, 70, 70), 0, "", "assets/play.png");
+		pauseRect = new SelectRect(new Rectangle(20, 20, 70, 70), 0, "", "assets/pause.png");
+		pauseImage = Util.loadImg("assets/pause.gif");
+		startImage = Util.loadImg("assets/start.gif");
+		charSelectImage = Util.loadImg("assets/charSelect.gif");
 
 		//sets current screen to the start by default
 		curScreen = START;
@@ -159,7 +169,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 						0);
 
 		//loads font
-		String fName = "NeonLight-Regular.ttf"; 
+		String fName = "Starborn.ttf"; 
     	InputStream is = Gamepanel.class.getResourceAsStream(fName);
     	try{
     		fontLocal = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(32f);
@@ -366,14 +376,14 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 //Drawing different screens
 	public void paintStart(Graphics g){
 		//TO DO CHANGE TO A BACKGROUND IMAGE
-		g.setColor(Color.GRAY);
-		g.fillRect(0,0, WIDTH, HEIGHT);
+		g.drawImage(startImage, 0, 0, WIDTH, HEIGHT, null);
+		// g.setColor(Color.GRAY);
+		// g.fillRect(0,0, WIDTH, HEIGHT);
 		g.setColor(Color.BLACK);
-		g.drawString("CLICK TO START", WIDTH/2, HEIGHT/2);
+		// g.drawString("CLICK TO START", WIDTH/2-100, HEIGHT/2);
 	}
 	public void paintControlSelect(Graphics g){
 		//TO DO CHANGE TO A BACKGROUND IMAGE 
-		
 		g.setColor(Color.GRAY);
 		g.fillRect(0,0, WIDTH, HEIGHT);
 		for (SelectRect curRect : keySelectRects){
@@ -383,10 +393,10 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	}
 	public void paintCharacterSelect(Graphics g){
 		//TO DO show which characters are selected / if they are cpu
-
+		g.drawImage(charSelectImage, 0, 0, WIDTH, HEIGHT, null);
 		//TO DO CHANGE TO A BACKGROUND IMAGE, the next couple of lines are temp
-		g.setColor(Color.GRAY);
-		g.fillRect(0,0, WIDTH, HEIGHT);
+		// g.setColor(Color.GRAY);
+		// g.fillRect(0,0, WIDTH, HEIGHT);
 		for (int i=0; i<charSelectRects.size(); i++){
 			charSelectRects.get(i).draw(g);
 		}
@@ -425,13 +435,11 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		catch(NullPointerException ex){}
 	}
 	public void paintPause(Graphics g){
-		//TO DO CHANGE TO A BACKGROUND IMAGE
-		g.setColor(Color.GRAY);
-		g.fillRect(0,0, WIDTH, HEIGHT);
+		g.drawImage(pauseImage, 0,0, WIDTH, HEIGHT, null);
 		g.setColor(Color.BLACK);
-		g.drawString("PAUSE SCREEN", WIDTH/2, HEIGHT/2);
+		g.drawString("PAUSED", WIDTH/2, HEIGHT/2);
 		g.setColor(Color.RED);
-		pauseRect.draw(g);
+		playRect.draw(g);
 		controlScreenRect.draw(g);
 	}
 

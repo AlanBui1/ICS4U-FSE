@@ -30,6 +30,6 @@ vy	0
 minX	0
 minY	0
 maxX	0
-maxY	0
-invisible	0
-bg MLPBG.png
+maxY	0.5
+invisible	1
+bg stage2.gif

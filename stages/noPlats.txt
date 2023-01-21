@@ -21,4 +21,4 @@ minY	0
 maxX	0.7
 maxY	0
 invisible	0
-bg MLPBG.png
+bg stage1.gif
