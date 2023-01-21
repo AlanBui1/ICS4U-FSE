@@ -43,4 +43,5 @@ minY	0
 maxX	1
 maxY	0
 invisible	1
+bg stage4.gif
 	

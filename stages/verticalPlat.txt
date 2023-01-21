@@ -32,3 +32,4 @@ minY	0.2
 maxX	0
 maxY	0.5
 invisible	1
+bg MLPBG.png
