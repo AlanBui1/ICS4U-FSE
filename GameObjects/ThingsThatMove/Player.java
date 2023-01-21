@@ -11,6 +11,7 @@ import Utility.Util;
 public class Player extends Mover{
     public static final int LEFT = -1, RIGHT = 1;
 	public static final String [] keyNames = {"UKey", "DKey", "LKey", "RKey", "fastKey", "chargeKey", "shieldKey"}; //names of keys that Player used
+    public static final double maxCharge = 50; //the maximum amount a move can be charged for
 
     private boolean isComputer; //true if the Player should be computer or not
 
@@ -43,7 +44,6 @@ public class Player extends Mover{
                     offsetY;
 
     private double  chargedMoveSize, //how long the charged move was charged for
-                    maxCharge, //the maximum amount a move can be charged for
                     damage, //the damage taken by the Player
                     damageDealt, //how much damage the Player dealt
                     damageTaken; //how much damage the Player took
@@ -63,7 +63,15 @@ public class Player extends Mover{
     private HashMap <String, Integer> actions;
 
 
-    public Player(double x, double y, HashMap<String, Double> stats, HashMap<String, Attack> atks, boolean cpu, String charType, String playerState, int playerFrameNum){
+    public Player(double x, 
+                  double y, 
+                  HashMap<String, Double> stats, 
+                  HashMap<String, Attack> atks, 
+                  boolean cpu, 
+                  String charType, 
+                  String playerState, 
+                  int playerFrameNum){
+
         super(x, y);
 
         height = stats.get("height");
@@ -86,7 +94,7 @@ public class Player extends Mover{
         shieldTime = 0;
         atkCooldown = 0;
         chargedMoveSize= 0;
-        maxCharge = 25;
+        
         damage = 0;
         damageDealt = 0;
         damageTaken = 0;
@@ -337,16 +345,8 @@ public class Player extends Mover{
                 state = "ChargeDownAtk";
             }
             else{
-                
-                // if (type == "swordsperson"){
-                //     attack("ChargeSideAtk");
-                //     state = "ChargeSideAtk";
-
-                // }
-                // else{
-                    attack("ChargeSideAtk");
-                    state = "ChargeSideAtk";
-                // }
+                attack("ChargeSideAtk");
+                state = "ChargeSideAtk";
             }
             keysReleasedTime[chargeKey] = 0;
         }
@@ -466,7 +466,10 @@ public class Player extends Mover{
 		}
 
 		g.drawString(""+Util.fDouble(damage, 1), xx, yy); //draws Player percent
-        g.drawString(""+Util.fDouble(chargedMoveSize, 1), xx, yy+400); //TO DO DRAW A METER FOR HOW LONG IT WAS CHARGED FOR
+        g.fillRect(xx, yy, (int)(100*(chargedMoveSize/maxCharge)), 10);
+        g.drawRect(xx, yy, 100, 10);
+
+        // g.drawString(""+Util.fDouble(chargedMoveSize, 1), xx, yy+400); //TO DO DRAW A METER FOR HOW LONG IT WAS CHARGED FOR
     }
 
     public void frameIncrease(){

@@ -393,6 +393,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		player1Rect.draw(g);
 		player2Rect.draw(g);
+
+		g.fillRect(100, 100, (int)(100*(p1.getCharge()/Player.maxCharge)), 10);
+		g.fillRect(500, 100, (int)(100*(p2.getCharge()/Player.maxCharge)), 10);
 	}
 	public void paintStageSelect(Graphics g){
 		//TO DO CHANGE TO A BACKGROUND IMAGE
@@ -558,7 +561,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			return;
 		}
 
-		move(); 	// never draw in move
+		move(); // never draw in move
 		if (p1.getLives() <= 0 || p2.getLives() <= 0){
 			curScreen = ENDSCREEN;
 			GameMusic.startMidi("music/Gallery.mid");
