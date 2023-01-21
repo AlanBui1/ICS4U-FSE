@@ -211,10 +211,10 @@ public class Util {
 
 			newStage = new Stage(plats);
 			inFile.next();
+			String name = inFile.next();
+			inFile.nextLine();
+			newStage.setElements(name);
 
-			String name = inFile.next(); //filename of the background 
-			newStage.setBg(name); //sets background of the Stage
-			
 			inFile.close();
 		}
 		catch (IOException e){}

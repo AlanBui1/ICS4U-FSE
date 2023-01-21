@@ -35,9 +35,10 @@ public class Platform extends Mover{
         super.move();
     }
 
-    public void draw(Graphics g, Color c){ //draws the Platform
-        g.setColor(c);
-        g.fillRect((int)getX(), (int)getY(), width, height);
+    public void draw(Graphics g, Image platform){ //draws the Platform
+        // g.setColor(c);
+        // g.fillRect((int)getX(), (int)getY(), width, height);
+        g.drawImage(platform, (int)getX(), (int)getY(), width, height, null);
     }
 
     public Rectangle getRect(){ //returns the Rectangle area where the Platform is

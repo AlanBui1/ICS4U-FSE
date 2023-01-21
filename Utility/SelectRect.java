@@ -13,11 +13,15 @@ public class SelectRect {
         rect = r;
         val = v;
         name = s;
-        img = Util.loadScaledImg(imgFile, (int)rect.getWidth(), (int)rect.getHeight());
+        img = Util.loadScaledImg(imgFile, (int)rect.getWidth()-20, (int)rect.getHeight()-20);
     }
 
     public void draw(Graphics g){ //displays the SelectRect on the screen
-        g.drawImage(img, (int)rect.getX(), (int)rect.getY(), null);
+        g.setColor(Color.WHITE);
+        if (!name.equals(name.toUpperCase()) || name.equals("RANDOM")){
+            g.fillRect((int)rect.getX()+5, (int)rect.getY()+5, (int)rect.getWidth()-10, (int)rect.getHeight()-10);
+        }
+        g.drawImage(img, (int)rect.getX()+10, (int)rect.getY()+10, null);
     }
 
     public boolean contains(int x, int y){ //method to check if (x, y) is contained in the SelectRect Rectangle
