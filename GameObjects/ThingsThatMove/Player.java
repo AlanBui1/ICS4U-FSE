@@ -94,7 +94,6 @@ public class Player extends Mover{
         shieldTime = 0;
         atkCooldown = 0;
         chargedMoveSize= 0;
-        
         damage = 0;
         damageDealt = 0;
         damageTaken = 0;
@@ -109,7 +108,7 @@ public class Player extends Mover{
         frames = Util.loadFrames(this, atks);
     }
 
-    public void loadKeyLayout(HashMap<String, Integer> keyVals){
+    public void loadKeyLayout(HashMap<String, Integer> keyVals){ //sets the key data from a HashMap
         UKey = keyVals.get("UKey");
         DKey = keyVals.get("DKey");
         LKey = keyVals.get("LKey");
@@ -144,7 +143,7 @@ public class Player extends Mover{
         // maybe add an invincibility period ?
 
         // player dies by going off-screen
-        if (getX() <= 0 || getX()+width >= Gamepanel.WIDTH || getY() <= 0 || getY()+height >= Gamepanel.HEIGHT){
+        if (getX() <= -20 || getX()+width >= Gamepanel.WIDTH || getY() <= 0 || getY()+height >= Gamepanel.HEIGHT){
             loseLife();
         }
 
@@ -466,10 +465,6 @@ public class Player extends Mover{
 		}
 
 		g.drawString(""+Util.fDouble(damage, 1), xx, yy); //draws Player percent
-        g.fillRect(xx, yy, (int)(100*(chargedMoveSize/maxCharge)), 10);
-        g.drawRect(xx, yy, 100, 10);
-
-        // g.drawString(""+Util.fDouble(chargedMoveSize, 1), xx, yy+400); //TO DO DRAW A METER FOR HOW LONG IT WAS CHARGED FOR
     }
 
     public void frameIncrease(){
@@ -488,9 +483,8 @@ public class Player extends Mover{
     }
 
     //adder methods????
-    public void addHitBox(Hitbox h){hitboxes.add(h);}
-    public void addForce(double magX, double magY, int stun){forces.add(new Force(magX, magY, stun));}
-    public void addForce(Force f){forces.add(f);}
+    public void addHitBox(Hitbox h){hitboxes.add(h);} //adds a Hitbox to the Player's ArrayList of Hitboxes
+    public void addForce(Force f){forces.add(f);} //adds a Force to the Player's ArrayList of Forces
     public void addStun(int time){stunTime += time;}
     public void addDamage(double d){damage += d;}
     public void addTakenDamage(double d){damageTaken += d;}

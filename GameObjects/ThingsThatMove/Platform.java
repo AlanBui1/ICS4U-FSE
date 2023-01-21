@@ -24,7 +24,7 @@ public class Platform extends Mover{
     }
 
     @Override
-    public void move(){
+    public void move(){ //moves the Platform
         if (!(minX <= getX() + getVX() && getX() + getVX() <= maxX)){ //check if moving will put Platform out of the right range in the X
             setVX(-getVX()); //moves in the other direction
         }

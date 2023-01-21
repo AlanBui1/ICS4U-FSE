@@ -468,10 +468,10 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	public void charAction(){ //actions on the character select screen
 		if (mousePressed){
 			if (player1Rect.contains(mouseX, mouseY)){
-				p1.setCPU(!p1.getCPU());
+				p1.setCPU(true^p1.getCPU());
 			}
 			if (player2Rect.contains(mouseX, mouseY)){
-				p2.setCPU(!p2.getCPU());
+				p2.setCPU(true^p2.getCPU());
 			}
 			for (SelectRect curRect : charSelectRects){ //loops through SelectRects 
 				if (curRect.contains(mouseX, mouseY)){ // checks if the mouse is inside them
@@ -484,7 +484,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 										0, 
 										allStats.get(p1.getType()), 
 										allAtks.get(p1.getType()), 
-										false, p1.getType(), 
+										p1.getCPU(), 
+										p1.getType(), 
 										"Idle", 
 										0);
 
@@ -492,7 +493,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 										0, 
 										allStats.get(p2.getType()), 
 										allAtks.get(p2.getType()), 
-										false, p2.getType(), 
+										p2.getCPU(), 
+										p2.getType(), 
 										"Idle", 
 										0);
 						

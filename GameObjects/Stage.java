@@ -30,8 +30,6 @@ public class Stage {
 
     public void draw(Graphics g){ //draws the Stage and the Platforms in the Stage
         g.drawImage(bg,0,0, Gamepanel.WIDTH, Gamepanel.HEIGHT, null);
-        // g.setColor(Color.BLACK);
-        // g.fillRect(0, 0, Gamepanel.WIDTH, Gamepanel.HEIGHT);
 
         for (Platform p : platforms){
             p.draw(g, Color.GRAY);
