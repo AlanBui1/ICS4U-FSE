@@ -1,11 +1,13 @@
-package GameObjects.ThingsThatMove;
+package GameObjects.Characters;
 
 import java.util.*;
 import java.awt.*;
 
-import GameObjects.ThingsThatMove.AttackStuff.*;
-import GameObjects.Stage;
+import GameObjects.Characters.Attacks.*;
+import GameObjects.Stages.Platform;
+import GameObjects.Stages.Stage;
 import MainGame.*;
+import Utility.Mover;
 import Utility.Util;
 
 public class Player extends Mover{

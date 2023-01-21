@@ -1,4 +1,4 @@
-package GameObjects.ThingsThatMove.AttackStuff;
+package GameObjects.Characters.Attacks;
 
 //class for Forces that will act on Players
 //Forces have magnitude, broken into x and y components as well as a stunTime, which is how long the Force will stun the Player affected

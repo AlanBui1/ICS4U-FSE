@@ -1,9 +1,9 @@
-package GameObjects.ThingsThatMove.AttackStuff;
+package GameObjects.Characters.Attacks;
 import java.awt.*;
 import java.util.HashMap;
 
-import GameObjects.ThingsThatMove.Mover;
-import GameObjects.ThingsThatMove.Player;
+import GameObjects.Characters.Player;
+import Utility.Mover;
 
 //class for Hitboxes
 //Hitboxes are able to move using methods inherited from the Mover class

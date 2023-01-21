@@ -1,6 +1,8 @@
-package GameObjects.ThingsThatMove;
+package GameObjects.Stages;
 import java.awt.*;
 import java.util.*;
+
+import Utility.Mover;
 
 //class for Platforms 
 //extends Mover class since Platforms can move

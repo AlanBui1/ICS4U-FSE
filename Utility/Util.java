@@ -3,12 +3,13 @@ import java.util.*;
 import java.awt.*;
 import javax.swing.*;
 
-import GameObjects.ThingsThatMove.Player;
-import GameObjects.ThingsThatMove.AttackStuff.*;
 import MainGame.Game;
 import MainGame.Gamepanel;
 import GameObjects.*;
-import GameObjects.ThingsThatMove.*;
+import GameObjects.Characters.Player;
+import GameObjects.Characters.Attacks.*;
+import GameObjects.Stages.Platform;
+import GameObjects.Stages.Stage;
 
 import java.io.*;
 
@@ -91,13 +92,13 @@ public class Util {
 			actions.put(atkName, atks.get(atkName).getnumFrames());
 			for (int k = 0; k < atks.get(atkName).getnumFrames(); k++){
 				if (player.getType().equals("swordsperson")){
-					atkFrames[k] = loadScaledImg("images/" + player.getType() + "/" + atkName + k + ".png", 337, 149);
+					atkFrames[k] = loadScaledImg("assets/" + player.getType() + "/" + atkName + k + ".png", 337, 149);
 					// this is only because the scaling of the characters look slightly different, but this causes a thing where when
 					// frames are first loaded/used, they start flashing 
 					// if this problem can't be resolved, we can revert to w/o rescaling (not that big of a difference)
 				}
 				else{
-					atkFrames[k] = loadImg("images/" + player.getType() + "/" + atkName + k + ".png");
+					atkFrames[k] = loadImg("assets/" + player.getType() + "/" + atkName + k + ".png");
 				}
 			}
 			frames.put(atkName, atkFrames);
@@ -113,17 +114,17 @@ public class Util {
 			Image[] moveFrames = new Image[moves.get(moveName)];
 			for (int k = 0; k < moves.get(moveName); k++){
 				if (player.getType().equals("swordsperson")){
-					moveFrames[k] = loadScaledImg("images/" + player.getType() + "/" + moveName + k + ".png", 337, 149);
+					moveFrames[k] = loadScaledImg("assets/" + player.getType() + "/" + moveName + k + ".png", 337, 149);
 				}
 				else{
-					moveFrames[k] = loadImg("images/" + player.getType() + "/" + moveName + k + ".png");
+					moveFrames[k] = loadImg("assets/" + player.getType() + "/" + moveName + k + ".png");
 				}
 				frames.put(moveName, moveFrames);
 				actions.put(moveName, moves.get(moveName));
 			}
 		}
 		if (player.getType().equals("shooter")){
-			Image[] FastSideAtkProjectile = {loadImg("images/shooter/FastSideAtkProjectile.png")};
+			Image[] FastSideAtkProjectile = {loadImg("assets/shooter/FastSideAtkProjectile.png")};
 			frames.put("FastSideAtkProjectile", FastSideAtkProjectile);
 		}
 

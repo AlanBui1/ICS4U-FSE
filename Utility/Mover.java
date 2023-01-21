@@ -1,4 +1,4 @@
-package GameObjects.ThingsThatMove;
+package Utility;
 
 import java.util.HashMap;
 

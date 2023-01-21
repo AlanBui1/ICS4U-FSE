@@ -1,8 +1,7 @@
-package GameObjects;
+package GameObjects.Stages;
 import java.util.ArrayList;
 import javax.swing.*;
 
-import GameObjects.ThingsThatMove.Platform;
 import MainGame.Gamepanel;
 import Utility.Util;
 

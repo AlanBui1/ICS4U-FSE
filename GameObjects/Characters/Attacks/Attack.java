@@ -1,4 +1,4 @@
-package GameObjects.ThingsThatMove.AttackStuff;
+package GameObjects.Characters.Attacks;
 
 import java.util.*;
 

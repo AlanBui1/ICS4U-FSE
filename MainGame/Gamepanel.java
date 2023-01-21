@@ -8,11 +8,10 @@ import java.io.*;
 
 import javax.swing.*;
 
-import GameObjects.ThingsThatMove.Player;
-import GameObjects.ThingsThatMove.Platform;
-import GameObjects.ThingsThatMove.AttackStuff.*;
-import GameObjects.ThingsThatMove.AttackStuff.Hitbox;
-import GameObjects.Stage;
+import GameObjects.Characters.Player;
+import GameObjects.Characters.Attacks.*;
+import GameObjects.Stages.Platform;
+import GameObjects.Stages.Stage;
 import Utility.*;
 
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
@@ -116,7 +115,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		allStats.put("bladekeeper", bladeStats);
 		allAtks.put("bladekeeper", bladeAtks);
 
-		curStage = Util.loadStage("stages/verticalPlat.txt"); //sets the stage to a default stage
+		curStage = Util.loadStage("stageConfigs/verticalPlat.txt"); //sets the stage to a default stage
 
 		controlScreenRect = new SelectRect(new Rectangle(100, 20, 70, 70), 0, "", "assets/stage1.png"); 
 		
@@ -132,14 +131,14 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		//PRECOMPUTE STAGES
 		allStages = new ArrayList<Stage>();
-		for (int i=0; i<stageNames.length; i++){allStages.add(Util.loadStage("stages/"+stageNames[i]+".txt"));} 
+		for (int i=0; i<stageNames.length; i++){allStages.add(Util.loadStage("stageConfigs/"+stageNames[i]+".txt"));} 
 
 		//INITIALIZE SelectRects
 		stageSelectRects = Util.loadSelectRects("selectRects/stageSelect.txt");
 		charSelectRects = Util.loadSelectRects("selectRects/charSelect.txt");
 		keySelectRects = Util.loadSelectRects("selectRects/keySelect.txt");
-		player1Rect = new SelectRect(new Rectangle(200, 400, 100, 100), 0, "", "images/shooter/shooter.png");
-		player2Rect = new SelectRect(new Rectangle(400, 400, 100, 100), 1, "", "images/shooter/shooter.png");
+		player1Rect = new SelectRect(new Rectangle(200, 400, 100, 100), 0, "", "assets/shooter/shooter.png");
+		player2Rect = new SelectRect(new Rectangle(400, 400, 100, 100), 1, "", "assets/shooter/shooter.png");
 
 
 		//INITIALIZE KEY SELECT
@@ -518,22 +517,22 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 						if (curRect.name.equals("RANDOM")){ //changes the Player to a random one
 							if (mouseButton == LEFTCLICK){
 								p1.setType(characterNames[Util.randint(0, characterNames.length-1)]);
-								player1Rect.changeImg("images/"+p1.getType()+"/"+p1.getType()+".png");
+								player1Rect.changeImg("assets/"+p1.getType()+"/"+p1.getType()+".png");
 							}
 							else if (mouseButton == RIGHTCLICK){ 
 								p2.setType(characterNames[Util.randint(0, characterNames.length-1)]);
-								player2Rect.changeImg("images/"+p2.getType()+"/"+p2.getType()+".png");
+								player2Rect.changeImg("assets/"+p2.getType()+"/"+p2.getType()+".png");
 							}
 						}
 						else{
 							//changes the Player to the one that was clicked
 							if (mouseButton == LEFTCLICK){
 								p1.setType(characterNames[curRect.val]);
-								player1Rect.changeImg("images/"+p1.getType()+"/"+p1.getType()+".png");
+								player1Rect.changeImg("assets/"+p1.getType()+"/"+p1.getType()+".png");
 							}
 							else if (mouseButton == RIGHTCLICK){
 								p2.setType(characterNames[curRect.val]);
-								player2Rect.changeImg("images/"+p2.getType()+"/"+p2.getType()+".png");
+								player2Rect.changeImg("assets/"+p2.getType()+"/"+p2.getType()+".png");
 							}
 						}
 					}
