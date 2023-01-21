@@ -1,20 +1,12 @@
-package GameObjects.Characters;
+package GameObjects.ThingsThatMove;
 
 import java.util.*;
 import java.awt.*;
 
-import GameObjects.Characters.Attacks.*;
-import GameObjects.Stages.Platform;
-import GameObjects.Stages.Stage;
+import GameObjects.ThingsThatMove.AttackStuff.*;
+import GameObjects.Stage;
 import MainGame.*;
-import Utility.Mover;
 import Utility.Util;
-
-//class for Player Objects
-//Players move according to keyboard movement  
-//Players have a variety of fields that are used for dealing with the physics of the game
-//Main things Players can do are: move, draw its Image on the screen, and attack
-//Players' movement and attacks can even be controlled by the program!
 
 public class Player extends Mover{
     public static final int LEFT = -1, RIGHT = 1;
@@ -37,6 +29,7 @@ public class Player extends Mover{
                 shieldTime; //how long the Player has shield active for
 
     private double  weight, //weight () is a measure of how much a Player can resist knockback i.e. more weight => less knockback
+                    airaccel, //airaccel (pixels / frame^2) is the rate a Player can change their horizontal velocity midair
                     airfriction, //airfriction (units / frame^2) is a measure of how long it takes a character to stop moving from a sideways force midair
                     groundfriction, //groundfriction (units / frame^2) is a measure of how long it takes a character to stop moving from a sideways force on the ground
                     airspd, //airspd (pixels / frame) is the maximum speed a Player can move horizontally midair
@@ -46,9 +39,9 @@ public class Player extends Mover{
                     jumpforce, //jumpforce (pixels / frame) is the force exerted on the Player when it jumps 
                     width, //width (pixels) is the number of pixels wide the Player is
                     height, //height (pixels) is the number of pixels high the Player is
-                    frameNum, // frameNum is current frame that the player should be showing
-                    offsetX, // offsetX is the offset in the x direction of the player's images
-                    offsetY; // offsetY is the offset in the y direction of the player's images
+                    frameNum,
+                    offsetX,
+                    offsetY;
 
     private double  chargedMoveSize, //how long the charged move was charged for
                     damage, //the damage taken by the Player
@@ -66,8 +59,8 @@ public class Player extends Mover{
     private ArrayList<Force> forces; //Forces that act on Player
 
     private HashMap <String, Attack> attacks; //attacks in the form {name, Attack}
-    private HashMap <String, Image[]> frames; // hashmap that stores all frames {name of action, Image array of all frames}
-    private HashMap <String, Integer> actions; // holds all possible
+    private HashMap <String, Image[]> frames;
+    private HashMap <String, Integer> actions;
 
 
     public Player(double x, 
@@ -84,6 +77,7 @@ public class Player extends Mover{
         height = stats.get("height");
         width = stats.get("width");
         weight = stats.get("weight");
+        airaccel = stats.get("airaccel");
         airfriction = stats.get("airfriction");
         groundfriction = stats.get("groundfriction");
         airspd = stats.get("airspd");
@@ -143,6 +137,10 @@ public class Player extends Mover{
                 }
             }
         }
+
+        // this depends on if we want the players to die immediately after hitting the edge or not
+        // rn it just resets player to starting pos... idk if that's what we want it to do
+        // maybe add an invincibility period ?
 
         // player dies by going off-screen
         if (getX() <= -20 || getX()+width >= Gamepanel.WIDTH || getY() <= 0 || getY()+height >= Gamepanel.HEIGHT){
@@ -276,13 +274,12 @@ public class Player extends Mover{
     
     public void loseLife(){
         lives--; //reduces number of lives of this Player
-        setX(Gamepanel.WIDTH/2); setY(30); //goes back to starting position
+        setX(Gamepanel.WIDTH/2); setY(30); //goes back to starting position TO DO
         
         //reset values
         setVX(0); setVY(0);
         setAX(0); setAY(0);
         damage = 0;
-
     }
 
     public void attack(boolean [] keysPressed, int [] keysReleasedTime){
@@ -317,7 +314,7 @@ public class Player extends Mover{
             shieldTime = shieldMove.getnumFrames() * 2;
         }
             
-        else if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){ //attacks if the fast key was released fast enough
+        else if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){ 
             if (keysPressed[UKey]){
                 attack("FastUpAtk", attacks.get("FastUpAtk"), 1);
                 state = "FastUpAtk";
@@ -336,7 +333,7 @@ public class Player extends Mover{
             keysReleasedTime[fastKey] = 0;
         }
 
-        else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){//attacks if the charge key was released fast enough
+        else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
             if (!onGround){
                 return;
             } 
@@ -351,7 +348,7 @@ public class Player extends Mover{
             keysReleasedTime[chargeKey] = 0;
         }
 
-        else if (keysPressed[chargeKey]){ //charges if the charge key was held
+        else if (keysPressed[chargeKey]){
             if (keysPressed[UKey]){
                 if (jump3){
                     jump3 = false;
@@ -374,29 +371,26 @@ public class Player extends Mover{
 
     public void attack(String name, Attack atk, double scale){
         stunTime += atk.getnumFrames()*2; //stuns the attacker to prevent the Player from moving while attacking
-        for (Hitbox h : atk.getHitboxes()){ //Loops through the Attack's hitboxes
-            Hitbox toAdd = h.cloneHitbox(); //makes a clone of the Hitbox
+        for (Hitbox h : atk.getHitboxes()){ //TO DO EXPLAIN THIS IDK HOW
+            Hitbox toAdd = h.cloneHitbox(); 
             toAdd.setName(name);
             toAdd.setPlayer(this);
 
-            //puts the Hitbox where it belongs
             if (type.equals("bladekeeper") && (name.contains("Down"))){
                 toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*(dir > 0 ? 0 : 1));
             }
             else if (type.equals("shooter") && name.equals("FastUpAtk")){
                 toAdd.setX(getX());
             }
-            else if (type.equals("shooter") && name.equals("ChargeDownAtk")){ //this is a unique attack to the shooter
-                chargedMoveSize = maxCharge; //fully charges the attack bar
-                damage += 5; //takes damage
+            else if (type.equals("shooter") && name.equals("ChargeDownAtk")){
+                chargedMoveSize = maxCharge;
+                damage += 5;
             }
             else toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
+            
             toAdd.setY(getY() + toAdd.getOffsetY());
-
-            //sets acceleration, velocity, and knockback depending on which way the character is facing/attacking
             toAdd.setVX(toAdd.getVX()*dir);
             toAdd.setAX(toAdd.getAX()*dir);
-            //scales the knockback and damage by how charged the move was
             toAdd.setKnockBackX(toAdd.getKnockBackX()*dir*scale);
             toAdd.setKnockBackY(toAdd.getKnockBackY()*dir*scale);
             toAdd.setDamage(toAdd.getDamage() * scale);
@@ -424,8 +418,15 @@ public class Player extends Mover{
         return nearestPlat; //returns the nearest Platform to the Player
     }
 
-    public void draw(Graphics g, int xx, int yy){ //draws the Player according to what action it's doing
-         
+    public void draw(Graphics g, int xx, int yy){ //draws the Player
+        g.setColor(Color.BLUE);
+        if (chargedMoveSize == maxCharge) g.setColor(Color.CYAN);
+        // change this so attack colour is different when fully charged !!
+
+        if (stunTime > 0) g.setColor(Color.RED);
+        if (shieldTime > 0) g.setColor(Color.GREEN);
+        g.fillRect((int)getX(), (int)getY(), (int)width, (int)height);
+        
         if (state.equals("Run") || state.equals("Jump") || state.equals("Fall") || state.equals("Idle")){
             if (getVX() != 0 && getVY() == 0 && state.equals("Idle")){
                 state = "Run";
@@ -446,19 +447,21 @@ public class Player extends Mover{
         }
 
         if (dir == RIGHT){
+            // divide by 2 is just to "slow down" frame rate of character
             g.drawImage(frames.get(state)[(int)frameNum], (int)(getX()+offsetX), (int)(getY()+offsetY), null);
         }
         else{
-            // divide by 2 is just to "slow down" frame rate of character
             int imgWidth = (frames.get(state)[(int)frameNum/2]).getWidth(null);
             int imgHeight = (frames.get(state)[(int)frameNum/2]).getHeight(null);
+            // still getting an index out of bounds error sometimes (pretty rare unless spamming bttns ?) :/
+            // i think it happens when frameIncrease() called then state is changed before draw is called, so max frames isn't updated yet
             g.drawImage(frames.get(state)[(int)frameNum], (int)(getX()+imgWidth+offsetX), (int)(getY()+offsetY), -(int)(imgWidth), (int)(imgHeight), null);
         } 
 
         for (Hitbox h : hitboxes){ //draws Hitboxes
 			h.draw(g);
 		}
-        g.setColor(Color.BLUE);
+
 		g.drawString(""+Util.fDouble(damage, 1), xx, yy); //draws Player percent
     }
 

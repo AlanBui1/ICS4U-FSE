@@ -13,6 +13,6 @@
 0.8125	0.25	0.125	0.125	1	fastKey	stage3.png
 0.8125	0.375	0.125	0.125	1	chargeKey	stage3.png
 0.8125	0.5	0.125	0.125	1	shieldKey	stage3.png
-0.9	0.9	0.1	0.1	1	START	stage3.png
+0.9	0.9	0.1	0.1	1	START	next.png
 0.8125	0.625	0.125	0.125	1	DEFAULT	stage1.png
 0.3125	0.625	0.125	0.125	0	DEFAULT	stage1.png

@@ -122,7 +122,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		curStage = Util.loadStage("stageConfigs/verticalPlat.txt"); //sets the stage to a default stage
 
-		controlScreenRect = new SelectRect(new Rectangle(100, 20, 70, 70), 0, "", "assets/stage1.png"); 
+		controlScreenRect = new SelectRect(new Rectangle(100, 20, 70, 70), 0, "", "assets/changecontrol.png"); 
 		
 		playRect = new SelectRect(new Rectangle(20, 20, 70, 70), 0, "", "assets/play.png");
 		pauseRect = new SelectRect(new Rectangle(20, 20, 70, 70), 0, "", "assets/pause.png");
