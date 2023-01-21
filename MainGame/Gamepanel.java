@@ -101,12 +101,12 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		timer = new Timer(30, this);
 		timer.start();
 
-		shooterStats = Util.loadStats("shooterStats.txt"); //stats of the shooter
-		shooterAtks = Util.loadAtks("shooterAtks.txt"); //attacks of the shoter
-		swordspersonStats = Util.loadStats("swordspersonStats.txt"); //stats of the swordsperson
-		swordspersonAtks = Util.loadAtks("swordspersonAtks.txt"); //attacks of the swordsperson
-		bladeStats = Util.loadStats("bladeStats.txt"); //stats of the bladekeeper
-		bladeAtks = Util.loadAtks("bladeAtks.txt"); //attacks of the bladekeeper
+		shooterStats = Util.loadStats("CharacterInfo/shooterStats.txt"); //stats of the shooter
+		shooterAtks = Util.loadAtks("CharacterInfo/shooterAtks.txt"); //attacks of the shoter
+		swordspersonStats = Util.loadStats("CharacterInfo/wordspersonStats.txt"); //stats of the swordsperson
+		swordspersonAtks = Util.loadAtks("CharacterInfo/swordspersonAtks.txt"); //attacks of the swordsperson
+		bladeStats = Util.loadStats("CharacterInfo/bladeStats.txt"); //stats of the bladekeeper
+		bladeAtks = Util.loadAtks("CharacterInfo/bladeAtks.txt"); //attacks of the bladekeeper
 
 		allStats.put("shooter", shooterStats);
 		allAtks.put("shooter", shooterAtks);
