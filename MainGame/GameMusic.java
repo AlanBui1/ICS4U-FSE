@@ -5,7 +5,16 @@ import javax.swing.*;
 import java.io.*;
 import javax.sound.midi.*;
 
-//class to play music using midiPlayer
+
+/*
+class to play music using midiPlayer
+
+Methods:
+startMidi(fileName) plays a new song given the file name and ends any previously played songs
+endMidi() ends any playing songs
+
+*/
+
 public class GameMusic{
     private static Sequencer midiPlayer;
    

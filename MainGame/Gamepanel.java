@@ -444,11 +444,11 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 						curScreen = STAGESELECT; //moves to the next screen
 						mousePressed = false;
 						//initializes Players
-						p1 = new Player(0,0, bladeStats, bladeAtks, false, "bladekeeper", "Idle", 0);
+						p1 = new Player(0,0, shooterStats, shooterAtks, false, "shooter", "Idle", 0);
 						// p1 = new Player(0,0, Util.loadStats(p1.getType()+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
 						p1.loadKeyLayout(playerKeys.get(0));
 						// p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), false);
-						p2 = new Player(0,0, bladeStats, bladeAtks, true, "bladekeeper", "Idle", 0);
+						p2 = new Player(0,0, swordspersonStats, swordspersonAtks, false, "swordsperson", "Idle", 0);
 						p2.loadKeyLayout(playerKeys.get(1));
 
 					}

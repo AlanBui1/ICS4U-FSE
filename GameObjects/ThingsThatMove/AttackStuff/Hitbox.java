@@ -83,14 +83,16 @@ public class Hitbox extends Mover{
         g.setColor(Color.GREEN);
 
         int dir = player.getDir();
-        if (player.getType().equals("shooter") && name.equals("FastSideAtk")){
-            if (invisTime < 0){
-                Image projectileImg = player.getFrames().get(name + "Projectile")[0];
-                if (dir == Player.LEFT){
-                    g.drawImage(projectileImg, (int)this.getX()-projectileImg.getWidth(null), (int)(this.getY()), 64, 6, null);
-                }
-                else{
-                    g.drawImage(projectileImg, (int)this.getX(), (int)(this.getY()), 64, 6, null);
+        if (player.getType().equals("shooter")){
+            if (name.equals("FastSideAtk")){
+                if (invisTime < 0){
+                    Image projectileImg = player.getFrames().get(name + "Projectile")[0];
+                    if (dir == Player.LEFT){
+                        g.drawImage(projectileImg, (int)this.getX()-projectileImg.getWidth(null), (int)(this.getY()), 64, 6, null);
+                    }
+                    else{
+                        g.drawImage(projectileImg, (int)this.getX(), (int)(this.getY()), 64, 6, null);
+                    }
                 }
             }
         }

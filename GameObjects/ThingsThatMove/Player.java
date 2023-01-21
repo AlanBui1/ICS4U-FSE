@@ -309,11 +309,9 @@ public class Player extends Mover{
             shieldTime = shieldMove.getnumFrames() * 2;
         }
             
-        else if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){ //TO DO DEPENDING ON WHAT THE SPRITES ALLOW FOR WE MAY OR MAY NOT HAVE THE BONUS ATTACK
-            // if (keysReleasedTime[fastKey] <= 5) attack("BonusAtk", attacks.get("BonusAtk"), 1); NEW
-            
+        else if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){ 
             if (keysPressed[UKey]){
-                attack("FastUpAttack", attacks.get("FastUpAtk"), 1);
+                attack("FastUpAtk", attacks.get("FastUpAtk"), 1);
                 state = "FastUpAtk";
             }
             else if (keysPressed[DKey]){
@@ -376,13 +374,20 @@ public class Player extends Mover{
 
     public void attack(String name, Attack atk, double scale){
         stunTime += atk.getnumFrames()*2; //stuns the attacker to prevent the Player from moving while attacking
-
         for (Hitbox h : atk.getHitboxes()){ //TO DO EXPLAIN THIS IDK HOW
             Hitbox toAdd = h.cloneHitbox(); 
             toAdd.setName(name);
             toAdd.setPlayer(this);
+
             if (type.equals("bladekeeper") && (name.contains("Down"))){
                 toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*(dir > 0 ? 0 : 1));
+            }
+            else if (type.equals("shooter") && name.equals("FastUpAtk")){
+                toAdd.setX(getX());
+            }
+            else if (type.equals("shooter") && name.equals("ChargeDownAtk")){
+                chargedMoveSize = maxCharge;
+                damage += 5;
             }
             else toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
             
