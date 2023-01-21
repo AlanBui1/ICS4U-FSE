@@ -7,6 +7,8 @@ import Utility.Util;
 
 import java.awt.*;
 
+//class that stores details about the stage such as how to display it on the screen
+//Stage class can draw Images for Platforms on the screen
 public class Stage {
     private ArrayList <Platform> platforms; //platforms that make up the stage
     private Platform mainPlatform; //the main platform that the AI will follow

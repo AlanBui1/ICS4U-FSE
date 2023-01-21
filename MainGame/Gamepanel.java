@@ -14,6 +14,10 @@ import GameObjects.Stages.Platform;
 import GameObjects.Stages.Stage;
 import Utility.*;
 
+//main game class that connects all object interactions together
+//has methods to move objects, display images on screen, check mouse location and if it's pressed, start levels, and check collisions between Hitboxes and Players
+//can also track which keys are being pressed and for how long
+
 public class Gamepanel extends JPanel implements KeyListener, ActionListener, MouseListener{	
 	public static final int WIDTH = 800, //width of the screen
 							HEIGHT = 600, // height of the screen
