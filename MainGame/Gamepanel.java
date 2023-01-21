@@ -61,6 +61,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	private Stage curStage; //which stage the battle is on
 
 	private String [] characterNames = {"shooter", "swordsperson", "bladekeeper"}; //all character names
+	private String [] stageNames = {"noPlats", "verticalPlat", "triPlat", "twoMoving","ground", "mainMoving", "twoPillars"}; //all stage names
 
 	private ArrayList <SelectRect> stageSelectRects, //SelectRects in the stage select screen
 								   charSelectRects, //SelectRects in the character select screen
@@ -90,15 +91,14 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		addKeyListener(this);
 		addMouseListener(this);
 		timer = new Timer(30, this);
-		// timer.setActionCommand("maingame");
 		timer.start();
 
-		shooterStats = Util.loadStats("shooterStats.txt");
-		shooterAtks = Util.loadAtks("shooterAtks.txt");
-		swordspersonStats = Util.loadStats("swordspersonStats.txt");
-		swordspersonAtks = Util.loadAtks("swordspersonAtks.txt");
-		bladeStats = Util.loadStats("bladeStats.txt"); //NEW
-		bladeAtks = Util.loadAtks("bladeAtks.txt"); //NEW
+		shooterStats = Util.loadStats("shooterStats.txt"); //stats of the shooter
+		shooterAtks = Util.loadAtks("shooterAtks.txt"); //attacks of the shoter
+		swordspersonStats = Util.loadStats("swordspersonStats.txt"); //stats of the swordsperson
+		swordspersonAtks = Util.loadAtks("swordspersonAtks.txt"); //attacks of the swordsperson
+		bladeStats = Util.loadStats("bladeStats.txt"); //stats of the bladekeeper
+		bladeAtks = Util.loadAtks("bladeAtks.txt"); //attacks of the bladekeeper
 
 		curStage = Util.loadStage("stages/verticalPlat.txt"); //sets the stage to a default stage
 
@@ -110,7 +110,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 		//PRECOMPUTE STAGES
 		allStages = new ArrayList<Stage>();
-		String [] stageNames = {"noPlats", "verticalPlat", "triPlat", "twoMoving","ground", "mainMoving", "twoPillars"};
 		for (int i=0; i<stageNames.length; i++){allStages.add(Util.loadStage("stages/"+stageNames[i]+".txt"));} 
 
 		//INITIALIZE SelectRects
@@ -177,9 +176,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		ArrayList<Hitbox> toDelH = new ArrayList<Hitbox>(); //Hitboxes to delete
 
 		for (Hitbox h : curPlayer.getHitBoxes()){ 
-			h.lowerInvis(); //NEW
+			h.lowerInvis(); //lowers the time the Hitbox is inactive for
 			if (h.getInvis() > 0){
-				h.setY(curPlayer.getY() + h.getOffsetY());
+				h.setY(curPlayer.getY() + h.getOffsetY()); //moves the hitbox where the Player is TO DO possibly put in setX
 				continue;
 			} 
 
@@ -195,12 +194,13 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 				continue; //continues so the effects of the Hitbox are negated
 			}
 
-			oppoPlayer.addForce(new Force(Force.knockBack(h.getKnockBackX(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
-									  Force.knockBack(h.getKnockBackY(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), 
+			oppoPlayer.addForce(new Force(Force.knockBack(h.getKnockBackX(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), //knockback in the x direction
+									  Force.knockBack(h.getKnockBackY(), oppoPlayer.getWeight(), oppoPlayer.getDamage()), //knockback in the y direction
 									  h.getStun())); //adds a Force acting on the opposing Player
 			oppoPlayer.setStun(Math.max(h.getStun(), oppoPlayer.getStun())); //stuns the opposing Player
 			oppoPlayer.addDamage(h.getDamage()); //adds damage to the opposing Player
 
+			//adds to statistics of each Player
 			curPlayer.addDealtDamage(h.getDamage());
 			oppoPlayer.addTakenDamage(h.getDamage());
 		}
@@ -217,7 +217,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		if (p2 != null){
 			p2.frameIncrease();
 		}
-		// System.out.println(timer.getActionCommand());
+
 		for (int i=0; i<KeyEvent.KEY_LAST; i++){
 			if (keysPressed[i]){
 				keysHeldTime[i]++; //if key i is pressed, increases the time it is held for
@@ -234,23 +234,18 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			else if (curScreen == CHARACTERSELECT){
 				charAction();
 			}
-
 			else if (curScreen == STAGESELECT){
 				stageAction();
 			}
-
 			else if (curScreen == CONTROLSELECT){
 				controlAction();
 			}
-			
 			else if (curScreen == BATTLE){
 				battleAction();
 			}
-
 			else if (curScreen == PAUSESCREEN){
 				pauseAction();
 			}
-
 			else if (curScreen == ENDSCREEN){
 				endAction();
 			}
@@ -283,7 +278,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	@Override
 	public void keyTyped(KeyEvent ke){}
 
-	public void updateMouse(MouseEvent e){
+	public void updateMouse(MouseEvent e){ //updates the mouse position and which button is pressed
 		mouseX = e.getX();
 		mouseY = e.getY();
 		mouseButton = e.getButton();
@@ -297,7 +292,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	public void	mouseEntered(MouseEvent e){
 		updateMouse(e);
 	}
-
 	@Override
 	public void	mouseExited(MouseEvent e){
 		updateMouse(e);

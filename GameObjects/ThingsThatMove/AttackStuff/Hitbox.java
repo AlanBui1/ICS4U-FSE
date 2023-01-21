@@ -4,9 +4,9 @@ import java.util.HashMap;
 
 import GameObjects.ThingsThatMove.Mover;
 import GameObjects.ThingsThatMove.Player;
-import MainGame.Game;
-import MainGame.Gamepanel;
 
+//class for Hitboxes
+//Hitboxes are able to move using methods inherited from the Mover class
 public class Hitbox extends Mover{
     private double  width, //how wide the Hitbox is
                     height, //how tall the Hitbox is
@@ -21,8 +21,8 @@ public class Hitbox extends Mover{
     private HashMap<String, Double> data; //HashMap of all the information needed to clone the Hitbox
 
     private int stunTime; //how long the Hitbox will stun the opponent for
-    private String name;
-    private Player player;
+    private String name; //name of Hitbox
+    private Player player; //Player that uses the Hitbox
 
     public Hitbox(HashMap <String, Double> stats){ //constructor that initializes fields using a HashMap with all the necessary information
         super(stats);
@@ -36,7 +36,6 @@ public class Hitbox extends Mover{
         baseKnockbackY = (double)stats.get("basekby");
         stunTime = (int)(double)stats.get("stuntime");
         damage = stats.get("damage");
-        invisTime = stats.get("invisTime") == null ? -1 : (int)(double)stats.get("invisTime");
         invisTime = stats.get("invisTime") == null ? -1 : stats.get("invisTime");
 
         data = stats;

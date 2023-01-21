@@ -42,7 +42,7 @@ public class Util {
 	public static double taxicabDist(double x1, double y1, double x2, double y2){ //returns the taxicab distance between (x1, y1) and (x2, y2)
 		return Math.abs(x1 - x2) + Math.abs(y1 - y2);
 	}
-	public static double taxicabDist(Point p1, Point p2){
+	public static double taxicabDist(Point p1, Point p2){ //returns the taxicab distance between two points p1 and p2
 		return taxicabDist(p1.getX(), p1.getY(), p2.getX(), p2.getY());
 	}
 
@@ -50,7 +50,8 @@ public class Util {
 		g.fillRect((int)r.getX(), (int)r.getY(), (int)r.getWidth(), (int)r.getHeight());
 	}
 
-	public static HashMap <String, Double> loadStats(String fileName){ //returns a HashMap with all the fields of a Player given the filename of the file with its data
+	//returns a HashMap with all the fields of a Player given the filename of the file with its data
+	public static HashMap <String, Double> loadStats(String fileName){ 
 		HashMap <String, Double> stats = new HashMap<String, Double>();
 		try{
 			Scanner inFile = new Scanner(new BufferedReader(new FileReader(fileName))); 
@@ -81,6 +82,7 @@ public class Util {
 		return stats;
 	}
 
+	//method to load Image frames 
 	public static HashMap <String, Image[]> loadFrames(Player player, HashMap<String, Attack> atks){
 		HashMap <String, Integer> actions = new HashMap <String, Integer>();
 		HashMap <String, Image[]> frames = new HashMap <String, Image[]>();
@@ -131,6 +133,7 @@ public class Util {
 		return frames;
 	}
 
+	//method to load a HashMap <String, Attack> from the data in a txt file given the file name
 	public static HashMap <String, Attack> loadAtks(String fileName){
 		HashMap <String, Attack> atks = new HashMap <String, Attack>();
 		try{
@@ -140,7 +143,7 @@ public class Util {
 
 			while (true){
 				String name = inFile.next();
-				if (name.equals("---END---")) break;
+				if (name.equals("---END---")) break; //reached the end of the File, break
 
 				curName = name.replaceAll("-", "");
 				numHitboxes = inFile.nextInt();
@@ -171,13 +174,14 @@ public class Util {
 				}
 
 				inFile.next();
-				int cdown = inFile.nextInt();
-				atks.get(curName).setCoolDown(cdown);
+				int cdown = inFile.nextInt(); //cooldown
+				atks.get(curName).setCoolDown(cdown); //sets the attack cooldown
+				
 				inFile.next();
-				int numFrames = inFile.nextInt();
-				inFile.nextLine();
-				atks.get(curName).setNumFrames(numFrames);
+				int numFrames = inFile.nextInt(); //number of frames the attack is
+				atks.get(curName).setNumFrames(numFrames); //sets the number of frames
 					
+				inFile.nextLine();
 			}
 
 			inFile.close();
@@ -186,7 +190,8 @@ public class Util {
 		return atks;
 	}
 
-	public static Stage loadStage(String fileName){ //returns a Stage with the stats from the given filename
+	//returns a Stage with the stats from the file with the given filename
+	public static Stage loadStage(String fileName){ 
 		ArrayList <Platform> plats = new ArrayList<Platform>();
 		Stage newStage = new Stage();
 		try{
@@ -198,18 +203,20 @@ public class Util {
 				HashMap <String, Integer> platStats = new HashMap<String, Integer>();
 
 				for (int k=0; k<PLATSTATS; k++){
-					platStats.put(inFile.next(), (int)(inFile.nextDouble() * (k%2 == 0 ? Gamepanel.WIDTH : Gamepanel.HEIGHT))); //scales with WIDTH or HEIGHT of the screen depending on if the stat affects X or Y direction
+					platStats.put(inFile.next(), 
+								 (int)(inFile.nextDouble() * (k%2 == 0 ? Gamepanel.WIDTH : Gamepanel.HEIGHT))); //scales with WIDTH or HEIGHT of the screen depending on if the stat affects X or Y direction
 					inFile.nextLine();
 				}
 
-				plats.add(new Platform(platStats));
+				plats.add(new Platform(platStats)); //adds Platform to the Platforms that are in the Stage
 			}
+
 			newStage = new Stage(plats);
 			inFile.next();
-			String name = inFile.next();
-			inFile.nextLine();
-			newStage.setBg(name);
 
+			String name = inFile.next(); //filename of the background 
+			newStage.setBg(name); //sets background of the Stage
+			
 			inFile.close();
 		}
 		catch (IOException e){}
@@ -225,13 +232,13 @@ public class Util {
 
 			for (int i=0; i<numRects; i++){
 				ret.add(new SelectRect(
-					new Rectangle((int)(inFile.nextDouble() * Gamepanel.WIDTH), 
-								  (int)(inFile.nextDouble() * Gamepanel.HEIGHT), 
-								  (int)(inFile.nextDouble() * Gamepanel.WIDTH), 
-								  (int)(inFile.nextDouble() * Gamepanel.HEIGHT)),
-					inFile.nextInt(),
-					inFile.next(),
-					"assets/"+inFile.next()
+					new Rectangle((int)(inFile.nextDouble() * Gamepanel.WIDTH), //x coordinate, scaled with WIDTH of screen
+								  (int)(inFile.nextDouble() * Gamepanel.HEIGHT), //y coordinate, scaled with HEIGHT of screen
+								  (int)(inFile.nextDouble() * Gamepanel.WIDTH), //width, scaled with WIDTH of screen
+								  (int)(inFile.nextDouble() * Gamepanel.HEIGHT)), //height, scaled with HEIGHT of screen
+					inFile.nextInt(), //val of the SelectRect
+					inFile.next(), //name of the SelectRect
+					"assets/"+inFile.next() //image file name of the SelectRect
 				));
 			}
 		}

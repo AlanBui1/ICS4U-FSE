@@ -4,7 +4,7 @@ import java.awt.*;
 
 //class used for selectable rectangles
 public class SelectRect {
-    public Rectangle rect;
+    public Rectangle rect; 
     public int val; 
     public String name; 
     public Image img; //what to display when drawing the SelectRect
