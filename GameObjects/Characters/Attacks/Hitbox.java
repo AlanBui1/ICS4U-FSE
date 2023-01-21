@@ -100,7 +100,5 @@ public class Hitbox extends Mover{
                 }
             }
         }
-        // DELETE
-        g.drawRect((int)getX(), (int)getY(), (int)width, (int)height);
     }
 }

@@ -425,15 +425,8 @@ public class Player extends Mover{
         return nearestPlat; //returns the nearest Platform to the Player
     }
 
-    public void draw(Graphics g, int xx, int yy){ //draws the Player
-        g.setColor(Color.BLUE);
-        if (chargedMoveSize == maxCharge) g.setColor(Color.CYAN);
-        // change this so attack colour is different when fully charged !!
-
-        if (stunTime > 0) g.setColor(Color.RED);
-        if (shieldTime > 0) g.setColor(Color.GREEN);
-        g.fillRect((int)getX(), (int)getY(), (int)width, (int)height);
-        
+    public void draw(Graphics g, int xx, int yy){ //draws the Player according to what action it's doing
+         
         if (state.equals("Run") || state.equals("Jump") || state.equals("Fall") || state.equals("Idle")){
             if (getVX() != 0 && getVY() == 0 && state.equals("Idle")){
                 state = "Run";
@@ -454,21 +447,19 @@ public class Player extends Mover{
         }
 
         if (dir == RIGHT){
-            // divide by 2 is just to "slow down" frame rate of character
             g.drawImage(frames.get(state)[(int)frameNum], (int)(getX()+offsetX), (int)(getY()+offsetY), null);
         }
         else{
+            // divide by 2 is just to "slow down" frame rate of character
             int imgWidth = (frames.get(state)[(int)frameNum/2]).getWidth(null);
             int imgHeight = (frames.get(state)[(int)frameNum/2]).getHeight(null);
-            // still getting an index out of bounds error sometimes (pretty rare unless spamming bttns ?) :/
-            // i think it happens when frameIncrease() called then state is changed before draw is called, so max frames isn't updated yet
             g.drawImage(frames.get(state)[(int)frameNum], (int)(getX()+imgWidth+offsetX), (int)(getY()+offsetY), -(int)(imgWidth), (int)(imgHeight), null);
         } 
 
         for (Hitbox h : hitboxes){ //draws Hitboxes
 			h.draw(g);
 		}
-
+        g.setColor(Color.BLUE);
 		g.drawString(""+Util.fDouble(damage, 1), xx, yy); //draws Player percent
     }
 
