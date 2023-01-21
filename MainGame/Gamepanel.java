@@ -221,7 +221,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		for (Hitbox h : curPlayer.getHitBoxes()){ 
 			h.lowerInvis(); //lowers the time the Hitbox is inactive for
 			if (h.getInvis() > 0){
-				h.setY(curPlayer.getY() + h.getOffsetY()); //moves the hitbox where the Player is TO DO possibly put in setX
+				h.setY(curPlayer.getY() + h.getOffsetY()); //moves the hitbox where the Player is
 				continue;
 			} 
 
@@ -412,7 +412,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	public void paintEnd(Graphics g){
 		g.drawImage(endImage, 0,0,WIDTH,HEIGHT,null);
 
-		//shows stats of the battle such as how much damage was done, taken, lives lost, etc. TO DO
 		//show which Player won
 		if (p1.getLives() > 0){
 			g.drawString("Player 1 Won!", 250, 380);
