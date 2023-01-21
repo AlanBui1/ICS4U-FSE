@@ -23,4 +23,8 @@ public class SelectRect {
     public boolean contains(int x, int y){ //method to check if (x, y) is contained in the SelectRect Rectangle
         return rect.contains(x, y);
     }
+
+    public void changeImg(String fileName){ //changes the image given the file name
+        img = Util.loadScaledImg(fileName, (int)rect.getWidth(), (int)rect.getHeight());
+    }
 }

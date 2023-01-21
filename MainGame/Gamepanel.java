@@ -33,12 +33,15 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	private ArrayList<HashMap <String, Integer>> playerKeys; //keys that the Players use
 	//playerKeys.get(0) are the keys that p1 uses
 	//playerKeys.get(1) are the keys that p2 uses
+
 	public static  HashMap <String, Double> shooterStats = new HashMap<String, Double>(); //statName -> value
 	public static  HashMap <String, Attack> shooterAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
 	public static  HashMap <String, Double> swordspersonStats = new HashMap<String, Double>(); //statName -> value
 	public static  HashMap <String, Attack> swordspersonAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
-	public static  HashMap <String, Double> bladeStats = new HashMap<String, Double>(); //statName -> value NEW
+	public static  HashMap <String, Double> bladeStats = new HashMap<String, Double>(); //statName -> value
 	public static  HashMap <String, Attack> bladeAtks = new HashMap<String, Attack>(); //attackName -> hitboxes
+	public static  HashMap <String, HashMap <String, Double>> allStats = new HashMap <String, HashMap <String, Double>>(); //all stats
+	public static  HashMap <String, HashMap <String, Attack>> allAtks = new HashMap <String, HashMap <String, Attack>>(); //all attacks
 
     private boolean [] keysPressed; //keysPressed[i] is true if the ith key is pressed
 	private int []  keysHeldTime, //how long the keys are held for
@@ -68,7 +71,6 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 								   keySelectRects; //SelectRects in the key select screen
 
 	private ArrayList <Stage> allStages; //all stages
-	// private String player1, player2; //String of the character name the Player 1 and Player 2 have selected
 
 	private SelectRect controlScreenRect, //SelectRect to go to the control select screen
 					   pauseRect; //SelectRect to pause/unpause the game
@@ -76,6 +78,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
     Timer timer; //Timer to count frames in the game
 
 	Player p1, p2; //Player 1 and Player 2 used to battle in the BATTLE screen
+	SelectRect player1Rect, player2Rect;
 
 	private Font fontLocal; //Font used for text to be drawn on screen
 
@@ -100,6 +103,13 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		bladeStats = Util.loadStats("bladeStats.txt"); //stats of the bladekeeper
 		bladeAtks = Util.loadAtks("bladeAtks.txt"); //attacks of the bladekeeper
 
+		allStats.put("shooter", shooterStats);
+		allAtks.put("shooter", shooterAtks);
+		allStats.put("swordsperson", swordspersonStats);
+		allAtks.put("swordsperson", swordspersonAtks);
+		allStats.put("bladekeeper", bladeStats);
+		allAtks.put("bladekeeper", bladeAtks);
+
 		curStage = Util.loadStage("stages/verticalPlat.txt"); //sets the stage to a default stage
 
 		controlScreenRect = new SelectRect(new Rectangle(0, 0, 100, 100), 0, "", "assets/stage1.png"); 
@@ -116,6 +126,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		stageSelectRects = Util.loadSelectRects("selectRects/stageSelect.txt");
 		charSelectRects = Util.loadSelectRects("selectRects/charSelect.txt");
 		keySelectRects = Util.loadSelectRects("selectRects/keySelect.txt");
+		player1Rect = new SelectRect(new Rectangle(200, 400, 100, 100), 0, "", "images/shooter/shooter.png");
+		player2Rect = new SelectRect(new Rectangle(400, 400, 100, 100), 1, "", "images/shooter/shooter.png");
+
 
 		//INITIALIZE KEY SELECT
 		playerKeys = new ArrayList<HashMap<String, Integer>>();
@@ -129,8 +142,21 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		}
 		
 		//sets default player type for Players
-		// player1 = "shooter";
-		// player2 = "shooter";
+		p1 = new Player(0, 
+						0, 
+						allStats.get("shooter"), 
+						allAtks.get("shooter"), 
+						false, "shooter", 
+						"Idle", 
+						0);
+						
+		p2 = new Player(0, 
+						0, 
+						allStats.get("shooter"), 
+						allAtks.get("shooter"), 
+						false, "shooter", 
+						"Idle", 
+						0);
 
 		//loads font
 		String fName = "NeonLight-Regular.ttf"; 
@@ -364,6 +390,9 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		for (int i=0; i<charSelectRects.size(); i++){
 			charSelectRects.get(i).draw(g);
 		}
+
+		player1Rect.draw(g);
+		player2Rect.draw(g);
 	}
 	public void paintStageSelect(Graphics g){
 		//TO DO CHANGE TO A BACKGROUND IMAGE
@@ -390,10 +419,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			p2.draw(g, 730, 30);
 			pauseRect.draw(g);
 		}
-		catch(NullPointerException ex){
-			System.out.println(p1 + " " + p2);
-			// System.out.println(player1 + " " + player2);
-		}
+		catch(NullPointerException ex){}
 	}
 	public void paintPause(Graphics g){
 		//TO DO CHANGE TO A BACKGROUND IMAGE
@@ -438,17 +464,36 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 
 	public void charAction(){ //actions on the character select screen
 		if (mousePressed){
+			if (player1Rect.contains(mouseX, mouseY)){
+				p1.setCPU(!p1.getCPU());
+			}
+			if (player2Rect.contains(mouseX, mouseY)){
+				p2.setCPU(!p2.getCPU());
+			}
 			for (SelectRect curRect : charSelectRects){ //loops through SelectRects 
 				if (curRect.contains(mouseX, mouseY)){ // checks if the mouse is inside them
 					if (curRect.name.equals("START")){
 						curScreen = STAGESELECT; //moves to the next screen
 						mousePressed = false;
+
 						//initializes Players
-						p1 = new Player(0,0, shooterStats, shooterAtks, false, "shooter", "Idle", 0);
-						// p1 = new Player(0,0, Util.loadStats(p1.getType()+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
+						p1 = new Player(0, 
+										0, 
+										allStats.get(p1.getType()), 
+										allAtks.get(p1.getType()), 
+										false, p1.getType(), 
+										"Idle", 
+										0);
+
+						p2 = new Player(0, 
+										0, 
+										allStats.get(p2.getType()), 
+										allAtks.get(p2.getType()), 
+										false, p2.getType(), 
+										"Idle", 
+										0);
+						
 						p1.loadKeyLayout(playerKeys.get(0));
-						// p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), false);
-						p2 = new Player(0,0, swordspersonStats, swordspersonAtks, false, "swordsperson", "Idle", 0);
 						p2.loadKeyLayout(playerKeys.get(1));
 
 					}
@@ -459,22 +504,22 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 						if (curRect.name.equals("RANDOM")){ //changes the Player to a random one
 							if (mouseButton == LEFTCLICK){
 								p1.setType(characterNames[Util.randint(0, characterNames.length-1)]);
-								// player1 = characterNames[Util.randint(0, characterNames.length-1)];
+								player1Rect.changeImg("images/"+p1.getType()+"/"+p1.getType()+".png");
 							}
 							else if (mouseButton == RIGHTCLICK){ 
 								p2.setType(characterNames[Util.randint(0, characterNames.length-1)]);
-								// player2 = characterNames[Util.randint(0, characterNames.length-1)];
+								player2Rect.changeImg("images/"+p2.getType()+"/"+p2.getType()+".png");
 							}
 						}
 						else{
 							//changes the Player to the one that was clicked
 							if (mouseButton == LEFTCLICK){
 								p1.setType(characterNames[curRect.val]);
-								// player1 = characterNames[curRect.val];
+								player1Rect.changeImg("images/"+p1.getType()+"/"+p1.getType()+".png");
 							}
 							else if (mouseButton == RIGHTCLICK){
 								p2.setType(characterNames[curRect.val]);
-								// player2 = characterNames[curRect.val];
+								player2Rect.changeImg("images/"+p2.getType()+"/"+p2.getType()+".png");
 							}
 						}
 					}
