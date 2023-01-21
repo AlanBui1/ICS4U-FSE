@@ -385,7 +385,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		g.drawImage(startImage, 0, 0, WIDTH, HEIGHT, null);
 	}
 	public void paintControlSelect(Graphics g){
-		g.drawImage(charSelectImage, 0, 0, WIDTH, HEIGHT, null);
+		g.drawImage(controlImage, 0, 0, WIDTH, HEIGHT, null);
 		for (SelectRect curRect : keySelectRects){
 			curRect.draw(g);
 			if (!curRect.name.equals("START") && !curRect.name.equals("DEFAULT")) g.drawString(""+(char)(int)playerKeys.get(curRect.val).get(curRect.name), (int)curRect.rect.getX()+(int)curRect.rect.getWidth()/2, (int)curRect.rect.getY()+(int)curRect.rect.getHeight()/2);
@@ -404,9 +404,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		
 	}
 	public void paintStageSelect(Graphics g){
-		//TO DO CHANGE TO A BACKGROUND IMAGE
-		g.setColor(Color.GRAY);
-		g.fillRect(0,0, WIDTH, HEIGHT);
+		g.drawImage(controlImage, 0, 0, WIDTH, HEIGHT, null);
 		for (int i=0; i<stageSelectRects.size(); i++){
 			stageSelectRects.get(i).draw(g);
 		}
