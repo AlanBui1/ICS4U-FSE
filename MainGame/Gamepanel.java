@@ -79,10 +79,11 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 					   pauseRect,
 					   playRect; //SelectRect to pause/unpause the game
 
-	private Image pauseImage;
-	private Image endImage;
-	private Image startImage;
-	private Image charSelectImage;
+	private Image pauseImage; //image for the pause screen
+	private Image endImage; //image for the end screen
+	private Image startImage; //image for the start screen 
+	private Image controlImage; //image for the control screen
+	private Image charSelectImage; //image for the character select screen
 
     Timer timer; //Timer to count frames in the game
 
@@ -129,6 +130,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		endImage = Util.loadImg("assets/end.gif");
 		startImage = Util.loadImg("assets/start.gif");
 		charSelectImage = Util.loadImg("assets/charSelect.gif");
+		controlImage = Util.loadScaledImg("assets/control.png", 800, 600);
 
 		//sets current screen to the start by default
 		curScreen = START;
@@ -383,9 +385,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		g.drawImage(startImage, 0, 0, WIDTH, HEIGHT, null);
 	}
 	public void paintControlSelect(Graphics g){
-		//TO DO CHANGE TO A BACKGROUND IMAGE 
-		g.setColor(Color.GRAY);
-		g.fillRect(0,0, WIDTH, HEIGHT);
+		g.drawImage(charSelectImage, 0, 0, WIDTH, HEIGHT, null);
 		for (SelectRect curRect : keySelectRects){
 			curRect.draw(g);
 			if (!curRect.name.equals("START") && !curRect.name.equals("DEFAULT")) g.drawString(""+(char)(int)playerKeys.get(curRect.val).get(curRect.name), (int)curRect.rect.getX()+(int)curRect.rect.getWidth()/2, (int)curRect.rect.getY()+(int)curRect.rect.getHeight()/2);

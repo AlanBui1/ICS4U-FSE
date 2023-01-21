@@ -3,6 +3,8 @@ package Utility;
 import java.awt.*;
 
 //class used for selectable rectangles
+//SelectRects are used over Rectangles sometimes because they draw an Image on the screen as well as can store some values associated with the Rectangle
+
 public class SelectRect {
     public Rectangle rect; 
     public int val; 

@@ -14,7 +14,7 @@ import Utility.Util;
 //Players move according to keyboard movement  
 //Players have a variety of fields that are used for dealing with the physics of the game
 //Main things Players can do are: move, draw its Image on the screen, and attack
-//Players can even be controlled by the program!
+//Players' movement and attacks can even be controlled by the program!
 
 public class Player extends Mover{
     public static final int LEFT = -1, RIGHT = 1;
