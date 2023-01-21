@@ -462,18 +462,18 @@ public class Player extends Mover{
 		g.drawString(""+Util.fDouble(damage, 1), xx, yy); //draws Player percent
     }
 
-    public void frameIncrease(){
+    public void frameIncrease(){ // increases current frame
         if (frameNum >= (actions.get(state)-1)){
-            if (state.equals("Run") || state.equals("Idle")){
-                frameNum = 0;
+            if (state.equals("Run") || state.equals("Idle")){ // these animations loop indefinitely 
+                frameNum = 0; 
             }
             else{
-                state = "Idle";
+                state = "Idle"; // otherwise, other animations go to idle state once done
                 frameNum = 0;
             }
         }
         else{
-            frameNum += 0.5;
+            frameNum += 0.5; // increase frame by 0.5 to decrease speed of animation
         }
     }
 

@@ -113,7 +113,7 @@ public class Util {
 			Image[] moveFrames = new Image[moves.get(moveName)]; // creates an array for frames of move
 			for (int k = 0; k < moves.get(moveName); k++){ // loads all frames for each move
 				if (player.getType().equals("swordsperson")){ // specialized scaling for swordsperson
-					moveFrames[k] = loadScaledImg("images/" + player.getType() + "/" + moveName + k + ".png", 337, 149);
+					moveFrames[k] = loadScaledImg("assets/" + player.getType() + "/" + moveName + k + ".png", 337, 149);
 				}
 				else{
 					moveFrames[k] = loadImg("assets/" + player.getType() + "/" + moveName + k + ".png");
@@ -122,7 +122,7 @@ public class Util {
 				actions.put(moveName, moves.get(moveName)); // adds moves ot all actions
 			}
 		}
-		if (player.getType().equals("shooter")){ // sepcial case, loads projectile frame
+		if (player.getType().equals("shooter")){ // special case, loads projectile frame
 			Image[] FastSideAtkProjectile = {loadImg("assets/shooter/FastSideAtkProjectile.png")};
 			frames.put("FastSideAtkProjectile", FastSideAtkProjectile);
 		}
