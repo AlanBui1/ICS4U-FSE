@@ -144,10 +144,6 @@ public class Player extends Mover{
             }
         }
 
-        // this depends on if we want the players to die immediately after hitting the edge or not
-        // rn it just resets player to starting pos... idk if that's what we want it to do
-        // maybe add an invincibility period ?
-
         // player dies by going off-screen
         if (getX() <= -20 || getX()+width >= Gamepanel.WIDTH || getY() <= 0 || getY()+height >= Gamepanel.HEIGHT){
             loseLife();
@@ -322,7 +318,7 @@ public class Player extends Mover{
             shieldTime = shieldMove.getnumFrames() * 2;
         }
             
-        else if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){ 
+        else if (1 <= keysReleasedTime[fastKey] && keysReleasedTime[fastKey] <= 10){ //attacks if the fast key was released fast enough
             if (keysPressed[UKey]){
                 attack("FastUpAtk", attacks.get("FastUpAtk"), 1);
                 state = "FastUpAtk";
@@ -341,7 +337,7 @@ public class Player extends Mover{
             keysReleasedTime[fastKey] = 0;
         }
 
-        else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){
+        else if (1 <= keysReleasedTime[chargeKey] && keysReleasedTime[chargeKey] <= 10){//attacks if the charge key was released fast enough
             if (!onGround){
                 return;
             } 
@@ -356,7 +352,7 @@ public class Player extends Mover{
             keysReleasedTime[chargeKey] = 0;
         }
 
-        else if (keysPressed[chargeKey]){
+        else if (keysPressed[chargeKey]){ //charges if the charge key was held
             if (keysPressed[UKey]){
                 if (jump3){
                     jump3 = false;
