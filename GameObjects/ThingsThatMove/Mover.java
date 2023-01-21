@@ -14,14 +14,14 @@ public class Mover {
                     maxVX, //maximum velocity in the x direction,
                     maxVY; //maximum velocity in the y direction
 
-    public Mover(double X, double Y){
+    public Mover(double X, double Y){ //constructor that just takes the location
         x = X; y = Y;
         vx = 0; vy = 0;
         ax = 0; ay = 0;
         maxVX = Double.MAX_VALUE; maxVY = Double.MAX_VALUE;
     }
 
-    public Mover(HashMap <String, Double> stats){
+    public Mover(HashMap <String, Double> stats){ //constructor that uses a HashMap to initialize values
         vx = stats.get("vx");
         vy = stats.get("vy"); 
         ax = stats.get("ax"); 

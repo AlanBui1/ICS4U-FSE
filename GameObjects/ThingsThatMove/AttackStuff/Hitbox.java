@@ -7,6 +7,8 @@ import GameObjects.ThingsThatMove.Player;
 
 //class for Hitboxes
 //Hitboxes are able to move using methods inherited from the Mover class
+//Hiboxes have their own move() which takes into consideration the time that the Hitbox has been active for before calling Mover's move()
+
 public class Hitbox extends Mover{
     private double  width, //how wide the Hitbox is
                     height, //how tall the Hitbox is

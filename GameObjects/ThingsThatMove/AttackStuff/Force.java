@@ -2,6 +2,7 @@ package GameObjects.ThingsThatMove.AttackStuff;
 
 //class for Forces that will act on Players
 //Forces have magnitude, broken into x and y components as well as a stunTime, which is how long the Force will stun the Player affected
+
 public class Force {
     double magnitudeX, //magnitude of the Force in the X direction
            magnitudeY; //magnitude of the Force in the Y direction

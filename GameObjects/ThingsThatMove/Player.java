@@ -274,7 +274,7 @@ public class Player extends Mover{
     
     public void loseLife(){
         lives--; //reduces number of lives of this Player
-        setX(Gamepanel.WIDTH/2); setY(30); //goes back to starting position TO DO
+        setX(Gamepanel.WIDTH/2); setY(30); //goes back to starting position
         
         //reset values
         setVX(0); setVY(0);
@@ -373,26 +373,29 @@ public class Player extends Mover{
 
     public void attack(String name, Attack atk, double scale){
         stunTime += atk.getnumFrames()*2; //stuns the attacker to prevent the Player from moving while attacking
-        for (Hitbox h : atk.getHitboxes()){ //TO DO EXPLAIN THIS IDK HOW
-            Hitbox toAdd = h.cloneHitbox(); 
+        for (Hitbox h : atk.getHitboxes()){ //Loops through the Attack's hitboxes
+            Hitbox toAdd = h.cloneHitbox(); //makes a clone of the Hitbox
             toAdd.setName(name);
             toAdd.setPlayer(this);
 
+            //puts the Hitbox where it belongs
             if (type.equals("bladekeeper") && (name.contains("Down"))){
                 toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth()/2)*(dir > 0 ? 0 : 1));
             }
             else if (type.equals("shooter") && name.equals("FastUpAtk")){
                 toAdd.setX(getX());
             }
-            else if (type.equals("shooter") && name.equals("ChargeDownAtk")){
-                chargedMoveSize = maxCharge;
-                damage += 5;
+            else if (type.equals("shooter") && name.equals("ChargeDownAtk")){ //this is a unique attack to the shooter
+                chargedMoveSize = maxCharge; //fully charges the attack bar
+                damage += 5; //takes damage
             }
             else toAdd.setX(getX() + (toAdd.getOffsetX()*(dir > 0 ? dir : 0)) - (toAdd.getWidth())*(dir > 0 ? 0 : 1));
-            
             toAdd.setY(getY() + toAdd.getOffsetY());
+
+            //sets acceleration, velocity, and knockback depending on which way the character is facing/attacking
             toAdd.setVX(toAdd.getVX()*dir);
             toAdd.setAX(toAdd.getAX()*dir);
+            //scales the knockback and damage by how charged the move was
             toAdd.setKnockBackX(toAdd.getKnockBackX()*dir*scale);
             toAdd.setKnockBackY(toAdd.getKnockBackY()*dir*scale);
             toAdd.setDamage(toAdd.getDamage() * scale);
