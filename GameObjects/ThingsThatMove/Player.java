@@ -29,7 +29,6 @@ public class Player extends Mover{
                 shieldTime; //how long the Player has shield active for
 
     private double  weight, //weight () is a measure of how much a Player can resist knockback i.e. more weight => less knockback
-                    airaccel, //airaccel (pixels / frame^2) is the rate a Player can change their horizontal velocity midair
                     airfriction, //airfriction (units / frame^2) is a measure of how long it takes a character to stop moving from a sideways force midair
                     groundfriction, //groundfriction (units / frame^2) is a measure of how long it takes a character to stop moving from a sideways force on the ground
                     airspd, //airspd (pixels / frame) is the maximum speed a Player can move horizontally midair
@@ -77,7 +76,6 @@ public class Player extends Mover{
         height = stats.get("height");
         width = stats.get("width");
         weight = stats.get("weight");
-        airaccel = stats.get("airaccel");
         airfriction = stats.get("airfriction");
         groundfriction = stats.get("groundfriction");
         airspd = stats.get("airspd");

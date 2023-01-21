@@ -77,6 +77,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 					   playRect; //SelectRect to pause/unpause the game
 
 	private Image pauseImage;
+	private Image endImage;
 	private Image startImage;
 	private Image charSelectImage;
 
@@ -122,6 +123,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		playRect = new SelectRect(new Rectangle(20, 20, 70, 70), 0, "", "assets/play.png");
 		pauseRect = new SelectRect(new Rectangle(20, 20, 70, 70), 0, "", "assets/pause.png");
 		pauseImage = Util.loadImg("assets/pause.gif");
+		endImage = Util.loadImg("assets/end.gif");
 		startImage = Util.loadImg("assets/start.gif");
 		charSelectImage = Util.loadImg("assets/charSelect.gif");
 
@@ -375,12 +377,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 //######################################################################################################################
 //Drawing different screens
 	public void paintStart(Graphics g){
-		//TO DO CHANGE TO A BACKGROUND IMAGE
 		g.drawImage(startImage, 0, 0, WIDTH, HEIGHT, null);
-		// g.setColor(Color.GRAY);
-		// g.fillRect(0,0, WIDTH, HEIGHT);
-		g.setColor(Color.BLACK);
-		// g.drawString("CLICK TO START", WIDTH/2-100, HEIGHT/2);
 	}
 	public void paintControlSelect(Graphics g){
 		//TO DO CHANGE TO A BACKGROUND IMAGE 
@@ -392,11 +389,8 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		}
 	}
 	public void paintCharacterSelect(Graphics g){
-		//TO DO show which characters are selected / if they are cpu
 		g.drawImage(charSelectImage, 0, 0, WIDTH, HEIGHT, null);
-		//TO DO CHANGE TO A BACKGROUND IMAGE, the next couple of lines are temp
-		// g.setColor(Color.GRAY);
-		// g.fillRect(0,0, WIDTH, HEIGHT);
+		
 		for (int i=0; i<charSelectRects.size(); i++){
 			charSelectRects.get(i).draw(g);
 		}
@@ -404,8 +398,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		player1Rect.draw(g);
 		player2Rect.draw(g);
 
-		g.fillRect(100, 100, (int)(100*(p1.getCharge()/Player.maxCharge)), 10);
-		g.fillRect(500, 100, (int)(100*(p2.getCharge()/Player.maxCharge)), 10);
+		
 	}
 	public void paintStageSelect(Graphics g){
 		//TO DO CHANGE TO A BACKGROUND IMAGE
@@ -416,11 +409,16 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		}
 	}
 	public void paintEnd(Graphics g){
-		//TO DO CHANGE TO A BACKGROUND IMAGE
-		g.setColor(Color.GRAY);
-		g.fillRect(0,0, WIDTH, HEIGHT);
+		g.drawImage(endImage, 0,0,WIDTH,HEIGHT,null);
 
-		//shows stats of the battle such as how much damage was done, taken, lives lost, etc.
+		//shows stats of the battle such as how much damage was done, taken, lives lost, etc. TO DO
+		//show which Player won
+		if (p1.getLives() > 0){
+			g.drawString("Player 1 Won!", 250, 380);
+		}
+		else{
+			g.drawString("Player 2 Won!", 250, 380);
+		}
 	}
 	public void paintBattle(Graphics g){
 		try{
@@ -428,9 +426,12 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 			curStage.draw(g);
 
 			//draw Players and their Hitboxes
-			p1.draw(g, 30, 30);
-			p2.draw(g, 730, 30);
+			p1.draw(g, 0, 570);
+			p2.draw(g, 700, 570);
 			pauseRect.draw(g);
+
+			g.fillRect(0, 585, (int)(100*(p1.getCharge()/Player.maxCharge)), 10);
+			g.fillRect(700, 585, (int)(100*(p2.getCharge()/Player.maxCharge)), 10);
 		}
 		catch(NullPointerException ex){}
 	}
