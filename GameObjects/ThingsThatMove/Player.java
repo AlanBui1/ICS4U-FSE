@@ -320,17 +320,11 @@ public class Player extends Mover{
                 attack("FastDownAtk", attacks.get("FastDownAtk"), 1);
             }
             else{
-                // if (type == "swordsperson"){
-                //     attack("FastSideAtk");
-                //     // attack("FastSideAtkFixed", attacks.get("FastSideAtkFixed"), 1);
-                //     state = "FastSideAtk";
-                //     frameNum = 0;
-                // }
-                // else{
-                    attack("FastSideAtk", attacks.get("FastSideAtk"), 1);
-                    state = "FastSideAtk";
-                    frameNum = 0;
-                // }
+
+                attack("FastSideAtk", attacks.get("FastSideAtk"), 1);
+                state = "FastSideAtk";
+                frameNum = 0;
+             
             }
 
             keysReleasedTime[fastKey] = 0;

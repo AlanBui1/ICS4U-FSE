@@ -68,15 +68,15 @@ public class Hitbox extends Mover{
     public void setName(String n){name = n;}
     public void setPlayer(Player p){player = p;}
     public void addTime(double t){time += t;}
-    public void lowerInvis(){invisTime--;} //NEW
+    public void lowerInvis(){invisTime--;}
 
     @Override
     public void move(){
         time --; //reduces the time the Hitbox is active for
-        if (time < 0){ 
+        if (time < 0){  //does not move if the Hitbox's time is up
             return;
         }
-        super.move();
+        super.move(); //moves with Mover's move method
     }
 
     public void draw(Graphics g){ //draws the Hitbox

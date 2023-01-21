@@ -2,6 +2,8 @@ package GameObjects.ThingsThatMove;
 import java.awt.*;
 import java.util.*;
 
+//class for Platforms 
+//extends Mover class since Platforms can move
 public class Platform extends Mover{
     private int width, //width of the rectangular Platform
                 height, //height of the rectangular Platform

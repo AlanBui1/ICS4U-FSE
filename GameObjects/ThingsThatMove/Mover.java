@@ -2,6 +2,8 @@ package GameObjects.ThingsThatMove;
 
 import java.util.HashMap;
 
+//class for all Objects that move in the game
+//acceleration and velocity are broken down into x and y components
 public class Mover {
     private double  x, //x coordinate
                     y, //y coordinate
