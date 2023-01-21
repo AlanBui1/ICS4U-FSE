@@ -60,7 +60,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 	private int curScreen; //which screen the game is on
 	private Stage curStage; //which stage the battle is on
 
-	private String [] characterNames = {"shooter", "swordsperson", "shooter"}; //all character names
+	private String [] characterNames = {"shooter", "swordsperson", "bladekeeper"}; //all character names
 
 	private ArrayList <SelectRect> stageSelectRects, //SelectRects in the stage select screen
 								   charSelectRects, //SelectRects in the character select screen
@@ -89,7 +89,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 		requestFocus();
 		addKeyListener(this);
 		addMouseListener(this);
-		timer = new Timer(20, this);
+		timer = new Timer(30, this);
 		// timer.setActionCommand("maingame");
 		timer.start();
 
@@ -421,7 +421,7 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 				if (curRect.contains(mouseX, mouseY)){ //checks if the mouse is inside the SelectRect
 					if (curRect.name.equals("START")){
 						curScreen = BATTLE; //moves to the next screen
-						p1.loadKeyLayout(playerKeys.get(0));
+						p1.loadKeyLayout(playerKeys.get(0)); //loads the controls
 						p2.loadKeyLayout(playerKeys.get(1));
 						mousePressed = false;
 					}
@@ -450,11 +450,11 @@ public class Gamepanel extends JPanel implements KeyListener, ActionListener, Mo
 						curScreen = STAGESELECT; //moves to the next screen
 						mousePressed = false;
 						//initializes Players
-						p1 = new Player(0,0, swordspersonStats, swordspersonAtks, false, "swordsperson", "Idle", 0); // maybe change string to constant (or completely remove)
+						p1 = new Player(0,0, bladeStats, bladeAtks, false, "bladekeeper", "Idle", 0);
 						// p1 = new Player(0,0, Util.loadStats(p1.getType()+"Stats.txt"), Util.loadAtks(player1+"Atks.txt"), false);
 						p1.loadKeyLayout(playerKeys.get(0));
 						// p2 = new Player(0,0, Util.loadStats(player2+"Stats.txt"), Util.loadAtks(player2+"Atks.txt"), false);
-						p2 = new Player(0,0, bladeStats, bladeAtks, false, "bladekeeper", "Idle", 0);
+						p2 = new Player(0,0, bladeStats, bladeAtks, true, "bladekeeper", "Idle", 0);
 						p2.loadKeyLayout(playerKeys.get(1));
 
 					}

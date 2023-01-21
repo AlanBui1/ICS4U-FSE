@@ -13,13 +13,13 @@ startoffsetx	0.03
 startoffsety	0.02
 timeactive	12
 stuntime	10
-damage	4
+damage	4.3
 invisTime 0
 cooldown 12
 frames 6
 ---ChargeDownAtk--- 1
 basekbx	0
-basekby	0.02
+basekby	-0.05
 vx	0
 vy	0
 ax	0
@@ -32,7 +32,7 @@ startoffsetx	-0.1
 startoffsety	0
 timeactive	22
 stuntime	10
-damage	4
+damage	8.4
 invisTime 0
 cooldown 20
 frames 11
@@ -51,7 +51,7 @@ startoffsetx	0.02875
 startoffsety	0
 timeactive	2
 stuntime	10
-damage	4
+damage	1.8
 invisTime 0
 basekbx 0.00625
 basekby 0.00625
@@ -67,7 +67,7 @@ startoffsetx 0.02875
 startoffsety 0
 timeactive 4
 stuntime 10
-damage 4
+damage 1.8
 invisTime 2
 basekbx 0.00625
 basekby 0.00625
@@ -83,7 +83,7 @@ startoffsetx 0.02875
 startoffsety 0
 timeactive 6
 stuntime 10
-damage 4
+damage 1.8
 invisTime 4
 basekbx 0.00625
 basekby 0.00625
@@ -99,7 +99,7 @@ startoffsetx 0.02875
 startoffsety 0
 timeactive 8
 stuntime 10
-damage 4
+damage 1.8
 invisTime 6
 basekbx 0.00625
 basekby 0.00625
@@ -115,7 +115,7 @@ startoffsetx 0.02875
 startoffsety 0
 timeactive 10
 stuntime 10
-damage 4
+damage 1.8
 invisTime 8
 basekbx 0.00625
 basekby 0.00625
@@ -131,7 +131,7 @@ startoffsetx 0.02875
 startoffsety 0
 timeactive 12
 stuntime 10
-damage 4
+damage 1.8
 invisTime 10
 basekbx 0.00625
 basekby 0.00625
@@ -147,7 +147,7 @@ startoffsetx 0.02875
 startoffsety 0
 timeactive 14
 stuntime 10
-damage 4
+damage 1.8
 invisTime 12
 basekbx 0.00625
 basekby 0.00625
@@ -163,7 +163,7 @@ startoffsetx 0.02875
 startoffsety 0
 timeactive 16
 stuntime 10
-damage 4
+damage 1.8
 invisTime 14
 cooldown 16
 frames 8
@@ -201,7 +201,7 @@ startoffsetx	0.02875
 startoffsety	0
 timeactive	2
 stuntime	10
-damage	4
+damage	1
 invisTime 0
 basekbx 0.00625
 basekby 0.00625
@@ -217,7 +217,7 @@ startoffsetx 0.02875
 startoffsety 0
 timeactive 10
 stuntime 10
-damage 4
+damage 1
 invisTime 5
 basekbx 0.00625
 basekby 0.00625
@@ -233,7 +233,7 @@ startoffsetx 0.02875
 startoffsety 0
 timeactive 15
 stuntime 10
-damage 4
+damage 1
 invisTime 10
 basekbx 0.00625
 basekby 0.00625
@@ -249,7 +249,7 @@ startoffsetx 0.02875
 startoffsety 0
 timeactive 20
 stuntime 10
-damage 4
+damage 1
 invisTime 15
 basekbx 0.00625
 basekby 0.00625
@@ -265,7 +265,7 @@ startoffsetx 0.02875
 startoffsety 0
 timeactive 20
 stuntime 10
-damage 4
+damage 1
 invisTime 20
 basekbx 0.00625
 basekby 0.00625
@@ -281,10 +281,10 @@ startoffsetx 0.02875
 startoffsety 0
 timeactive 20
 stuntime 10
-damage 4
+damage 1
 invisTime 25
-basekbx 1
-basekby 1
+basekbx 0.03
+basekby 0.03
 vx 0
 vy 0
 ax 0
