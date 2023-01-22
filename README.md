@@ -6,20 +6,31 @@ The more attacks a player lands on their opponent, the further the opponent gets
 Each player starts with 3 lives and when a player runs out of lives, the game ends! 
 
 Characters:
+
 In the Character Select Screen, clicking on the Character icons causes a CPU to play
 
 Bladekeeper -> specializes in short ranged attacks
+
 Swordsperson -> specializes in short-mid ranged attacks
+
 Shooter -> specializes in long ranged attacks
 
 Stages:
+
 Different stages have different platform configurations and music
 
 Default Controls (for Player 1):
+
 W -> Jump
+
 A -> Left
+
 S -> Down
+
 D -> Right
+
 E -> Fast Attack (click to attack)
+
 Q -> Charged Attack (Hold to charge attack bar, click to attack)
+
 Z -> Shield
