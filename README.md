@@ -34,3 +34,21 @@ E -> Fast Attack (click to attack)
 Q -> Charged Attack (Hold to charge attack bar, click to attack)
 
 Z -> Shield
+
+Default Controls (for Player 2):
+
+I -> Jump
+
+J -> Left
+
+K -> Down
+
+L -> Right
+
+U -> Fast Attack (click to attack)
+
+O -> Charged Attack (Hold to charge attack bar, click to attack)
+
+SLASH -> Shield
+
+Controls can be changed in the control selection screen by clicking on a current keybind and pressing a new key to rebind the action. 
